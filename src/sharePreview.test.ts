@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import rootHtml from "../index.html?raw";
 import {
   PUBLIC_OG_IMAGE_URL,
+  PUBLIC_SITE_DOMAIN,
   PUBLIC_SITE_URL,
   buildResidenceShareHtml,
   createResidenceShareDescription,
@@ -40,6 +41,7 @@ describe("social share preview metadata", () => {
     expect(getProperty(doc, "og:locale")).toBe("ko_KR");
     expect(getProperty(doc, "og:url")).toBe(PUBLIC_SITE_URL);
     expect(getProperty(doc, "og:image")).toBe(PUBLIC_OG_IMAGE_URL);
+    expect(getProperty(doc, "og:image:url")).toBe(PUBLIC_OG_IMAGE_URL);
     expect(getProperty(doc, "og:image:secure_url")).toBe(PUBLIC_OG_IMAGE_URL);
     expect(getProperty(doc, "og:image:type")).toBe("image/png");
     expect(getProperty(doc, "og:image:width")).toBe("1200");
@@ -47,6 +49,7 @@ describe("social share preview metadata", () => {
     expect(getProperty(doc, "og:image:alt")).toBe("지방선거 가이드 미리보기");
     expect(getName(doc, "twitter:card")).toBe("summary_large_image");
     expect(getName(doc, "twitter:url")).toBe(PUBLIC_SITE_URL);
+    expect(getName(doc, "twitter:domain")).toBe(PUBLIC_SITE_DOMAIN);
     expect(getName(doc, "twitter:image")).toBe(PUBLIC_OG_IMAGE_URL);
     expect(getName(doc, "twitter:image:alt")).toBe("지방선거 가이드 미리보기");
   });
@@ -66,9 +69,11 @@ describe("social share preview metadata", () => {
     expect(getProperty(doc, "og:description")).toBe(createResidenceShareDescription(sampleResidence, 7, 40));
     expect(getProperty(doc, "og:url")).toBe(`${PUBLIC_SITE_URL}share/${sampleResidence.id}.html`);
     expect(getProperty(doc, "og:image")).toBe(PUBLIC_OG_IMAGE_URL);
+    expect(getProperty(doc, "og:image:url")).toBe(PUBLIC_OG_IMAGE_URL);
     expect(getProperty(doc, "og:image:type")).toBe("image/png");
     expect(getName(doc, "twitter:card")).toBe("summary_large_image");
     expect(getName(doc, "twitter:url")).toBe(`${PUBLIC_SITE_URL}share/${sampleResidence.id}.html`);
+    expect(getName(doc, "twitter:domain")).toBe(PUBLIC_SITE_DOMAIN);
     expect(doc.querySelector('meta[http-equiv="refresh"]')?.getAttribute("content")).toContain(
       `${PUBLIC_SITE_URL}?region=${sampleResidence.id}`,
     );

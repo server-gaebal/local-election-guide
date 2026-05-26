@@ -1,6 +1,7 @@
 import type { Residence } from "./electionTypes";
 
 export const PUBLIC_SITE_URL = "https://kimsunghyun1995.github.io/local-election-guide/";
+export const PUBLIC_SITE_DOMAIN = "kimsunghyun1995.github.io";
 export const PUBLIC_OG_IMAGE_URL = `${PUBLIC_SITE_URL}og-image.png`;
 export const SHARE_IMAGE_ALT = "지방선거 가이드 미리보기";
 
@@ -79,9 +80,11 @@ export function buildResidenceShareHtml({
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeHtml(description)}" />
+    <meta name="theme-color" content="#0f766e" />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="${escapeHtml(shareUrl)}" />
     <link rel="image_src" href="${PUBLIC_OG_IMAGE_URL}" />
+    <link rel="icon" type="image/svg+xml" href="${PUBLIC_SITE_URL}favicon.svg" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="지방선거 가이드" />
@@ -89,6 +92,7 @@ export function buildResidenceShareHtml({
     <meta property="og:description" content="${escapeHtml(description)}" />
     <meta property="og:url" content="${escapeHtml(shareUrl)}" />
     <meta property="og:image" content="${PUBLIC_OG_IMAGE_URL}" />
+    <meta property="og:image:url" content="${PUBLIC_OG_IMAGE_URL}" />
     <meta property="og:image:secure_url" content="${PUBLIC_OG_IMAGE_URL}" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
@@ -99,6 +103,7 @@ export function buildResidenceShareHtml({
     <meta name="twitter:title" content="${escapeHtml(title)}" />
     <meta name="twitter:description" content="${escapeHtml(description)}" />
     <meta name="twitter:url" content="${escapeHtml(shareUrl)}" />
+    <meta name="twitter:domain" content="${PUBLIC_SITE_DOMAIN}" />
     <meta name="twitter:image" content="${PUBLIC_OG_IMAGE_URL}" />
     <meta name="twitter:image:alt" content="${SHARE_IMAGE_ALT}" />
     <meta http-equiv="refresh" content="0; url=${escapeHtml(appUrl)}" />
