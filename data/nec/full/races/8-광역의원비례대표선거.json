@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-26T04:05:37.347Z",
+  "fetchedAt": "2026-05-26T07:11:42.700Z",
   "electionId": "20260603",
   "source": "https://policy.nec.go.kr/plc/commiment/initUCACommimentList.do",
   "race": {
@@ -10,6 +10,7 @@
   "scopeCount": 16,
   "totalRows": 147,
   "fivePledgePdfCount": 0,
+  "campaignBulletinPdfCount": 0,
   "scopes": [
     {
       "regionId": "1100",
@@ -158,7 +159,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-국민의힘-20260603/PDF/PBINFO_PUB/1100/-003_200_20260523_1.pdf",
@@ -177,7 +179,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-조국혁신당-20260603/PDF/PBINFO_PUB/1100/-003_5077_20260523_1.pdf",
@@ -196,7 +199,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-개혁신당-20260603/PDF/PBINFO_PUB/1100/-003_5070_20260523_1.pdf",
@@ -215,7 +219,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-진보당-20260603/PDF/PBINFO_PUB/1100/-003_5010_20260523_1.pdf",
@@ -234,7 +239,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-기본소득당-20260603/PDF/PBINFO_PUB/1100/-003_5035_20260523_1.pdf",
@@ -253,7 +259,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-사회민주당",
@@ -272,7 +279,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-거지당-20260603/PDF/PBINFO_PUB/1100/-003_5054_20260523_1.pdf",
@@ -291,7 +299,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-공화당-20260603/PDF/PBINFO_PUB/1100/-003_5051_20260523_1.pdf",
@@ -310,7 +319,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-국민대통합당-20260603/PDF/PBINFO_PUB/1100/-003_2060_20260523_1.pdf",
@@ -329,7 +339,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-국민연합-20260603/PDF/PBINFO_PUB/1100/-003_4080_20260523_1.pdf",
@@ -348,7 +359,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-대한국민당-20260603/PDF/PBINFO_PUB/1100/-003_5059_20260523_1.pdf",
@@ -367,7 +379,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-자유와혁신",
@@ -386,7 +399,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-자유통일당",
@@ -405,7 +419,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-정의당-20260603/PDF/PBINFO_PUB/1100/-003_730_20260523_1.pdf",
@@ -424,7 +439,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-친미연합-20260603/PDF/PBINFO_PUB/1100/-003_5041_20260523_1.pdf",
@@ -443,7 +459,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-국민당-20260603/PDF/PBINFO_PUB/1100/-003_2050_20260523_1.pdf",
@@ -462,7 +479,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-한국독립당-20260603/PDF/PBINFO_PUB/1100/-003_700_20260523_1.pdf",
@@ -481,7 +499,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-서울특별시-한나라당-20260603/PDF/PBINFO_PUB/1100/-003_1990_20260523_1.pdf",
@@ -500,7 +519,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전남광주통합특별시-더불어민주당-20260603/PDF/PBINFO_PUB/2900/-003_100_20260523_4.pdf",
@@ -519,7 +539,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전남광주통합특별시-국민의힘-20260603/PDF/PBINFO_PUB/2900/-003_200_20260522_1.pdf",
@@ -538,7 +559,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전남광주통합특별시-조국혁신당-20260603/PDF/PBINFO_PUB/2900/-003_5077_20260522_1.pdf",
@@ -557,7 +579,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전남광주통합특별시-진보당-20260603/PDF/PBINFO_PUB/2900/-003_5010_20260523_1.pdf",
@@ -576,7 +599,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전남광주통합특별시-기본소득당-20260603/PDF/PBINFO_PUB/2900/-003_5035_20260518_1.pdf",
@@ -595,7 +619,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전남광주통합특별시-자유와혁신",
@@ -614,7 +639,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전남광주통합특별시-정의당-20260603/PDF/PBINFO_PUB/2900/-003_730_20260523_1.pdf",
@@ -633,7 +659,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-부산광역시-더불어민주당-20260603/PDF/PBINFO_PUB/2600/-003_100_20260522_1.pdf",
@@ -652,7 +679,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-부산광역시-국민의힘-20260603/PDF/PBINFO_PUB/2600/-003_200_20260525_3.pdf",
@@ -671,7 +699,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-부산광역시-개혁신당",
@@ -690,7 +719,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-부산광역시-진보당-20260603/PDF/PBINFO_PUB/2600/-003_5010_20260521_1.pdf",
@@ -709,7 +739,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-부산광역시-기본소득당-20260603/PDF/PBINFO_PUB/2600/-003_5035_20260521_1.pdf",
@@ -728,7 +759,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-부산광역시-사회민주당",
@@ -747,7 +779,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-부산광역시-공화당-20260603/PDF/PBINFO_PUB/2600/-003_5051_20260521_1.pdf",
@@ -766,7 +799,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-부산광역시-자유와혁신",
@@ -785,7 +819,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-부산광역시-정의당-20260603/PDF/PBINFO_PUB/2600/-003_730_20260521_1.pdf",
@@ -804,7 +839,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대구광역시-더불어민주당-20260603/PDF/PBINFO_PUB/2700/-003_100_20260522_1.pdf",
@@ -823,7 +859,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대구광역시-국민의힘-20260603/PDF/PBINFO_PUB/2700/-003_200_20260525_3.pdf",
@@ -842,7 +879,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대구광역시-개혁신당",
@@ -861,7 +899,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대구광역시-진보당-20260603/PDF/PBINFO_PUB/2700/-003_5010_20260525_1.pdf",
@@ -880,7 +919,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대구광역시-기본소득당-20260603/PDF/PBINFO_PUB/2700/-003_5035_20260522_1.pdf",
@@ -899,7 +939,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대구광역시-공화당-20260603/PDF/PBINFO_PUB/2700/-003_5051_20260523_3.pdf",
@@ -918,7 +959,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대구광역시-국민연합-20260603/PDF/PBINFO_PUB/2700/-003_4080_20260522_1.pdf",
@@ -937,7 +979,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대구광역시-자유와혁신",
@@ -956,7 +999,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대구광역시-정의당-20260603/PDF/PBINFO_PUB/2700/-003_730_20260524_2.pdf",
@@ -975,7 +1019,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-더불어민주당-20260603/PDF/PBINFO_PUB/2800/-003_100_20260518_1.pdf",
@@ -994,7 +1039,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-국민의힘-20260603/PDF/PBINFO_PUB/2800/-003_200_20260518_1.pdf",
@@ -1013,7 +1059,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-조국혁신당-20260603/PDF/PBINFO_PUB/2800/-003_5077_20260519_2.pdf",
@@ -1032,7 +1079,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-진보당-20260603/PDF/PBINFO_PUB/2800/-003_5010_20260518_1.pdf",
@@ -1051,7 +1099,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-기본소득당-20260603/PDF/PBINFO_PUB/2800/-003_5035_20260518_1.pdf",
@@ -1070,7 +1119,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-사회민주당",
@@ -1089,7 +1139,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-공화당-20260603/PDF/PBINFO_PUB/2800/-003_5051_20260521_2.pdf",
@@ -1108,7 +1159,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-국민연합-20260603/PDF/PBINFO_PUB/2800/-003_4080_20260518_1.pdf",
@@ -1127,7 +1179,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-노동당-20260603/PDF/PBINFO_PUB/2800/-003_1988_20260519_2.pdf",
@@ -1146,7 +1199,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-자유와혁신",
@@ -1165,7 +1219,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-정의당-20260603/PDF/PBINFO_PUB/2800/-003_730_20260518_1.pdf",
@@ -1184,7 +1239,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-인천광역시-국민당-20260603/PDF/PBINFO_PUB/2800/-003_2050_20260518_1.pdf",
@@ -1203,7 +1259,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대전광역시-더불어민주당-20260603/PDF/PBINFO_PUB/3000/-003_100_20260514_1.pdf",
@@ -1222,7 +1279,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대전광역시-국민의힘-20260603/PDF/PBINFO_PUB/3000/-003_200_20260514_1.pdf",
@@ -1241,7 +1299,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대전광역시-조국혁신당-20260603/PDF/PBINFO_PUB/3000/-003_5077_20260514_1.pdf",
@@ -1260,7 +1319,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대전광역시-진보당-20260603/PDF/PBINFO_PUB/3000/-003_5010_20260514_1.pdf",
@@ -1279,7 +1339,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대전광역시-기본소득당-20260603/PDF/PBINFO_PUB/3000/-003_5035_20260518_1.pdf",
@@ -1298,7 +1359,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-대전광역시-정의당-20260603/PDF/PBINFO_PUB/3000/-003_730_20260520_1.pdf",
@@ -1317,7 +1379,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-울산광역시-더불어민주당-20260603/PDF/PBINFO_PUB/3100/-003_100_20260521_1.pdf",
@@ -1336,7 +1399,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-울산광역시-국민의힘-20260603/PDF/PBINFO_PUB/3100/-003_200_20260521_1.pdf",
@@ -1355,7 +1419,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-울산광역시-조국혁신당-20260603/PDF/PBINFO_PUB/3100/-003_5077_20260521_1.pdf",
@@ -1374,7 +1439,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-울산광역시-개혁신당-20260603/PDF/PBINFO_PUB/3100/-003_5070_20260521_1.pdf",
@@ -1393,7 +1459,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-울산광역시-진보당-20260603/PDF/PBINFO_PUB/3100/-003_5010_20260522_1.pdf",
@@ -1412,7 +1479,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-울산광역시-기본소득당-20260603/PDF/PBINFO_PUB/3100/-003_5035_20260521_1.pdf",
@@ -1431,7 +1499,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-울산광역시-정의당-20260603/PDF/PBINFO_PUB/3100/-003_730_20260521_1.pdf",
@@ -1450,7 +1519,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-세종특별자치시-더불어민주당-20260603/PDF/PBINFO_PUB/5100/-003_100_20260522_1.pdf",
@@ -1469,7 +1539,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-세종특별자치시-국민의힘-20260603/PDF/PBINFO_PUB/5100/-003_200_20260522_1.pdf",
@@ -1488,7 +1559,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-세종특별자치시-조국혁신당-20260603/PDF/PBINFO_PUB/5100/-003_5077_20260523_1.pdf",
@@ -1507,7 +1579,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-세종특별자치시-진보당-20260603/PDF/PBINFO_PUB/5100/-003_5010_20260522_1.pdf",
@@ -1526,7 +1599,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-세종특별자치시-기본소득당-20260603/PDF/PBINFO_PUB/5100/-003_5035_20260522_1.pdf",
@@ -1545,7 +1619,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-세종특별자치시-정의당-20260603/PDF/PBINFO_PUB/5100/-003_730_20260523_1.pdf",
@@ -1564,7 +1639,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-더불어민주당-20260603/PDF/PBINFO_PUB/4100/-003_100_20260523_1.pdf",
@@ -1583,7 +1659,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-국민의힘-20260603/PDF/PBINFO_PUB/4100/-003_200_20260523_1.pdf",
@@ -1602,7 +1679,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-조국혁신당-20260603/PDF/PBINFO_PUB/4100/-003_5077_20260523_1.pdf",
@@ -1621,7 +1699,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-개혁신당-20260603/PDF/PBINFO_PUB/4100/-003_5070_20260523_1.pdf",
@@ -1640,7 +1719,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-진보당-20260603/PDF/PBINFO_PUB/4100/-003_5010_20260523_1.pdf",
@@ -1659,7 +1739,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-기본소득당-20260603/PDF/PBINFO_PUB/4100/-003_5035_20260523_1.pdf",
@@ -1678,7 +1759,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-사회민주당",
@@ -1697,7 +1779,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-거지당-20260603/PDF/PBINFO_PUB/4100/-003_5054_20260523_1.pdf",
@@ -1716,7 +1799,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-공화당-20260603/PDF/PBINFO_PUB/4100/-003_5051_20260523_1.pdf",
@@ -1735,7 +1819,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-국민대통합당-20260603/PDF/PBINFO_PUB/4100/-003_2060_20260523_1.pdf",
@@ -1754,7 +1839,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-국민연합-20260603/PDF/PBINFO_PUB/4100/-003_4080_20260523_1.pdf",
@@ -1773,7 +1859,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-기독당-20260603/PDF/PBINFO_PUB/4100/-003_2020_20260523_1.pdf",
@@ -1792,7 +1879,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-대한국민당-20260603/PDF/PBINFO_PUB/4100/-003_5059_20260523_1.pdf",
@@ -1811,7 +1899,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-새미래민주당",
@@ -1830,7 +1919,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-자유와혁신",
@@ -1849,7 +1939,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-정의당-20260603/PDF/PBINFO_PUB/4100/-003_730_20260523_1.pdf",
@@ -1868,7 +1959,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-친미연합-20260603/PDF/PBINFO_PUB/4100/-003_5041_20260523_1.pdf",
@@ -1887,7 +1979,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-국민당-20260603/PDF/PBINFO_PUB/4100/-003_2050_20260523_1.pdf",
@@ -1906,7 +1999,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-한국독립당-20260603/PDF/PBINFO_PUB/4100/-003_700_20260523_1.pdf",
@@ -1925,7 +2019,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경기도-한나라당-20260603/PDF/PBINFO_PUB/4100/-003_1990_20260523_1.pdf",
@@ -1944,7 +2039,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-강원특별자치도-더불어민주당-20260603/PDF/PBINFO_PUB/5200/-003_100_20260518_1.pdf",
@@ -1963,7 +2059,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-강원특별자치도-국민의힘-20260603/PDF/PBINFO_PUB/5200/-003_200_20260518_1.pdf",
@@ -1982,7 +2079,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-강원특별자치도-조국혁신당-20260603/PDF/PBINFO_PUB/5200/-003_5077_20260519_1.pdf",
@@ -2001,7 +2099,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-강원특별자치도-진보당-20260603/PDF/PBINFO_PUB/5200/-003_5010_20260518_1.pdf",
@@ -2020,7 +2119,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-강원특별자치도-기본소득당-20260603/PDF/PBINFO_PUB/5200/-003_5035_20260518_1.pdf",
@@ -2039,7 +2139,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-강원특별자치도-자유와혁신-20260603/PDF/PBINFO_PUB/5200/-003_5082_20260525_2.pdf",
@@ -2058,7 +2159,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-강원특별자치도-정의당-20260603/PDF/PBINFO_PUB/5200/-003_730_20260518_1.pdf",
@@ -2077,7 +2179,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청북도-더불어민주당-20260603/PDF/PBINFO_PUB/4300/-003_100_20260516_1.pdf",
@@ -2096,7 +2199,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청북도-국민의힘-20260603/PDF/PBINFO_PUB/4300/-003_200_20260516_1.pdf",
@@ -2115,7 +2219,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청북도-조국혁신당-20260603/PDF/PBINFO_PUB/4300/-003_5077_20260516_1.pdf",
@@ -2134,7 +2239,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청북도-진보당-20260603/PDF/PBINFO_PUB/4300/-003_5010_20260516_1.pdf",
@@ -2153,7 +2259,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청북도-기본소득당-20260603/PDF/PBINFO_PUB/4300/-003_5035_20260517_1.pdf",
@@ -2172,7 +2279,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청북도-정의당-20260603/PDF/PBINFO_PUB/4300/-003_730_20260516_1.pdf",
@@ -2191,7 +2299,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청남도-더불어민주당-20260603/PDF/PBINFO_PUB/4400/-003_100_20260514_1.pdf",
@@ -2210,7 +2319,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청남도-국민의힘-20260603/PDF/PBINFO_PUB/4400/-003_200_20260525_1.pdf",
@@ -2229,7 +2339,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청남도-조국혁신당-20260603/PDF/PBINFO_PUB/4400/-003_5077_20260514_1.pdf",
@@ -2248,7 +2359,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청남도-진보당-20260603/PDF/PBINFO_PUB/4400/-003_5010_20260522_1.pdf",
@@ -2267,7 +2379,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청남도-기본소득당-20260603/PDF/PBINFO_PUB/4400/-003_5035_20260518_1.pdf",
@@ -2286,7 +2399,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-충청남도-정의당-20260603/PDF/PBINFO_PUB/4400/-003_730_20260522_1.pdf",
@@ -2305,7 +2419,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전북특별자치도-더불어민주당-20260603/PDF/PBINFO_PUB/5300/-003_100_20260522_1.pdf",
@@ -2324,7 +2439,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전북특별자치도-국민의힘-20260603/PDF/PBINFO_PUB/5300/-003_200_20260522_1.pdf",
@@ -2343,7 +2459,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전북특별자치도-조국혁신당-20260603/PDF/PBINFO_PUB/5300/-003_5077_20260522_1.pdf",
@@ -2362,7 +2479,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전북특별자치도-진보당",
@@ -2381,7 +2499,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전북특별자치도-기본소득당-20260603/PDF/PBINFO_PUB/5300/-003_5035_20260522_1.pdf",
@@ -2400,7 +2519,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전북특별자치도-자유와혁신",
@@ -2419,7 +2539,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-전북특별자치도-정의당-20260603/PDF/PBINFO_PUB/5300/-003_730_20260518_1.pdf",
@@ -2438,7 +2559,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-더불어민주당-20260603/PDF/PBINFO_PUB/4700/-003_100_20260517_1.pdf",
@@ -2457,7 +2579,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-국민의힘-20260603/PDF/PBINFO_PUB/4700/-003_200_20260522_2.pdf",
@@ -2476,7 +2599,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-개혁신당-20260603/PDF/PBINFO_PUB/4700/-003_5070_20260518_1.pdf",
@@ -2495,7 +2619,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-진보당-20260603/PDF/PBINFO_PUB/4700/-003_5010_20260518_1.pdf",
@@ -2514,7 +2639,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-기본소득당-20260603/PDF/PBINFO_PUB/4700/-003_5035_20260517_2.pdf",
@@ -2533,7 +2659,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-공화당-20260603/PDF/PBINFO_PUB/4700/-003_5051_20260520_1.pdf",
@@ -2552,7 +2679,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-국민대통합당-20260603/PDF/PBINFO_PUB/4700/-003_2060_20260517_1.pdf",
@@ -2571,7 +2699,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-국민연합-20260603/PDF/PBINFO_PUB/4700/-003_4080_20260518_3.pdf",
@@ -2590,7 +2719,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-정의당-20260603/PDF/PBINFO_PUB/4700/-003_730_20260520_1.pdf",
@@ -2609,7 +2739,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상북도-친미연합-20260603/PDF/PBINFO_PUB/4700/-003_5041_20260517_1.pdf",
@@ -2628,7 +2759,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상남도-더불어민주당-20260603/PDF/PBINFO_PUB/4800/-003_100_20260520_1.pdf",
@@ -2647,7 +2779,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상남도-국민의힘-20260603/PDF/PBINFO_PUB/4800/-003_200_20260523_1.pdf",
@@ -2666,7 +2799,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상남도-조국혁신당-20260603/PDF/PBINFO_PUB/4800/-003_5077_20260523_1.pdf",
@@ -2685,7 +2819,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상남도-개혁신당-20260603/PDF/PBINFO_PUB/4800/-003_5070_20260520_1.pdf",
@@ -2704,7 +2839,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상남도-진보당-20260603/PDF/PBINFO_PUB/4800/-003_5010_20260520_1.pdf",
@@ -2723,7 +2859,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상남도-기본소득당-20260603/PDF/PBINFO_PUB/4800/-003_5035_20260520_1.pdf",
@@ -2742,7 +2879,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상남도-공화당-20260603/PDF/PBINFO_PUB/4800/-003_5051_20260521_1.pdf",
@@ -2761,7 +2899,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상남도-국민연합-20260603/PDF/PBINFO_PUB/4800/-003_4080_20260520_1.pdf",
@@ -2780,7 +2919,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-경상남도-정의당-20260603/PDF/PBINFO_PUB/4800/-003_730_20260523_1.pdf",
@@ -2799,7 +2939,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-제주특별자치도-더불어민주당-20260603/PDF/PBINFO_PUB/4900/-003_100_20260520_1.pdf",
@@ -2818,7 +2959,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-제주특별자치도-국민의힘-20260603/PDF/PBINFO_PUB/4900/-003_200_20260520_1.pdf",
@@ -2837,7 +2979,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-제주특별자치도-조국혁신당-20260603/PDF/PBINFO_PUB/4900/-003_5077_20260520_1.pdf",
@@ -2856,7 +2999,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-제주특별자치도-개혁신당-20260603/PDF/PBINFO_PUB/4900/-003_5070_20260520_1.pdf",
@@ -2875,7 +3019,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-제주특별자치도-진보당-20260603/PDF/PBINFO_PUB/4900/-003_5010_20260522_1.pdf",
@@ -2894,7 +3039,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-제주특별자치도-기본소득당-20260603/PDF/PBINFO_PUB/4900/-003_5035_20260520_1.pdf",
@@ -2913,7 +3059,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     },
     {
       "id": "20260603-820260603-광역의원비례대표선거-제주특별자치도-녹색당-20260603/PDF/PBINFO_PUB/4900/-003_710_20260520_1.pdf",
@@ -2932,7 +3079,8 @@
       "education": "",
       "thumbnailPath": "",
       "thumbnailUrl": null,
-      "fivePledgePdf": null
+      "fivePledgePdf": null,
+      "campaignBulletinPdf": null
     }
   ]
 }

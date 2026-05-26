@@ -1,11 +1,12 @@
 {
-  "fetchedAt": "2026-05-26T04:05:37.347Z",
+  "fetchedAt": "2026-05-26T07:11:42.700Z",
   "electionId": "20260603",
   "mode": "all",
-  "metadataOnly": false,
+  "metadataOnly": true,
   "downloadedPdfCount": 677,
   "totalRows": 7313,
   "fivePledgePdfCount": 677,
+  "campaignBulletinPdfCount": 5897,
   "raceCount": 8,
   "endpoints": {
     "region": "https://policy.nec.go.kr/plc/commiment/initUCACommimentRegion.do",

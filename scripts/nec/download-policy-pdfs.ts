@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import { promisify } from "node:util";
 import {
@@ -55,6 +55,13 @@ type CrawlRaceResult = {
   candidates: NecNormalizedCandidate[];
 };
 
+type DownloadTarget = {
+  candidate: NecNormalizedCandidate;
+  documentType: "fivePledges" | "campaignBulletin";
+  sourceLabel: "5대공약" | "선거공보";
+  pdf: NonNullable<NecNormalizedCandidate["fivePledgePdf"]>;
+};
+
 const ajaxHeaders = {
   accept: "application/json, text/javascript, */*; q=0.01",
   "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -85,6 +92,10 @@ function safeName(value: string) {
 async function writeJson(path: string, value: unknown) {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+async function readJson<T>(path: string) {
+  return JSON.parse(await readFile(path, "utf8")) as T;
 }
 
 async function pathExists(path: string) {
@@ -263,28 +274,29 @@ async function extractText(pdfPath: string, textPath: string) {
   return "extracted";
 }
 
-async function downloadCandidatePdf(outDir: string, candidate: NecNormalizedCandidate, { groupByRace }: { groupByRace: boolean }) {
-  if (!candidate.fivePledgePdf) {
-    return null;
-  }
-
+async function downloadCandidateDocument(outDir: string, target: DownloadTarget, { groupByRace }: { groupByRace: boolean }) {
+  const { candidate, documentType, pdf, sourceLabel } = target;
   const label = candidate.name || candidate.partyName || candidate.candidateId || candidate.id;
   const raceDir = `${candidate.raceTypeCode}-${safeName(candidate.raceName)}`;
+  const suffix = documentType === "fivePledges" ? "5pledges" : "campaign-bulletin";
   const fileName = groupByRace
     ? `${safeName(candidate.candidateNumber || "n")}-${safeName(candidate.districtName)}-${safeName(label)}-${safeName(
         candidate.candidateId ?? candidate.id,
-      )}-5pledges.pdf`
-    : `${safeName(candidate.candidateNumber || "n")}-${safeName(label)}-${safeName(candidate.candidateId ?? candidate.id)}-5pledges.pdf`;
+      )}-${suffix}.pdf`
+    : `${safeName(candidate.candidateNumber || "n")}-${safeName(label)}-${safeName(candidate.candidateId ?? candidate.id)}-${suffix}.pdf`;
   const pdfPath = groupByRace ? join(outDir, "pdfs", raceDir, fileName) : join(outDir, "pdfs", fileName);
   const textPath = pdfPath.replace(/\.pdf$/i, ".txt");
-  const downloadStatus = await downloadFile(candidate.fivePledgePdf.downloadUrl, pdfPath);
+  const downloadStatus = await downloadFile(pdf.downloadUrl, pdfPath);
   const extractStatus = await extractText(pdfPath, textPath);
 
   return {
     candidateId: candidate.id,
+    documentType,
+    sourceLabel,
     name: candidate.name,
     partyName: candidate.partyName,
     raceName: candidate.raceName,
+    requestedFullPath: pdf.requestedFullPath,
     pdfPath: relative(process.cwd(), pdfPath),
     textPath: relative(process.cwd(), textPath),
     downloadStatus,
@@ -330,6 +342,35 @@ function applyLimit<T>(items: T[], limit: number) {
   return limit > 0 ? items.slice(0, limit) : items;
 }
 
+function buildDownloadTargets(candidates: NecNormalizedCandidate[]) {
+  return candidates.flatMap((candidate): DownloadTarget[] => {
+    const targets: DownloadTarget[] = [];
+
+    if (candidate.fivePledgePdf) {
+      targets.push({
+        candidate,
+        documentType: "fivePledges",
+        sourceLabel: "5대공약",
+        pdf: candidate.fivePledgePdf,
+      });
+    }
+
+    const shouldDownloadBulletin =
+      candidate.campaignBulletinPdf && (shouldIncludeAllBulletins || (shouldIncludeFallbackBulletins && !candidate.fivePledgePdf));
+
+    if (shouldDownloadBulletin && candidate.campaignBulletinPdf) {
+      targets.push({
+        candidate,
+        documentType: "campaignBulletin",
+        sourceLabel: "선거공보",
+        pdf: candidate.campaignBulletinPdf,
+      });
+    }
+
+    return targets;
+  });
+}
+
 function delay(ms: number) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -340,6 +381,8 @@ const electionId = readArg("election", defaultNecElectionId);
 const shouldCrawlAll = hasFlag("all");
 const metadataOnly = hasFlag("metadata-only");
 const shouldDownload = hasFlag("download") && !metadataOnly;
+const shouldIncludeAllBulletins = hasFlag("include-bulletins");
+const shouldIncludeFallbackBulletins = shouldIncludeAllBulletins || hasFlag("fallback-bulletins");
 const downloadLimit = Number(readArg("limit", "0"));
 const concurrency = Number(readArg("concurrency", "2"));
 const outDir = readArg("out", shouldCrawlAll ? "data/nec/full" : "data/nec");
@@ -358,6 +401,7 @@ if (shouldCrawlAll) {
       scopeCount: result.scopes.length,
       totalRows: result.candidates.length,
       fivePledgePdfCount: result.candidates.filter((candidate) => candidate.fivePledgePdf).length,
+      campaignBulletinPdfCount: result.candidates.filter((candidate) => candidate.campaignBulletinPdf).length,
       scopes: result.scopes,
       candidates: result.candidates,
     });
@@ -375,13 +419,16 @@ if (shouldCrawlAll) {
     scopeCount: result.scopes.length,
     totalRows: result.candidates.length,
     fivePledgePdfCount: result.candidates.filter((candidate) => candidate.fivePledgePdf).length,
+    campaignBulletinPdfCount: result.candidates.filter((candidate) => candidate.campaignBulletinPdf).length,
     scopes: result.scopes,
     candidates: result.candidates,
   });
 }
 
 const candidates = dedupeCandidates(raceResults.flatMap((result) => result.candidates));
-const downloadableCandidates = candidates.filter((candidate) => candidate.fivePledgePdf);
+const downloadableTargets = buildDownloadTargets(candidates);
+const fivePledgeCandidates = candidates.filter((candidate) => candidate.fivePledgePdf);
+const campaignBulletinCandidates = candidates.filter((candidate) => candidate.campaignBulletinPdf);
 
 await writeJson(join(outDir, "candidates.json"), {
   fetchedAt,
@@ -391,25 +438,27 @@ await writeJson(join(outDir, "candidates.json"), {
     endpoints: necEndpoints,
   },
   totalRows: candidates.length,
-  fivePledgePdfCount: downloadableCandidates.length,
+  fivePledgePdfCount: fivePledgeCandidates.length,
+  campaignBulletinPdfCount: campaignBulletinCandidates.length,
   races: raceResults.map((result) => ({
     ...result.race,
     scopeCount: result.scopes.length,
     totalRows: result.candidates.length,
     fivePledgePdfCount: result.candidates.filter((candidate) => candidate.fivePledgePdf).length,
+    campaignBulletinPdfCount: result.candidates.filter((candidate) => candidate.campaignBulletinPdf).length,
   })),
   candidates,
 });
 
-let downloadResults: Awaited<ReturnType<typeof downloadCandidatePdf>>[] = [];
+let downloadResults: Awaited<ReturnType<typeof downloadCandidateDocument>>[] = [];
 
 if (shouldDownload) {
-  const targets = applyLimit(downloadableCandidates, downloadLimit);
+  const targets = applyLimit(downloadableTargets, downloadLimit);
   console.log(`[download] ${targets.length} PDF targets, concurrency=${concurrency}`);
-  downloadResults = await runLimited(targets, concurrency, async (candidate, index) => {
-    const result = await downloadCandidatePdf(outDir, candidate, { groupByRace: shouldCrawlAll });
-    const label = candidate.name || candidate.partyName || candidate.id;
-    console.log(`[download] ${index + 1}/${targets.length} ${label}`);
+  downloadResults = await runLimited(targets, concurrency, async (target, index) => {
+    const result = await downloadCandidateDocument(outDir, target, { groupByRace: shouldCrawlAll });
+    const label = target.candidate.name || target.candidate.partyName || target.candidate.id;
+    console.log(`[download] ${index + 1}/${targets.length} ${label} ${target.sourceLabel}`);
     return result;
   });
 
@@ -421,20 +470,33 @@ if (shouldDownload) {
   });
 }
 
+const existingDownloadedPdfCount = await readExistingDownloadedPdfCount(join(outDir, "downloads.json"));
+
 await writeJson(join(outDir, "manifest.json"), {
   fetchedAt,
   electionId,
   mode: shouldCrawlAll ? "all" : "single-region-race",
   metadataOnly,
-  downloadedPdfCount: downloadResults.filter(Boolean).length,
+  downloadedPdfCount: shouldDownload ? downloadResults.filter(Boolean).length : existingDownloadedPdfCount,
   totalRows: candidates.length,
-  fivePledgePdfCount: downloadableCandidates.length,
+  fivePledgePdfCount: fivePledgeCandidates.length,
+  campaignBulletinPdfCount: campaignBulletinCandidates.length,
   raceCount: raceResults.length,
   endpoints: necEndpoints,
 });
 
 console.log(
-  `Wrote ${candidates.length} NEC rows with ${downloadableCandidates.length} five-pledge PDFs to ${outDir}${
+  `Wrote ${candidates.length} NEC rows with ${fivePledgeCandidates.length} five-pledge PDFs and ${campaignBulletinCandidates.length} campaign bulletins to ${outDir}${
     shouldDownload ? `; downloaded ${downloadResults.filter(Boolean).length}` : ""
   }`,
 );
+
+async function readExistingDownloadedPdfCount(downloadsPath: string) {
+  if (!(await pathExists(downloadsPath))) {
+    return 0;
+  }
+
+  const downloads = await readJson<{ completed?: number; results?: unknown[] }>(downloadsPath);
+
+  return downloads.completed ?? downloads.results?.length ?? 0;
+}

@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-26T04:05:37.347Z",
+  "fetchedAt": "2026-05-26T07:11:42.700Z",
   "electionId": "20260603",
   "source": "https://policy.nec.go.kr/plc/commiment/initUCACommimentList.do",
   "race": {
@@ -10,6 +10,7 @@
   "scopeCount": 16,
   "totalRows": 58,
   "fivePledgePdfCount": 58,
+  "campaignBulletinPdfCount": 58,
   "scopes": [
     {
       "regionId": "1100",
@@ -162,6 +163,11 @@
         "requestedFileName": "20260603_서울특별시_김영배_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100153800_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EA%B9%80%EC%98%81%EB%B0%B0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100153800_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_서울특별시_김영배_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/1100/003_100153800_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EA%B9%80%EC%98%81%EB%B0%B0_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F1100%2F003_100153800_20260520_1.pdf"
       }
     },
     {
@@ -185,6 +191,11 @@
         "requestedFileName": "20260603_서울특별시_한만중_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100155563_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%ED%95%9C%EB%A7%8C%EC%A4%91_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100155563_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_서울특별시_한만중_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/1100/003_100155563_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%ED%95%9C%EB%A7%8C%EC%A4%91_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F1100%2F003_100155563_20260520_1.pdf"
       }
     },
     {
@@ -208,6 +219,11 @@
         "requestedFileName": "20260603_서울특별시_조전혁_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100163258_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%A1%B0%EC%A0%84%ED%98%81_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100163258_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_서울특별시_조전혁_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/1100/003_100163258_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%A1%B0%EC%A0%84%ED%98%81_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F1100%2F003_100163258_20260520_1.pdf"
       }
     },
     {
@@ -231,6 +247,11 @@
         "requestedFileName": "20260603_서울특별시_이학인_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100162651_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9D%B4%ED%95%99%EC%9D%B8_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100162651_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_서울특별시_이학인_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/1100/003_100162651_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9D%B4%ED%95%99%EC%9D%B8_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F1100%2F003_100162651_20260521_1.pdf"
       }
     },
     {
@@ -254,6 +275,11 @@
         "requestedFileName": "20260603_서울특별시_윤호상_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100153774_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9C%A4%ED%98%B8%EC%83%81_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100153774_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_서울특별시_윤호상_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/1100/003_100153774_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9C%A4%ED%98%B8%EC%83%81_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F1100%2F003_100153774_20260520_1.pdf"
       }
     },
     {
@@ -277,6 +303,11 @@
         "requestedFileName": "20260603_서울특별시_정근식_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100161493_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%A0%95%EA%B7%BC%EC%8B%9D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100161493_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_서울특별시_정근식_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/1100/003_100161493_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%A0%95%EA%B7%BC%EC%8B%9D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F1100%2F003_100161493_20260520_1.pdf"
       }
     },
     {
@@ -300,6 +331,11 @@
         "requestedFileName": "20260603_서울특별시_홍제남_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100153778_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%ED%99%8D%EC%A0%9C%EB%82%A8_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100153778_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_서울특별시_홍제남_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/1100/003_100153778_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%ED%99%8D%EC%A0%9C%EB%82%A8_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F1100%2F003_100153778_20260520_1.pdf"
       }
     },
     {
@@ -323,6 +359,11 @@
         "requestedFileName": "20260603_서울특별시_류수노_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100153786_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EB%A5%98%EC%88%98%EB%85%B8_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100153786_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_서울특별시_류수노_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/1100/003_100153786_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EB%A5%98%EC%88%98%EB%85%B8_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F1100%2F003_100153786_20260520_1.pdf"
       }
     },
     {
@@ -346,6 +387,11 @@
         "requestedFileName": "20260603_전남광주통합특별시_강숙영_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2900/001_100153856_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%82%A8%EA%B4%91%EC%A3%BC%ED%86%B5%ED%95%A9%ED%8A%B9%EB%B3%84%EC%8B%9C_%EA%B0%95%EC%88%99%EC%98%81_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2900%2F001_100153856_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_전남광주통합특별시_강숙영_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2900/003_100153856_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%82%A8%EA%B4%91%EC%A3%BC%ED%86%B5%ED%95%A9%ED%8A%B9%EB%B3%84%EC%8B%9C_%EA%B0%95%EC%88%99%EC%98%81_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2900%2F003_100153856_20260522_1.pdf"
       }
     },
     {
@@ -369,6 +415,11 @@
         "requestedFileName": "20260603_전남광주통합특별시_이정선_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2900/001_100160673_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%82%A8%EA%B4%91%EC%A3%BC%ED%86%B5%ED%95%A9%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9D%B4%EC%A0%95%EC%84%A0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2900%2F001_100160673_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_전남광주통합특별시_이정선_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2900/003_100160673_20260524_3.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%82%A8%EA%B4%91%EC%A3%BC%ED%86%B5%ED%95%A9%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9D%B4%EC%A0%95%EC%84%A0_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2900%2F003_100160673_20260524_3.pdf"
       }
     },
     {
@@ -392,6 +443,11 @@
         "requestedFileName": "20260603_전남광주통합특별시_장관호_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2900/001_100153771_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%82%A8%EA%B4%91%EC%A3%BC%ED%86%B5%ED%95%A9%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9E%A5%EA%B4%80%ED%98%B8_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2900%2F001_100153771_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_전남광주통합특별시_장관호_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2900/003_100153771_20260522_2.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%82%A8%EA%B4%91%EC%A3%BC%ED%86%B5%ED%95%A9%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9E%A5%EA%B4%80%ED%98%B8_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2900%2F003_100153771_20260522_2.pdf"
       }
     },
     {
@@ -415,6 +471,11 @@
         "requestedFileName": "20260603_전남광주통합특별시_김대중_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2900/001_100162107_20260521_3.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%82%A8%EA%B4%91%EC%A3%BC%ED%86%B5%ED%95%A9%ED%8A%B9%EB%B3%84%EC%8B%9C_%EA%B9%80%EB%8C%80%EC%A4%91_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2900%2F001_100162107_20260521_3.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_전남광주통합특별시_김대중_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2900/003_100162107_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%82%A8%EA%B4%91%EC%A3%BC%ED%86%B5%ED%95%A9%ED%8A%B9%EB%B3%84%EC%8B%9C_%EA%B9%80%EB%8C%80%EC%A4%91_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2900%2F003_100162107_20260522_1.pdf"
       }
     },
     {
@@ -438,6 +499,11 @@
         "requestedFileName": "20260603_부산광역시_정승윤_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2600/001_100163844_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%A0%95%EC%8A%B9%EC%9C%A4_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2600%2F001_100163844_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_부산광역시_정승윤_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2600/003_100163844_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%A0%95%EC%8A%B9%EC%9C%A4_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2600%2F003_100163844_20260522_1.pdf"
       }
     },
     {
@@ -461,6 +527,11 @@
         "requestedFileName": "20260603_부산광역시_최윤홍_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2600/001_100153847_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%B5%9C%EC%9C%A4%ED%99%8D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2600%2F001_100153847_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_부산광역시_최윤홍_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2600/003_100153847_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%B5%9C%EC%9C%A4%ED%99%8D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2600%2F003_100153847_20260521_1.pdf"
       }
     },
     {
@@ -484,6 +555,11 @@
         "requestedFileName": "20260603_부산광역시_김석준_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2600/001_100162788_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EA%B9%80%EC%84%9D%EC%A4%80_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2600%2F001_100162788_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_부산광역시_김석준_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2600/003_100162788_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EA%B9%80%EC%84%9D%EC%A4%80_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2600%2F003_100162788_20260522_1.pdf"
       }
     },
     {
@@ -507,6 +583,11 @@
         "requestedFileName": "20260603_대구광역시_서중현_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2700/001_100153820_20260516_5.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%84%9C%EC%A4%91%ED%98%84_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2700%2F001_100153820_20260516_5.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_대구광역시_서중현_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2700/003_100153820_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%84%9C%EC%A4%91%ED%98%84_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2700%2F003_100153820_20260522_1.pdf"
       }
     },
     {
@@ -530,6 +611,11 @@
         "requestedFileName": "20260603_대구광역시_임성무_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2700/001_100162085_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%9E%84%EC%84%B1%EB%AC%B4_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2700%2F001_100162085_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_대구광역시_임성무_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2700/003_100162085_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%9E%84%EC%84%B1%EB%AC%B4_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2700%2F003_100162085_20260522_1.pdf"
       }
     },
     {
@@ -553,6 +639,11 @@
         "requestedFileName": "20260603_대구광역시_강은희_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2700/001_100162500_20260515_2.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C_%EA%B0%95%EC%9D%80%ED%9D%AC_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2700%2F001_100162500_20260515_2.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_대구광역시_강은희_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2700/003_100162500_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C_%EA%B0%95%EC%9D%80%ED%9D%AC_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2700%2F003_100162500_20260522_1.pdf"
       }
     },
     {
@@ -576,6 +667,11 @@
         "requestedFileName": "20260603_인천광역시_도성훈_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2800/001_100163408_20260515_3.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9D%B8%EC%B2%9C%EA%B4%91%EC%97%AD%EC%8B%9C_%EB%8F%84%EC%84%B1%ED%9B%88_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2800%2F001_100163408_20260515_3.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_인천광역시_도성훈_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2800/003_100163408_20260518_2.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9D%B8%EC%B2%9C%EA%B4%91%EC%97%AD%EC%8B%9C_%EB%8F%84%EC%84%B1%ED%9B%88_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2800%2F003_100163408_20260518_2.pdf"
       }
     },
     {
@@ -599,6 +695,11 @@
         "requestedFileName": "20260603_인천광역시_이대형_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2800/001_100153794_20260515_4.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9D%B8%EC%B2%9C%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%9D%B4%EB%8C%80%ED%98%95_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2800%2F001_100153794_20260515_4.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_인천광역시_이대형_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2800/003_100153794_20260521_3.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9D%B8%EC%B2%9C%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%9D%B4%EB%8C%80%ED%98%95_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2800%2F003_100153794_20260521_3.pdf"
       }
     },
     {
@@ -622,6 +723,11 @@
         "requestedFileName": "20260603_인천광역시_임병구_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/2800/001_100153776_20260515_3.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9D%B8%EC%B2%9C%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%9E%84%EB%B3%91%EA%B5%AC_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F2800%2F001_100153776_20260515_3.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_인천광역시_임병구_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/2800/003_100153776_20260518_2.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9D%B8%EC%B2%9C%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%9E%84%EB%B3%91%EA%B5%AC_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F2800%2F003_100153776_20260518_2.pdf"
       }
     },
     {
@@ -645,6 +751,11 @@
         "requestedFileName": "20260603_대전광역시_정상신_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/3000/001_100153741_20260514_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%A0%95%EC%83%81%EC%8B%A0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F3000%2F001_100153741_20260514_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_대전광역시_정상신_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/3000/003_100153741_20260514_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%A0%95%EC%83%81%EC%8B%A0_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F3000%2F003_100153741_20260514_1.pdf"
       }
     },
     {
@@ -668,6 +779,11 @@
         "requestedFileName": "20260603_대전광역시_맹수석_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/3000/001_100153739_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EB%A7%B9%EC%88%98%EC%84%9D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F3000%2F001_100153739_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_대전광역시_맹수석_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/3000/003_100153739_20260515_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EB%A7%B9%EC%88%98%EC%84%9D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F3000%2F003_100153739_20260515_1.pdf"
       }
     },
     {
@@ -691,6 +807,11 @@
         "requestedFileName": "20260603_대전광역시_성광진_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/3000/001_100153764_20260514_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%84%B1%EA%B4%91%EC%A7%84_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F3000%2F001_100153764_20260514_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_대전광역시_성광진_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/3000/003_100153764_20260514_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%84%B1%EA%B4%91%EC%A7%84_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F3000%2F003_100153764_20260514_1.pdf"
       }
     },
     {
@@ -714,6 +835,11 @@
         "requestedFileName": "20260603_대전광역시_오석진_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/3000/001_100153740_20260514_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%98%A4%EC%84%9D%EC%A7%84_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F3000%2F001_100153740_20260514_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_대전광역시_오석진_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/3000/003_100153740_20260514_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%98%A4%EC%84%9D%EC%A7%84_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F3000%2F003_100153740_20260514_1.pdf"
       }
     },
     {
@@ -737,6 +863,11 @@
         "requestedFileName": "20260603_대전광역시_진동규_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/3000/001_100153737_20260514_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%A7%84%EB%8F%99%EA%B7%9C_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F3000%2F001_100153737_20260514_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_대전광역시_진동규_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/3000/003_100153737_20260515_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%A7%84%EB%8F%99%EA%B7%9C_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F3000%2F003_100153737_20260515_1.pdf"
       }
     },
     {
@@ -760,6 +891,11 @@
         "requestedFileName": "20260603_울산광역시_구광렬_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/3100/001_100161017_20260516_2.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9A%B8%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EA%B5%AC%EA%B4%91%EB%A0%AC_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F3100%2F001_100161017_20260516_2.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_울산광역시_구광렬_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/3100/003_100161017_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9A%B8%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EA%B5%AC%EA%B4%91%EB%A0%AC_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F3100%2F003_100161017_20260521_1.pdf"
       }
     },
     {
@@ -783,6 +919,11 @@
         "requestedFileName": "20260603_울산광역시_조용식_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/3100/001_100160241_20260514_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9A%B8%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%A1%B0%EC%9A%A9%EC%8B%9D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F3100%2F001_100160241_20260514_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_울산광역시_조용식_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/3100/003_100160241_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9A%B8%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EC%A1%B0%EC%9A%A9%EC%8B%9D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F3100%2F003_100160241_20260521_1.pdf"
       }
     },
     {
@@ -806,6 +947,11 @@
         "requestedFileName": "20260603_울산광역시_김주홍_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/3100/001_100156317_20260514_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9A%B8%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EA%B9%80%EC%A3%BC%ED%99%8D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F3100%2F001_100156317_20260514_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_울산광역시_김주홍_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/3100/003_100156317_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%9A%B8%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C_%EA%B9%80%EC%A3%BC%ED%99%8D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F3100%2F003_100156317_20260521_1.pdf"
       }
     },
     {
@@ -829,6 +975,11 @@
         "requestedFileName": "20260603_세종특별자치시_강미애_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5100/001_100153756_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%B8%EC%A2%85%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EC%8B%9C_%EA%B0%95%EB%AF%B8%EC%95%A0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5100%2F001_100153756_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_세종특별자치시_강미애_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5100/003_100153756_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%B8%EC%A2%85%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EC%8B%9C_%EA%B0%95%EB%AF%B8%EC%95%A0_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5100%2F003_100153756_20260522_1.pdf"
       }
     },
     {
@@ -852,6 +1003,11 @@
         "requestedFileName": "20260603_세종특별자치시_안광식_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5100/001_100153760_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%B8%EC%A2%85%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EC%8B%9C_%EC%95%88%EA%B4%91%EC%8B%9D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5100%2F001_100153760_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_세종특별자치시_안광식_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5100/003_100153760_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%B8%EC%A2%85%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EC%8B%9C_%EC%95%88%EA%B4%91%EC%8B%9D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5100%2F003_100153760_20260522_1.pdf"
       }
     },
     {
@@ -875,6 +1031,11 @@
         "requestedFileName": "20260603_세종특별자치시_임전수_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5100/001_100153758_20260521_2.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%B8%EC%A2%85%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EC%8B%9C_%EC%9E%84%EC%A0%84%EC%88%98_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5100%2F001_100153758_20260521_2.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_세종특별자치시_임전수_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5100/003_100153758_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%B8%EC%A2%85%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EC%8B%9C_%EC%9E%84%EC%A0%84%EC%88%98_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5100%2F003_100153758_20260522_1.pdf"
       }
     },
     {
@@ -898,6 +1059,11 @@
         "requestedFileName": "20260603_세종특별자치시_원성수_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5100/001_100153759_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%B8%EC%A2%85%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EC%8B%9C_%EC%9B%90%EC%84%B1%EC%88%98_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5100%2F001_100153759_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_세종특별자치시_원성수_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5100/003_100153759_20260526_2.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%B8%EC%A2%85%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EC%8B%9C_%EC%9B%90%EC%84%B1%EC%88%98_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5100%2F003_100153759_20260526_2.pdf"
       }
     },
     {
@@ -921,6 +1087,11 @@
         "requestedFileName": "20260603_경기도_임태희_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4100/001_100163064_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EA%B8%B0%EB%8F%84_%EC%9E%84%ED%83%9C%ED%9D%AC_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4100%2F001_100163064_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_경기도_임태희_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4100/003_100163064_20260523_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EA%B8%B0%EB%8F%84_%EC%9E%84%ED%83%9C%ED%9D%AC_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4100%2F003_100163064_20260523_1.pdf"
       }
     },
     {
@@ -944,6 +1115,11 @@
         "requestedFileName": "20260603_경기도_안민석_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4100/001_100153797_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EA%B8%B0%EB%8F%84_%EC%95%88%EB%AF%BC%EC%84%9D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4100%2F001_100153797_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_경기도_안민석_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4100/003_100153797_20260523_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EA%B8%B0%EB%8F%84_%EC%95%88%EB%AF%BC%EC%84%9D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4100%2F003_100153797_20260523_1.pdf"
       }
     },
     {
@@ -967,6 +1143,11 @@
         "requestedFileName": "20260603_강원특별자치도_강삼영_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5200/001_100153785_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EA%B0%95%EC%82%BC%EC%98%81_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5200%2F001_100153785_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_강원특별자치도_강삼영_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5200/003_100153785_20260514_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EA%B0%95%EC%82%BC%EC%98%81_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5200%2F003_100153785_20260514_1.pdf"
       }
     },
     {
@@ -990,6 +1171,11 @@
         "requestedFileName": "20260603_강원특별자치도_최광익_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5200/001_100153787_20260515_2.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%B5%9C%EA%B4%91%EC%9D%B5_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5200%2F001_100153787_20260515_2.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_강원특별자치도_최광익_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5200/003_100153787_20260514_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%B5%9C%EA%B4%91%EC%9D%B5_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5200%2F003_100153787_20260514_1.pdf"
       }
     },
     {
@@ -1013,6 +1199,11 @@
         "requestedFileName": "20260603_강원특별자치도_신경호_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5200/001_100162320_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%8B%A0%EA%B2%BD%ED%98%B8_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5200%2F001_100162320_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_강원특별자치도_신경호_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5200/003_100162320_20260514_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%8B%A0%EA%B2%BD%ED%98%B8_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5200%2F003_100162320_20260514_1.pdf"
       }
     },
     {
@@ -1036,6 +1227,11 @@
         "requestedFileName": "20260603_강원특별자치도_박현숙_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5200/001_100153782_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EB%B0%95%ED%98%84%EC%88%99_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5200%2F001_100153782_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_강원특별자치도_박현숙_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5200/003_100153782_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EB%B0%95%ED%98%84%EC%88%99_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5200%2F003_100153782_20260521_1.pdf"
       }
     },
     {
@@ -1059,6 +1255,11 @@
         "requestedFileName": "20260603_충청북도_윤건영_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4300/001_100162804_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%B6%81%EB%8F%84_%EC%9C%A4%EA%B1%B4%EC%98%81_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4300%2F001_100162804_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_충청북도_윤건영_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4300/003_100162804_20260516_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%B6%81%EB%8F%84_%EC%9C%A4%EA%B1%B4%EC%98%81_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4300%2F003_100162804_20260516_1.pdf"
       }
     },
     {
@@ -1082,6 +1283,11 @@
         "requestedFileName": "20260603_충청북도_김성근_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4300/001_100153743_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%B6%81%EB%8F%84_%EA%B9%80%EC%84%B1%EA%B7%BC_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4300%2F001_100153743_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_충청북도_김성근_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4300/003_100153743_20260519_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%B6%81%EB%8F%84_%EA%B9%80%EC%84%B1%EA%B7%BC_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4300%2F003_100153743_20260519_1.pdf"
       }
     },
     {
@@ -1105,6 +1311,11 @@
         "requestedFileName": "20260603_충청북도_김진균_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4300/001_100153825_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%B6%81%EB%8F%84_%EA%B9%80%EC%A7%84%EA%B7%A0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4300%2F001_100153825_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_충청북도_김진균_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4300/003_100153825_20260516_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%B6%81%EB%8F%84_%EA%B9%80%EC%A7%84%EA%B7%A0_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4300%2F003_100153825_20260516_1.pdf"
       }
     },
     {
@@ -1128,6 +1339,11 @@
         "requestedFileName": "20260603_충청남도_이병도_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4400/001_100153788_20260514_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84_%EC%9D%B4%EB%B3%91%EB%8F%84_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4400%2F001_100153788_20260514_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_충청남도_이병도_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4400/003_100153788_20260515_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84_%EC%9D%B4%EB%B3%91%EB%8F%84_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4400%2F003_100153788_20260515_1.pdf"
       }
     },
     {
@@ -1151,6 +1367,11 @@
         "requestedFileName": "20260603_충청남도_이병학_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4400/001_100153791_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84_%EC%9D%B4%EB%B3%91%ED%95%99_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4400%2F001_100153791_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_충청남도_이병학_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4400/003_100153791_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84_%EC%9D%B4%EB%B3%91%ED%95%99_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4400%2F003_100153791_20260522_1.pdf"
       }
     },
     {
@@ -1174,6 +1395,11 @@
         "requestedFileName": "20260603_충청남도_김영춘_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4400/001_100153814_20260514_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84_%EA%B9%80%EC%98%81%EC%B6%98_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4400%2F001_100153814_20260514_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_충청남도_김영춘_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4400/003_100153814_20260515_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84_%EA%B9%80%EC%98%81%EC%B6%98_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4400%2F003_100153814_20260515_1.pdf"
       }
     },
     {
@@ -1197,6 +1423,11 @@
         "requestedFileName": "20260603_충청남도_이명수_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4400/001_100158164_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84_%EC%9D%B4%EB%AA%85%EC%88%98_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4400%2F001_100158164_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_충청남도_이명수_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4400/003_100158164_20260522_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%B6%A9%EC%B2%AD%EB%82%A8%EB%8F%84_%EC%9D%B4%EB%AA%85%EC%88%98_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4400%2F003_100158164_20260522_1.pdf"
       }
     },
     {
@@ -1220,6 +1451,11 @@
         "requestedFileName": "20260603_전북특별자치도_이남호_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5300/001_100153763_20260521_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%B6%81%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%9D%B4%EB%82%A8%ED%98%B8_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5300%2F001_100153763_20260521_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_전북특별자치도_이남호_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5300/003_100153763_20260518_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%B6%81%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%9D%B4%EB%82%A8%ED%98%B8_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5300%2F003_100153763_20260518_1.pdf"
       }
     },
     {
@@ -1243,6 +1479,11 @@
         "requestedFileName": "20260603_전북특별자치도_천호성_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/5300/001_100153762_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%B6%81%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%B2%9C%ED%98%B8%EC%84%B1_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F5300%2F001_100153762_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_전북특별자치도_천호성_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/5300/003_100153762_20260518_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%84%EB%B6%81%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%B2%9C%ED%98%B8%EC%84%B1_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F5300%2F003_100153762_20260518_1.pdf"
       }
     },
     {
@@ -1266,6 +1507,11 @@
         "requestedFileName": "20260603_경상북도_김상동_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4700/001_100156976_20260515_3.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84_%EA%B9%80%EC%83%81%EB%8F%99_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4700%2F001_100156976_20260515_3.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_경상북도_김상동_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4700/003_100156976_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84_%EA%B9%80%EC%83%81%EB%8F%99_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4700%2F003_100156976_20260521_1.pdf"
       }
     },
     {
@@ -1289,6 +1535,11 @@
         "requestedFileName": "20260603_경상북도_이용기_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4700/001_100153805_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84_%EC%9D%B4%EC%9A%A9%EA%B8%B0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4700%2F001_100153805_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_경상북도_이용기_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4700/003_100153805_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84_%EC%9D%B4%EC%9A%A9%EA%B8%B0_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4700%2F003_100153805_20260521_1.pdf"
       }
     },
     {
@@ -1312,6 +1563,11 @@
         "requestedFileName": "20260603_경상북도_임종식_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4700/001_100162976_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84_%EC%9E%84%EC%A2%85%EC%8B%9D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4700%2F001_100162976_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_경상북도_임종식_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4700/003_100162976_20260519_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84_%EC%9E%84%EC%A2%85%EC%8B%9D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4700%2F003_100162976_20260519_1.pdf"
       }
     },
     {
@@ -1335,6 +1591,11 @@
         "requestedFileName": "20260603_경상남도_오인태_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4800/001_100153751_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84_%EC%98%A4%EC%9D%B8%ED%83%9C_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4800%2F001_100153751_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_경상남도_오인태_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4800/003_100153751_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84_%EC%98%A4%EC%9D%B8%ED%83%9C_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4800%2F003_100153751_20260521_1.pdf"
       }
     },
     {
@@ -1358,6 +1619,11 @@
         "requestedFileName": "20260603_경상남도_송영기_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4800/001_100153784_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84_%EC%86%A1%EC%98%81%EA%B8%B0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4800%2F001_100153784_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_경상남도_송영기_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4800/003_100153784_20260521_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84_%EC%86%A1%EC%98%81%EA%B8%B0_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4800%2F003_100153784_20260521_1.pdf"
       }
     },
     {
@@ -1381,6 +1647,11 @@
         "requestedFileName": "20260603_경상남도_김준식_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4800/001_100153823_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84_%EA%B9%80%EC%A4%80%EC%8B%9D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4800%2F001_100153823_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_경상남도_김준식_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4800/003_100153823_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84_%EA%B9%80%EC%A4%80%EC%8B%9D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4800%2F003_100153823_20260520_1.pdf"
       }
     },
     {
@@ -1404,6 +1675,11 @@
         "requestedFileName": "20260603_경상남도_권순기_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4800/001_100153770_20260516_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84_%EA%B6%8C%EC%88%9C%EA%B8%B0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4800%2F001_100153770_20260516_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_경상남도_권순기_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4800/003_100153770_20260523_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84_%EA%B6%8C%EC%88%9C%EA%B8%B0_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4800%2F003_100153770_20260523_1.pdf"
       }
     },
     {
@@ -1427,6 +1703,11 @@
         "requestedFileName": "20260603_제주특별자치도_송문석_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4900/001_100153761_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%9C%EC%A3%BC%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%86%A1%EB%AC%B8%EC%84%9D_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4900%2F001_100153761_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_제주특별자치도_송문석_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4900/003_100153761_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%9C%EC%A3%BC%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EC%86%A1%EB%AC%B8%EC%84%9D_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4900%2F003_100153761_20260520_1.pdf"
       }
     },
     {
@@ -1450,6 +1731,11 @@
         "requestedFileName": "20260603_제주특별자치도_고의숙_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4900/001_100156980_20260515_1.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%9C%EC%A3%BC%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EA%B3%A0%EC%9D%98%EC%88%99_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4900%2F001_100156980_20260515_1.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_제주특별자치도_고의숙_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4900/003_100156980_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%9C%EC%A3%BC%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EA%B3%A0%EC%9D%98%EC%88%99_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4900%2F003_100156980_20260520_1.pdf"
       }
     },
     {
@@ -1473,6 +1759,11 @@
         "requestedFileName": "20260603_제주특별자치도_김광수_5대공약.pdf",
         "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/4900/001_100162806_20260515_2.pdf",
         "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%9C%EC%A3%BC%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EA%B9%80%EA%B4%91%EC%88%98_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F4900%2F001_100162806_20260515_2.pdf"
+      },
+      "campaignBulletinPdf": {
+        "requestedFileName": "20260603_제주특별자치도_김광수_선거공보.pdf",
+        "requestedFullPath": "20260603/PDF/PBINFO/4900/003_100162806_20260520_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%A0%9C%EC%A3%BC%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84_%EA%B9%80%EA%B4%91%EC%88%98_%EC%84%A0%EA%B1%B0%EA%B3%B5%EB%B3%B4.pdf&requestedFullPath=20260603%2FPDF%2FPBINFO%2F4900%2F003_100162806_20260520_1.pdf"
       }
     }
   ]

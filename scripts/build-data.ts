@@ -27,6 +27,8 @@ type NecCandidatesCache = {
 type NecDownloadsCache = {
   results: Array<{
     candidateId: string;
+    documentType?: "fivePledges" | "campaignBulletin";
+    sourceLabel?: "5대공약" | "선거공보";
     textPath: string;
   }>;
 };
@@ -34,6 +36,8 @@ type NecDownloadsCache = {
 type NecCandidateInfoCache = {
   records: NecCandidateInfoRecord[];
 };
+
+type NecDownloadEntry = NecDownloadIndex extends Map<string, infer Value> ? Value : never;
 
 function hashJson(value: unknown) {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -71,13 +75,19 @@ async function buildNecDownloadIndex(downloads: NecDownloadsCache) {
     const text = await readFile(join(repoRoot, result.textPath), "utf8");
     const pledges = extractPledges(text);
     const policyText = pledges.map((pledge) => `${pledge.title} ${pledge.detail}`).join(" ");
-
-    index.set(result.candidateId, {
+    const existing = index.get(result.candidateId);
+    const nextEntry = {
       textPath: result.textPath,
+      sourceType: result.documentType ?? "fivePledges",
+      sourceLabel: result.sourceLabel ?? "5대공약",
       pledgeTitles: pledges.map((pledge) => pledge.title),
       pledges,
       policyTags: extractPolicyTags(policyText),
-    });
+    } satisfies NecDownloadEntry;
+
+    if (!existing || nextEntry.sourceType === "fivePledges") {
+      index.set(result.candidateId, nextEntry);
+    }
   }
 
   return index;

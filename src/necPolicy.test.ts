@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildNecDownloadUrl, getFivePledgePdf, parseNecFileInfo } from "./necPolicy";
+import { buildNecDownloadUrl, getCampaignBulletinPdf, getFivePledgePdf, parseNecFileInfo } from "./necPolicy";
 
 const sampleFileInfo =
   "선거공보||20260603/PDF/PBINFO/1100/003_100157144_20260520_1.pdf||||1||HEIGHT||Y||00||01,선거공약서||||||0||HEIGHT||Y||||00,5대공약||20260603/PDF/P5_PRMS_PUB/1100/001_100157144_20260516_1.pdf||11551||1||HEIGHT||Y||00||01";
@@ -8,6 +8,13 @@ describe("NEC policy data helpers", () => {
   it("parses the 5 pledge PDF entry from NEC fileinfo strings", () => {
     const entries = parseNecFileInfo(sampleFileInfo);
 
+    expect(getCampaignBulletinPdf(sampleFileInfo)).toEqual(
+      expect.objectContaining({
+        label: "선거공보",
+        requestedFullPath: "20260603/PDF/PBINFO/1100/003_100157144_20260520_1.pdf",
+        submitted: true,
+      }),
+    );
     expect(entries).toContainEqual(
       expect.objectContaining({
         label: "5대공약",

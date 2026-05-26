@@ -72,6 +72,7 @@ function necRow(overrides: Partial<NecNormalizedCandidate>): NecNormalizedCandid
             downloadUrl: "https://policy.nec.go.kr/sample.pdf",
           }
         : overrides.fivePledgePdf,
+    campaignBulletinPdf: overrides.campaignBulletinPdf ?? null,
   };
 }
 
@@ -155,6 +156,11 @@ describe("NEC residence cache builder", () => {
           districtName: "마포구제1선거구",
           name: "고병준",
           fivePledgePdf: null,
+          campaignBulletinPdf: {
+            requestedFileName: "고병준_선거공보.pdf",
+            requestedFullPath: "20260603/PDF/PBINFO/1100/003_100_20260520_1.pdf",
+            downloadUrl: "https://policy.nec.go.kr/bulletin.pdf",
+          },
         }),
         necRow({
           id: "city-council-2",
@@ -221,9 +227,9 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates[0].comparison).toContain("교통·주거");
     expect(dataset.candidates[0].pledgeHighlights).toEqual(["서울 교통망 재편", "청년 주거 지원"]);
     expect(dataset.candidates[0].fullPledges[0].detail).toBe("버스와 지하철 환승 체계를 개편합니다.");
-    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeSummary).toContain(
-      "5대공약 PDF가 제공되지 않아",
-    );
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.publicRecord).toContain("선거공보 PDF 있음");
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeSummary).toContain("선거공보 PDF가 제공됩니다");
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeHighlights).toContain("선거공보 PDF 제공");
     expect(dataset.source.mode).toBe("nec");
   });
 

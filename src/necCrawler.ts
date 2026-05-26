@@ -1,4 +1,4 @@
-import { buildNecDownloadUrl, getFivePledgePdf } from "./necPolicy";
+import { buildNecDownloadUrl, getCampaignBulletinPdf, getFivePledgePdf } from "./necPolicy";
 
 export const defaultNecElectionId = "20260603";
 
@@ -63,6 +63,7 @@ export type NecNormalizedCandidate = {
   thumbnailPath: string;
   thumbnailUrl: string | null;
   fivePledgePdf: NecPolicyPdf | null;
+  campaignBulletinPdf: NecPolicyPdf | null;
 };
 
 const raceConfigs: NecRaceConfig[] = [
@@ -140,7 +141,10 @@ export function normalizeNecCandidate(row: NecRawCandidate): NecNormalizedCandid
     .join("-");
   const rowId = candidateId ?? fallbackId;
   const fivePledgePdf = getFivePledgePdf(toText(row.fileinfo));
-  const requestedFileName = `${electionId}_${districtName}_${candidateName || partyName}_5대공약.pdf`;
+  const campaignBulletinPdf = getCampaignBulletinPdf(toText(row.fileinfo));
+  const pdfLabel = candidateName || partyName;
+  const fivePledgeFileName = `${electionId}_${districtName}_${pdfLabel}_5대공약.pdf`;
+  const campaignBulletinFileName = `${electionId}_${districtName}_${pdfLabel}_선거공보.pdf`;
 
   return {
     id: [electionId, subElectionId, rowId].filter(Boolean).join("-"),
@@ -161,11 +165,21 @@ export function normalizeNecCandidate(row: NecRawCandidate): NecNormalizedCandid
     thumbnailUrl: buildNecThumbnailUrl(electionId, toText(row.filename)),
     fivePledgePdf: fivePledgePdf
       ? {
-          requestedFileName,
+          requestedFileName: fivePledgeFileName,
           requestedFullPath: fivePledgePdf.requestedFullPath,
           downloadUrl: buildNecDownloadUrl({
-            requestedFileName,
+            requestedFileName: fivePledgeFileName,
             requestedFullPath: fivePledgePdf.requestedFullPath,
+          }),
+        }
+      : null,
+    campaignBulletinPdf: campaignBulletinPdf
+      ? {
+          requestedFileName: campaignBulletinFileName,
+          requestedFullPath: campaignBulletinPdf.requestedFullPath,
+          downloadUrl: buildNecDownloadUrl({
+            requestedFileName: campaignBulletinFileName,
+            requestedFullPath: campaignBulletinPdf.requestedFullPath,
           }),
         }
       : null,

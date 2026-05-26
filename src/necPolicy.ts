@@ -44,6 +44,10 @@ export function getFivePledgePdf(fileinfo: string) {
   return parseNecFileInfo(fileinfo).find((entry) => entry.label === "5대공약" && entry.submitted) ?? null;
 }
 
+export function getCampaignBulletinPdf(fileinfo: string) {
+  return parseNecFileInfo(fileinfo).find((entry) => entry.label === "선거공보" && entry.submitted) ?? null;
+}
+
 export function buildNecDownloadUrl({
   requestedFileName,
   requestedFullPath,

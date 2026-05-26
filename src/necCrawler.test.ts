@@ -77,6 +77,10 @@ describe("NEC full crawler helpers", () => {
       partyName: "더불어민주당",
       name: "정원오",
       thumbnailUrl: "https://cdn.nec.go.kr/photo_20260603/Gsg1100/Hb100157144/gicho/thumbnail.100157144.JPG",
+      campaignBulletinPdf: {
+        requestedFileName: "20260603_서울특별시_정원오_선거공보.pdf",
+        requestedFullPath: "20260603/PDF/PBINFO/1100/003_100157144_20260520_1.pdf",
+      },
       fivePledgePdf: {
         requestedFileName: "20260603_서울특별시_정원오_5대공약.pdf",
         requestedFullPath: "20260603/PDF/P5_PRMS_PUB/1100/001_100157144_20260516_1.pdf",
