@@ -450,6 +450,29 @@ o 이행 방법
     expect(extractPledges(text)).toEqual([]);
   });
 
+  it("keeps a campaign bulletin source fallback when OCR has no structured pledge text", () => {
+    const text = `
+책자형 선거공보
+성북구제1선거구
+현) 성북구 26년 거주
+현) 국민의힘 서울시의원 후보
+서강대학교 공공정책대학원 졸업
+
+후보자정보공개자료
+서울특별시의회의원선거 (성북구제1선거구)
+1. 인적사항
+2. 재산상황 및 병역사항
+3. 세금납부.체납실적 및 전과기록
+`;
+
+    expect(extractPledges(text)).toEqual([
+      {
+        title: "선거공보 원문 확인 가능",
+        detail: "선거공보 원문 OCR 텍스트가 확보되어 있습니다. 자동으로 구조화 가능한 공약 문장이 부족해 원문 확인이 필요합니다.",
+      },
+    ]);
+  });
+
   it("strips repeated title labels from extracted pledge titles", () => {
     const text = `
 공약순위         제목    분 통근도시 실현으로 시민에게 쉼표를
@@ -507,7 +530,7 @@ O 장기간 표류된 부지를 부산시, 국방부와 직접 협상해 복합 
     });
   });
 
-  it("does not turn candidate disclosure tables into campaign bulletin pledges", () => {
+  it("keeps source fallback without turning disclosure tables into campaign bulletin pledges", () => {
     const text = `
 책자형선거공보 | 경기도의회의원선거 / 가평군 선거구
 가평 예산,
@@ -526,7 +549,12 @@ O 장기간 표류된 부지를 부산시, 국방부와 직접 협상해 복합 
                어르신 및 교통약자 교통사각지대 해소                                                                     관광연계형 활성화 시범사업 도입 추진
 `;
 
-    expect(extractPledges(text)).toEqual([]);
+    expect(extractPledges(text)).toEqual([
+      {
+        title: "가평 예산, 바꾸겠습니다!",
+        detail: "가평 예산, 바꾸겠습니다!",
+      },
+    ]);
   });
 
   it("builds the selected residence ballot from matching NEC districts only", () => {

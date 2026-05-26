@@ -992,15 +992,23 @@ function extractBulletinPledges(text: string, limit: number): Pledge[] {
     return duplicatedNumberedPledges;
   }
 
-  const lines = text
+  const rawLines = text
     .replace(/\r/g, "")
     .split("\n")
     .map(cleanBulletinLine)
-    .filter((line) => line && !isBulletinNoiseLine(line));
+    .filter(Boolean);
+  const rawText = rawLines.join(" ");
+  const hasBulletinSource = hasBulletinSourceText(rawLines) || (rawText.match(/[가-힣]/g)?.length ?? 0) >= 20;
+  const lines = rawLines.filter((line) => !isBulletinNoiseLine(line));
   const markerIndex = findBulletinPolicyStartIndex(lines);
   const disclosureIndex = lines.findIndex(isCandidateDisclosureStartLine);
   const markerAfterDisclosure = markerIndex >= 0 && disclosureIndex >= 0 && markerIndex > disclosureIndex;
   const policyLines = lines.slice(markerIndex >= 0 ? markerIndex : 0);
+
+  if (hasNoPledgeNotice(lines)) {
+    return [];
+  }
+
   const standaloneHeadingPledges = extractBulletinStandaloneHeadingPledges(lines, limit);
 
   if (standaloneHeadingPledges.length > 0) {
@@ -1042,10 +1050,12 @@ function extractBulletinPledges(text: string, limit: number): Pledge[] {
   if (markerIndex >= 0) {
     const fullTextActionPledges = extractBulletinActionPledges(lines, limit);
 
-    return fullTextActionPledges.length >= 3 ? fullTextActionPledges : [];
+    return fullTextActionPledges.length >= 3
+      ? fullTextActionPledges
+      : extractBulletinFallbackPledges(lines, limit, hasBulletinSource);
   }
 
-  return [];
+  return extractBulletinFallbackPledges(lines, limit, hasBulletinSource);
 }
 
 function extractBulletinNumberedPledges(lines: string[], limit: number): Pledge[] {
@@ -1301,6 +1311,48 @@ function extractBulletinActionPledges(lines: string[], limit: number): Pledge[] 
   return pledges;
 }
 
+function extractBulletinFallbackPledges(lines: string[], limit: number, hasBulletinSource: boolean) {
+  if (!hasBulletinSource) {
+    return [];
+  }
+
+  const disclosureIndex = lines.findIndex(isCandidateDisclosureStartLine);
+  const preDisclosureLines = disclosureIndex > 0 ? lines.slice(0, disclosureIndex) : lines;
+  const actionPledges = extractBulletinActionPledges(buildBulletinActionCandidateLines(preDisclosureLines), limit);
+
+  if (actionPledges.length > 0) {
+    return actionPledges;
+  }
+
+  const pledges: Pledge[] = [];
+  const seen = new Set<string>();
+
+  for (const line of preDisclosureLines) {
+    const title = cleanBulletinTitle(line);
+
+    if (!isBulletinFallbackHeadlineLine(title) || hasOverlappingBulletinTitle(seen, title)) {
+      continue;
+    }
+
+    seen.add(title);
+    pledges.push({
+      title: shortenText(title, 30),
+      detail: "선거공보 원문에서 확인되는 핵심 문구입니다. 세부 공약 여부와 실행 방식은 원문 확인이 필요합니다.",
+    });
+
+    if (pledges.length >= limit) {
+      return pledges;
+    }
+  }
+
+  return [
+    {
+      title: "선거공보 원문 확인 가능",
+      detail: "선거공보 원문 OCR 텍스트가 확보되어 있습니다. 자동으로 구조화 가능한 공약 문장이 부족해 원문 확인이 필요합니다.",
+    },
+  ];
+}
+
 function hasOverlappingBulletinTitle(seen: Set<string>, title: string) {
   for (const existing of seen) {
     if (existing.includes(title) || title.includes(existing)) {
@@ -1332,6 +1384,30 @@ function isBulletinPolicyItemLine(line: string) {
     !/(후보|선거|기호|정당|전과|재산|학력|경력|졸업|책자형|정보공개|인적사항|생년월일|직업|약력|특보)/.test(line) &&
     (bulletinActionKeywordPattern.test(line) || bulletinPolicySubjectPattern.test(line))
   );
+}
+
+function isBulletinFallbackHeadlineLine(line: string) {
+  return (
+    line.length >= 6 &&
+    line.length <= 60 &&
+    /[가-힣]{2}/.test(line) &&
+    !isBulletinNoiseLine(line) &&
+    !isCandidateDisclosureStartLine(line) &&
+    !/(후보자|후보|선거|기호|정당|전과|재산|학력|경력|졸업|책자형|정보공개|인적사항|생년월일|직업|약력|특보|뉴스|NEWS)/.test(line) &&
+    !/[|]{2,}/.test(line) &&
+    (
+      bulletinActionKeywordPattern.test(line) ||
+      /(?:하겠|겠습니다|합니다|약속|비전|달라집니다|해내|만들|바꾸|지키|위해|함께|든든|확실|새로운|깨끗|믿음|미래|희망)/.test(line)
+    )
+  );
+}
+
+function hasNoPledgeNotice(lines: string[]) {
+  return lines.some((line) => /공약이\s*없|공약\s*없/.test(line));
+}
+
+function hasBulletinSourceText(lines: string[]) {
+  return lines.some((line) => /선거\s*공보|선거공보|책자형|후보자정보공개|후보자\s*정보\s*공개/.test(line));
 }
 
 function isBulletinPolicyHeadingLine(line: string) {

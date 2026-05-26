@@ -261,6 +261,10 @@ async function buildTargets(outDir: string, candidates: NecNormalizedCandidate[]
 
     const textPath = outputTextPath(outDir, pdfPath);
 
+    if (hasFlag("skip-existing-ocr") && (await pathExists(textPath))) {
+      continue;
+    }
+
     if (!hasFlag("force") && (await pathExists(textPath))) {
       const ocrText = await readFile(textPath, "utf8");
 
