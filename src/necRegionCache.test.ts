@@ -102,6 +102,49 @@ describe("NEC residence cache builder", () => {
     expect(extractPolicyTags(text)).toEqual(expect.arrayContaining(["안전", "복지", "주거"]));
   });
 
+  it("extracts pledge highlights from campaign bulletin text without five-pledge headings", () => {
+    const text = `
+후보자 정보 공개자료
+인적사항
+북수원이 달라집니다
+1. 신산업 유치
+- 북수원 테크로밸리 조성 추진
+- 영화도시재생혁신지구 추진
+2. 편리한 지하철 시대
+- 동탄인덕원선 및 신분당선 조기 개통
+- 수원도시철도 1호선 조기 추진
+3. 수원의 미래
+- 재개발ㆍ재건축 조속추진 행ㆍ재정적 지원
+4. 구도심 지역경제 활성화
+- 전통시장 등 공용주차장 대폭 확충
+5. 체육시설 확충
+- 수원 돔구장 추진
+`;
+
+    expect(extractPledges(text)).toEqual([
+      {
+        title: "신산업 유치",
+        detail: "북수원 테크로밸리 조성 추진 영화도시재생혁신지구 추진",
+      },
+      {
+        title: "편리한 지하철 시대",
+        detail: "동탄인덕원선 및 신분당선 조기 개통 수원도시철도 1호선 조기 추진",
+      },
+      {
+        title: "수원의 미래",
+        detail: "재개발ㆍ재건축 조속추진 행ㆍ재정적 지원",
+      },
+      {
+        title: "구도심 지역경제 활성화",
+        detail: "전통시장 등 공용주차장 대폭 확충",
+      },
+      {
+        title: "체육시설 확충",
+        detail: "수원 돔구장 추진",
+      },
+    ]);
+  });
+
   it("builds the selected residence ballot from matching NEC districts only", () => {
     const downloads: NecDownloadIndex = new Map([
       [

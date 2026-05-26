@@ -107,7 +107,7 @@ export function extractPledges(text: string, limit = 5): Pledge[] {
     }
   }
 
-  return pledges;
+  return pledges.length > 0 ? pledges : extractBulletinPledges(text, limit);
 }
 
 export function extractPolicyTags(value: string, limit = 4) {
@@ -621,6 +621,140 @@ function extractPledgeDetailFromBlock(block: string, title: string) {
   const detail = normalizeWhitespace(selectedLines.join(" "));
 
   return detail || "PDF 원문에서 제목을 추출했으나 목표·이행방법 문장은 추가 확인이 필요합니다.";
+}
+
+function extractBulletinPledges(text: string, limit: number): Pledge[] {
+  const lines = text
+    .replace(/\r/g, "")
+    .split("\n")
+    .map(cleanBulletinLine)
+    .filter((line) => line && !isBulletinNoiseLine(line));
+  const policyLines = lines.slice(findBulletinPolicyStartIndex(lines));
+  const pledges: Pledge[] = [];
+  const seen = new Set<string>();
+
+  for (let index = 0; index < policyLines.length; index += 1) {
+    const numberedTitle = extractBulletinNumberedTitle(policyLines, index);
+
+    if (!numberedTitle) {
+      continue;
+    }
+
+    const { title, nextIndex } = numberedTitle;
+
+    if (seen.has(title)) {
+      continue;
+    }
+
+    const detail = extractBulletinDetail(policyLines, nextIndex, title);
+
+    seen.add(title);
+    pledges.push({
+      title,
+      detail,
+    });
+
+    if (pledges.length >= limit) {
+      return pledges;
+    }
+  }
+
+  return pledges;
+}
+
+function findBulletinPolicyStartIndex(lines: string[]) {
+  const markerIndex = lines.findIndex(
+    (line) => /(달라집니다|약속|비전|공약|프로젝트|대전환|만들겠습니다|바꾸겠습니다)/.test(line) && !isBulletinNoiseLine(line),
+  );
+
+  return markerIndex >= 0 ? markerIndex : 0;
+}
+
+function extractBulletinNumberedTitle(lines: string[], index: number) {
+  const line = lines[index];
+  const singleNumber = line.match(/^(?:공약\s*)?([1-5])[.)]?$/);
+
+  if (singleNumber && lines[index + 1]) {
+    const title = cleanBulletinTitle(lines[index + 1]);
+
+    return isBulletinTitle(title) ? { title, nextIndex: index + 2 } : null;
+  }
+
+  const match = line.match(/^(?:공약\s*)?(?:[1-5][.)]|[①②③④⑤]|[1-5]\s+)\s*(.+)$/);
+  const title = match ? cleanBulletinTitle(match[1]) : "";
+
+  return isBulletinTitle(title) ? { title, nextIndex: index + 1 } : null;
+}
+
+function extractBulletinDetail(lines: string[], startIndex: number, title: string) {
+  const details: string[] = [];
+
+  for (const line of lines.slice(startIndex)) {
+    if (/^(?:공약\s*)?[1-5][.)]?$/.test(line) || extractBulletinNumberedTitle([line], 0)) {
+      break;
+    }
+
+    const detail = cleanBulletinDetailLine(line);
+
+    if (!isBulletinDetailLine(detail, title)) {
+      continue;
+    }
+
+    details.push(detail);
+
+    if (details.length >= 3) {
+      break;
+    }
+  }
+
+  const normalized = normalizeWhitespace(details.join(" "));
+
+  return normalized || "선거공보 원문에서 제목을 추출했으나 세부 설명은 추가 확인이 필요합니다.";
+}
+
+function cleanBulletinLine(value: string) {
+  return normalizeWhitespace(value.replace(/[\u0000-\u001f\u007f]/g, ""))
+    .replace(/^\f+/, "")
+    .replace(/^[·\-–•]+/, "")
+    .replace(/^[○□■]+/, "")
+    .trim();
+}
+
+function cleanBulletinTitle(value: string) {
+  return cleanPledgeTitle(value)
+    .replace(/^[·\-–•]+/, "")
+    .replace(/\s*\([^)]*쪽\)\s*$/g, "")
+    .trim();
+}
+
+function cleanBulletinDetailLine(value: string) {
+  return cleanBulletinTitle(value).replace(/^[·\-–•]+/, "").trim();
+}
+
+function isBulletinTitle(title: string) {
+  return (
+    title.length >= 4 &&
+    title.length <= 30 &&
+    /[가-힣]{2}/.test(title) &&
+    !isBulletinNoiseLine(title) &&
+    !/[.?!]$/.test(title)
+  );
+}
+
+function isBulletinDetailLine(line: string, title: string) {
+  return (
+    line.length >= 6 &&
+    line !== title &&
+    /[가-힣]{2}/.test(line) &&
+    !isBulletinNoiseLine(line) &&
+    !extractBulletinNumberedTitle([line], 0)
+  );
+}
+
+function isBulletinNoiseLine(line: string) {
+  return /^(후보자|후보자정보|후보자 정보|정보공개|공개자료|인적사항|재산|병역|납세|세금|체납|납부|전과|소명서|선거명|선거구명|후보자명|기호|성명|생년월일|직업|학력|경력|주소|소속정당명|책자형|점자형|후원회|회계책임자|전화|팩스|홈페이지|이메일|제\d+회|투표일|사전투표|작성근거)/.test(
+    line,
+  );
 }
 
 function extractTargetSectionLines(lines: string[]) {

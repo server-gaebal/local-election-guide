@@ -1,7 +1,7 @@
 {
-  "fetchedAt": "2026-05-26T04:05:37.347Z",
-  "requested": 677,
-  "completed": 677,
+  "fetchedAt": "2026-05-26T07:41:51.792Z",
+  "requested": 678,
+  "completed": 678,
   "results": [
     {
       "candidateId": "20260603-320260603-100157144",
@@ -6772,6 +6772,20 @@
       "textPath": "data/nec/full/pdfs/11-교육감선거/3-제주특별자치도-김광수-100162806-5pledges.txt",
       "downloadStatus": "downloaded",
       "extractStatus": "extracted"
+    },
+    {
+      "candidateId": "20260603-520260603-100155139",
+      "documentType": "campaignBulletin",
+      "sourceLabel": "선거공보",
+      "name": "최상규",
+      "partyName": "더불어민주당",
+      "raceName": "시·도의회의원선거",
+      "requestedFileName": "20260603_수원시제1선거구_최상규_선거공보.pdf",
+      "requestedFullPath": "20260603/PDF/PBINFO/4101/003_100155139_20260520_1.pdf",
+      "pdfPath": null,
+      "textPath": "data/nec/full/bulletin-texts/5-시-도의회의원선거/1-수원시제1선거구-최상규-100155139-campaign-bulletin.txt",
+      "downloadStatus": "skipped",
+      "extractStatus": "skipped"
     }
   ]
 }
