@@ -395,6 +395,50 @@ o 이행 방법
     ]);
   });
 
+  it("extracts local pledge lists around a standalone bulletin pledge heading", () => {
+    const text = `
+· 정의당 은평갑위원회 사무국장
+· 권영국 당대표 사회복지정책 특보
+약력 · 노회찬 · 심상정 사회복지정책 특보
+은평구의회 외유성 출장 금지
+소수자 · 여성 · 아이가 안전한 은평구, 안전 종합 점검
+공약
+보건복지 사각지대 발굴 봉산 · 불광천 난개발 금지
+모바일 의정보고서 및 기타 자료 발행
+`;
+
+    expect(extractPledges(text).map((pledge) => pledge.title)).toEqual([
+      "은평구의회 외유성 출장 금지",
+      "소수자 · 여성 · 아이가 안전한 은평구, 안전 종합…",
+      "보건복지 사각지대 발굴 봉산 · 불광천 난개발 금지",
+      "모바일 의정보고서 및 기타 자료 발행",
+    ]);
+  });
+
+  it("extracts bullet-style local promises with additional action words", () => {
+    const text = `
+• 주거 지역 주차 문제의 획기적인 개선책 마련
+• 동대구 역에서 창원중앙역, 부산신항까지 철도 직선화
+• 경노당 급식도우미 지원
+`;
+
+    expect(extractPledges(text).map((pledge) => pledge.title)).toEqual([
+      "주거 지역 주차 문제의 획기적인 개선책 마련",
+      "동대구 역에서 창원중앙역, 부산신항까지 철도 직선화",
+      "경노당 급식도우미 지원",
+    ]);
+  });
+
+  it("extracts explicit representative pledges without opening disclosure tables", () => {
+    const text = `
+후보 중 유일한 현역, 당선 즉시 일합니다!
+대표공약 신속한 재개발·재건축, 지금 바로 시작 !!
+윤보수(선거공보)_레이아웃 1 26. 5. 16. 오후 2:52 페이지 4
+`;
+
+    expect(extractPledges(text).map((pledge) => pledge.title)).toEqual(["신속한 재개발·재건축, 지금 바로 시작 !!"]);
+  });
+
   it("does not synthesize pledge items when a bulletin says there are no pledges", () => {
     const text = `
 아산시의회의원선거(아산시 라선거구)
