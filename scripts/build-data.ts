@@ -46,7 +46,7 @@ function hashJson(value: unknown) {
 async function writeJson(relativePath: string, value: unknown) {
   const target = join(repoRoot, relativePath);
   await mkdir(dirname(target), { recursive: true });
-  await writeFile(target, `${JSON.stringify(value, null, 2)}\n`);
+  await writeFile(target, `${JSON.stringify(value)}\n`);
 }
 
 async function writeText(relativePath: string, value: string) {
