@@ -222,7 +222,7 @@ function officeFor(candidate: NecNormalizedCandidate, residence: Residence, scop
     case "11":
       return `${residence.city}교육감`;
     case "4":
-      return localGovernmentHeadOfficeName(residence.district);
+      return localGovernmentHeadOfficeName(scope.districtHeadDistrict ?? residence.district);
     case "5":
       return `${cityCouncilOfficeName(residence.city)} ${scope.cityCouncilDistrict ?? candidate.districtName}`;
     case "6":

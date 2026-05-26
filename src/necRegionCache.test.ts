@@ -30,6 +30,20 @@ const busanResidence: Residence = {
   },
 };
 
+const suwonResidence: Residence = {
+  id: "nec-4100-4101-dong-1qhklm1",
+  city: "경기도",
+  district: "수원시 장안구",
+  neighborhood: "파장동",
+  cacheKey: "nec:area:4100:4101:파장동:v1",
+  cachedAt: "2026-05-26T13:30:00+09:00",
+  electionScope: {
+    districtHeadDistrict: "수원시",
+    cityCouncilDistrict: "수원시제1선거구",
+    localCouncilDistrict: "수원시나선거구",
+  },
+};
+
 function necRow(overrides: Partial<NecNormalizedCandidate>): NecNormalizedCandidate {
   return {
     id: overrides.id ?? "row",
@@ -216,5 +230,22 @@ describe("NEC residence cache builder", () => {
       "중구의원 비례대표",
     ]);
     expect(dataset.candidates.map((candidate) => candidate.name)).not.toContain("제외");
+  });
+
+  it("labels district-head ballots from election scope, not display district text", () => {
+    const dataset = buildResidenceDatasetFromNec({
+      residence: suwonResidence,
+      generatedAt: "2026-05-26T13:30:00+09:00",
+      downloads: new Map(),
+      candidates: [
+        necRow({ id: "suwon-head", raceTypeCode: "4", raceName: "구·시·군의 장선거", districtName: "수원시", name: "수원후보" }),
+        necRow({ id: "suwon-local", raceTypeCode: "6", raceName: "구·시·군의회의원선거", districtName: "수원시나선거구", name: "기초후보" }),
+      ],
+    });
+
+    expect(dataset.candidates.map((candidate) => candidate.office)).toEqual([
+      "수원시장",
+      "수원시의원 수원시나선거구",
+    ]);
   });
 });

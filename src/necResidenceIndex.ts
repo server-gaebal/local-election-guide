@@ -1,5 +1,10 @@
 import type { Residence } from "./electionTypes";
-import type { NecElectionDistrictsCache, NecSelectboxItem, NecTownDistrictScope } from "./necElectionInfo";
+import type {
+  NecElectionAreaCache,
+  NecElectionDistrictsCache,
+  NecSelectboxItem,
+  NecTownDistrictScope,
+} from "./necElectionInfo";
 
 type TownScopes = {
   town: NecSelectboxItem;
@@ -7,8 +12,14 @@ type TownScopes = {
   localCouncilDistricts: NecSelectboxItem[];
 };
 
-export function buildNationalResidences(cache: NecElectionDistrictsCache): Residence[] {
+export function buildNationalResidences(cache: NecElectionDistrictsCache, areaCache?: NecElectionAreaCache): Residence[] {
   return cache.cities.flatMap((city) => {
+    const areaResidences = areaCache ? buildAreaResidences(cache, areaCache, city) : [];
+
+    if (areaResidences.length > 0) {
+      return areaResidences;
+    }
+
     const townScopes = buildTownScopes(city.cityCouncilTownScopes, city.localCouncilTownScopes);
 
     return townScopes.flatMap((townScope) => {
@@ -29,6 +40,75 @@ export function buildNationalResidences(cache: NecElectionDistrictsCache): Resid
       );
     });
   });
+}
+
+type NeighborhoodScope = {
+  city: NecSelectboxItem;
+  town: NecSelectboxItem;
+  districtHeadDistrict?: NecSelectboxItem;
+  cityCouncilDistrict?: NecSelectboxItem;
+  localCouncilDistrict?: NecSelectboxItem;
+  neighborhood: string;
+  generatedAt: string;
+};
+
+function buildAreaResidences(
+  cache: NecElectionDistrictsCache,
+  areaCache: NecElectionAreaCache,
+  city: NecSelectboxItem,
+) {
+  const cityRows = areaCache.rows.filter((row) => row.cityCode === city.code);
+
+  if (cityRows.length === 0) {
+    return [];
+  }
+
+  const scopes = new Map<string, NeighborhoodScope>();
+
+  for (const row of cityRows) {
+    for (const neighborhood of row.neighborhoods) {
+      const town = findTown(cache, city.code, row.jurisdictionName);
+
+      if (!town) {
+        continue;
+      }
+
+      const key = `${town.code}:${neighborhood}`;
+      const existing =
+        scopes.get(key) ??
+        ({
+          city,
+          town,
+          districtHeadDistrict: findDistrictHeadDistrict(
+            cache.cities.find((item) => item.code === city.code)?.districtHeadScopes ?? [],
+            town,
+          ),
+          neighborhood,
+          generatedAt: areaCache.generatedAt,
+        } satisfies NeighborhoodScope);
+
+      if (row.electionCode === "4") {
+        existing.districtHeadDistrict = { code: row.districtName, name: row.districtName };
+      } else if (row.electionCode === "5") {
+        existing.cityCouncilDistrict = findTownDistrict(cache, city.code, town.code, "cityCouncil", row.districtName) ?? {
+          code: row.districtName,
+          name: row.districtName,
+        };
+      } else if (row.electionCode === "6") {
+        existing.localCouncilDistrict = findTownDistrict(cache, city.code, town.code, "localCouncil", row.districtName) ?? {
+          code: row.districtName,
+          name: row.districtName,
+        };
+      }
+
+      scopes.set(key, existing);
+    }
+  }
+
+  return Array.from(scopes.values())
+    .filter((scope) => scope.cityCouncilDistrict || scope.localCouncilDistrict)
+    .sort((a, b) => a.town.name.localeCompare(b.town.name) || a.neighborhood.localeCompare(b.neighborhood))
+    .map(buildNeighborhoodResidence);
 }
 
 function buildTownScopes(
@@ -100,8 +180,71 @@ function buildResidence({
   };
 }
 
+function buildNeighborhoodResidence(scope: NeighborhoodScope): Residence {
+  const districtName = buildDisplayDistrictName(scope.town.name, scope.districtHeadDistrict?.name);
+
+  return {
+    id: `nec-${scope.city.code}-${scope.town.code}-dong-${hashText(scope.neighborhood)}`,
+    city: scope.city.name,
+    district: districtName,
+    neighborhood: scope.neighborhood,
+    cacheKey: `nec:area:${scope.city.code}:${scope.town.code}:${scope.neighborhood}:v1`,
+    cachedAt: scope.generatedAt,
+    electionScope: {
+      districtHeadDistrict: scope.districtHeadDistrict?.name,
+      cityCouncilDistrict: scope.cityCouncilDistrict?.name,
+      localCouncilDistrict: scope.localCouncilDistrict?.name,
+    },
+  };
+}
+
+function buildDisplayDistrictName(townName: string, districtHeadName?: string) {
+  if (!districtHeadName || townName === districtHeadName) {
+    return districtHeadName ?? townName;
+  }
+
+  if (townName.startsWith(districtHeadName)) {
+    const suffix = townName.slice(districtHeadName.length);
+    return [districtHeadName, suffix].filter(Boolean).join(" ");
+  }
+
+  return townName;
+}
+
+function findTown(cache: NecElectionDistrictsCache, cityCode: string, jurisdictionName: string) {
+  const city = cache.cities.find((item) => item.code === cityCode);
+  const townScopes = city ? buildTownScopes(city.cityCouncilTownScopes, city.localCouncilTownScopes) : [];
+
+  return townScopes.find((scope) => scope.town.name === jurisdictionName)?.town;
+}
+
+function findTownDistrict(
+  cache: NecElectionDistrictsCache,
+  cityCode: string,
+  townCode: string,
+  scopeType: "cityCouncil" | "localCouncil",
+  districtName: string,
+) {
+  const city = cache.cities.find((item) => item.code === cityCode);
+  const townScopes = scopeType === "cityCouncil" ? city?.cityCouncilTownScopes : city?.localCouncilTownScopes;
+  const townScope = townScopes?.find((scope) => scope.town.code === townCode);
+
+  return townScope?.districts.find((district) => district.name === districtName);
+}
+
 function findDistrictHeadDistrict(districtHeadScopes: NecSelectboxItem[], town: NecSelectboxItem) {
   return [...districtHeadScopes]
     .sort((a, b) => b.name.length - a.name.length)
     .find((scope) => town.name === scope.name || town.name.startsWith(scope.name));
+}
+
+function hashText(value: string) {
+  let hash = 0x811c9dc5;
+
+  for (const character of value) {
+    hash ^= character.codePointAt(0) ?? 0;
+    hash = Math.imul(hash, 0x01000193);
+  }
+
+  return (hash >>> 0).toString(36);
 }

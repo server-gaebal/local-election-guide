@@ -9,6 +9,7 @@
     "data:nec:all": "tsx scripts/nec/download-policy-pdfs.ts --all --metadata-only --out=data/nec/full",
     "data:nec:all:download": "tsx scripts/nec/download-policy-pdfs.ts --all --download --out=data/nec/full",
     "data:nec:districts": "tsx scripts/nec/download-election-districts.ts",
+    "data:nec:areas": "tsx scripts/nec/download-election-areas.ts",
     "data:nec:info": "tsx scripts/nec/download-candidate-info.ts",
     "data:nec:info:all": "tsx scripts/nec/download-candidate-info.ts --all --no-html --out=all-candidates.json --delay-ms=20",
     "dev": "vite --host 127.0.0.1",

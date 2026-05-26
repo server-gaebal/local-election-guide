@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { candidates, residences, voterProfiles } from "../src/mockData";
 import { createCandidateInfoIndex, type NecCandidateInfoRecord } from "../src/necCandidateInfo";
 import type { NecNormalizedCandidate } from "../src/necCrawler";
-import type { NecElectionDistrictsCache } from "../src/necElectionInfo";
+import type { NecElectionAreaCache, NecElectionDistrictsCache } from "../src/necElectionInfo";
 import { buildNationalResidences } from "../src/necResidenceIndex";
 import { buildResidenceDatasetFromNec, extractPledgeTitles, type NecDownloadIndex } from "../src/necRegionCache";
 import { necEndpoints } from "../src/necPolicy";
@@ -108,12 +108,29 @@ async function buildNecRegionDatasets(nextResidences: typeof residences) {
 }
 
 async function buildResidences() {
-  const nationalResidences = (await pathExists("data/nec/info/election-districts.json"))
-    ? buildNationalResidences(await readJsonFile<NecElectionDistrictsCache>("data/nec/info/election-districts.json"))
-    : [];
-  const residenceMap = new Map([...residences, ...nationalResidences].map((residence) => [residence.id, residence]));
+  const nationalResidences = await buildNationalResidencesFromCache();
+  const nationalResidenceKeys = new Set(nationalResidences.map(residenceLocationKey));
+  const fallbackResidences = residences.filter((residence) => !nationalResidenceKeys.has(residenceLocationKey(residence)));
+  const residenceMap = new Map([...fallbackResidences, ...nationalResidences].map((residence) => [residence.id, residence]));
 
   return Array.from(residenceMap.values());
+}
+
+function residenceLocationKey(residence: { city: string; district: string; neighborhood: string }) {
+  return [residence.city, residence.district, residence.neighborhood].join("\u0000");
+}
+
+async function buildNationalResidencesFromCache() {
+  if (!(await pathExists("data/nec/info/election-districts.json"))) {
+    return [];
+  }
+
+  const districts = await readJsonFile<NecElectionDistrictsCache>("data/nec/info/election-districts.json");
+  const areaCache = (await pathExists("data/nec/info/election-areas.json"))
+    ? await readJsonFile<NecElectionAreaCache>("data/nec/info/election-areas.json")
+    : undefined;
+
+  return buildNationalResidences(districts, areaCache);
 }
 
 const allResidences = await buildResidences();
@@ -193,6 +210,7 @@ await writeJson("public/data/cache-manifest.json", {
 });
 
 await writeOptionalPublicJsonCopy("data/nec/info/election-districts.json", "public/data/nec/election-districts.json");
+await writeOptionalPublicJsonCopy("data/nec/info/election-areas.json", "public/data/nec/election-areas.json");
 await writeOptionalPublicJsonCopy("data/nec/info/all-candidates.json", "public/data/nec/all-candidates.json");
 
 console.log(`Wrote ${regions.length} region shards to public/data`);

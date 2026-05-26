@@ -26,6 +26,24 @@ export type NecElectionDistrictsCache = {
   cities: NecCityElectionDistricts[];
 };
 
+export type NecElectionAreaRow = {
+  electionCode: "4" | "5" | "6";
+  cityCode: string;
+  cityName: string;
+  jurisdictionName: string;
+  districtName: string;
+  seatCount: number;
+  neighborhoods: string[];
+};
+
+export type NecElectionAreaCache = {
+  generatedAt: string;
+  electionId: string;
+  sourceName: string;
+  sourceUrl: string;
+  rows: NecElectionAreaRow[];
+};
+
 export type NecCandidateInfoQuery = {
   slug: string;
   electionCode: string;
@@ -103,6 +121,30 @@ export function buildNecSelectboxUrl(endpoint: NecSelectboxEndpoint, params: Rec
   return url.toString();
 }
 
+export function parseNecElectionAreaRows(
+  html: string,
+  context: {
+    electionCode: "4" | "5" | "6";
+    cityCode: string;
+    cityName: string;
+  },
+): NecElectionAreaRow[] {
+  const tbody = html.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/i)?.[1];
+
+  if (!tbody) {
+    return [];
+  }
+
+  return Array.from(tbody.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi))
+    .map((rowMatch) =>
+      Array.from(rowMatch[1].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)).map((cellMatch) =>
+        cleanHtmlText(cellMatch[1]),
+      ),
+    )
+    .map((cells) => buildAreaRow(cells, context))
+    .filter((row): row is NecElectionAreaRow => row !== null);
+}
+
 export function buildCandidateInfoQueriesFromDistricts(cache: NecElectionDistrictsCache): NecCandidateInfoQuery[] {
   return cache.cities.flatMap((city) => [
     buildCityWideQuery("3", city),
@@ -126,6 +168,100 @@ function buildCityWideQuery(electionCode: string, city: NecSelectboxItem): NecCa
     cityName: city.name,
     scopeName: city.name,
   };
+}
+
+function buildAreaRow(
+  cells: string[],
+  context: {
+    electionCode: "4" | "5" | "6";
+    cityCode: string;
+    cityName: string;
+  },
+) {
+  if (cells.length < 4) {
+    return null;
+  }
+
+  const [firstCell, secondCell, thirdCell, fourthCell] = cells;
+  const jurisdictionName = context.electionCode === "4" ? thirdCell : firstCell;
+  const districtName = context.electionCode === "4" ? firstCell : secondCell;
+  const seatCount = Number.parseInt(context.electionCode === "4" ? secondCell : thirdCell, 10);
+  const neighborhoods = splitNeighborhoods(fourthCell);
+
+  if (!jurisdictionName || !districtName || neighborhoods.length === 0) {
+    return null;
+  }
+
+  return {
+    ...context,
+    jurisdictionName,
+    districtName,
+    seatCount: Number.isFinite(seatCount) ? seatCount : 0,
+    neighborhoods,
+  };
+}
+
+function cleanHtmlText(html: string) {
+  return html
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function splitNeighborhoods(value: string) {
+  return splitTopLevelComma(value).flatMap(expandParenthesizedNeighborhood).filter(Boolean);
+}
+
+function splitTopLevelComma(value: string) {
+  const parts: string[] = [];
+  let depth = 0;
+  let current = "";
+
+  for (const character of value) {
+    if (character === "(" || character === "（") {
+      depth += 1;
+    } else if ((character === ")" || character === "）") && depth > 0) {
+      depth -= 1;
+    }
+
+    if (character === "," && depth === 0) {
+      parts.push(current.trim());
+      current = "";
+    } else {
+      current += character;
+    }
+  }
+
+  parts.push(current.trim());
+
+  return parts.filter(Boolean);
+}
+
+function expandParenthesizedNeighborhood(value: string) {
+  const openIndex = value.search(/[（(]/);
+  const closeIndex = Math.max(value.lastIndexOf(")"), value.lastIndexOf("）"));
+
+  if (openIndex < 0 || closeIndex < openIndex) {
+    return [value.trim()];
+  }
+
+  const prefix = value.slice(0, openIndex).trim();
+  const suffix = value.slice(closeIndex + 1).trim();
+  const inner = value.slice(openIndex + 1, closeIndex).trim();
+  const innerParts = splitTopLevelComma(inner);
+
+  if (!prefix || innerParts.length === 0) {
+    return [value.trim()];
+  }
+
+  return innerParts.map((part) => [prefix, part, suffix].filter(Boolean).join(" "));
 }
 
 function buildSggCityQuery(

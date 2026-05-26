@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildCandidateInfoQueriesFromDistricts,
   buildNecSelectboxUrl,
+  parseNecElectionAreaRows,
   parseNecSelectboxItems,
   type NecElectionDistrictsCache,
 } from "./necElectionInfo";
@@ -33,6 +34,93 @@ describe("NEC election-info helpers", () => {
       }),
     ).toBe(
       "https://info.nec.go.kr/bizcommon/selectbox/selectbox_getSggTownCodeJson.json?electionId=0020260603&electionCode=5&townCode=1114",
+    );
+  });
+
+  it("parses official election district area tables into neighborhood mappings", () => {
+    const html = `
+      <table>
+        <tbody>
+          <tr>
+            <td class="alignL">마포구</td>
+            <td class="alignL rowspan">마포구제1선거구</td>
+            <td class="alignC">1</td>
+            <td class="alignL">공덕동, 아현동, 도화동</td>
+          </tr>
+          <tr>
+            <td class="alignL rowspan">마포구</td>
+            <td class="alignC rowint">1</td>
+            <td class="alignL">마포구</td>
+            <td class="alignL">공덕동, 아현동, 도화동, 용강동</td>
+          </tr>
+          <tr>
+            <td class="alignL">제주시</td>
+            <td class="alignL">제주특별자치도 제주시 애월읍갑선거구</td>
+            <td class="alignC">1</td>
+            <td class="alignL">애월읍(애월리, 곽지리, 금성리)</td>
+          </tr>
+          <tr>
+            <td class="alignL">제주시</td>
+            <td class="alignL">제주특별자치도 제주시 이도2동갑선거구</td>
+            <td class="alignC">1</td>
+            <td class="alignL">이도2동(1~20통, 48~55통, 57~61통)</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+    expect(
+      parseNecElectionAreaRows(html, {
+        electionCode: "5",
+        cityCode: "1100",
+        cityName: "서울특별시",
+      }),
+    ).toContainEqual(
+      {
+        electionCode: "5",
+        cityCode: "1100",
+        cityName: "서울특별시",
+        jurisdictionName: "마포구",
+        districtName: "마포구제1선거구",
+        seatCount: 1,
+        neighborhoods: ["공덕동", "아현동", "도화동"],
+      },
+    );
+    expect(
+      parseNecElectionAreaRows(html, {
+        electionCode: "5",
+        cityCode: "4900",
+        cityName: "제주특별자치도",
+      }),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          jurisdictionName: "제주시",
+          districtName: "제주특별자치도 제주시 애월읍갑선거구",
+          neighborhoods: ["애월읍 애월리", "애월읍 곽지리", "애월읍 금성리"],
+        }),
+        expect.objectContaining({
+          districtName: "제주특별자치도 제주시 이도2동갑선거구",
+          neighborhoods: ["이도2동 1~20통", "이도2동 48~55통", "이도2동 57~61통"],
+        }),
+      ]),
+    );
+    expect(
+      parseNecElectionAreaRows(html, {
+        electionCode: "4",
+        cityCode: "1100",
+        cityName: "서울특별시",
+      }),
+    ).toContainEqual(
+      {
+        electionCode: "4",
+        cityCode: "1100",
+        cityName: "서울특별시",
+        jurisdictionName: "마포구",
+        districtName: "마포구",
+        seatCount: 1,
+        neighborhoods: ["공덕동", "아현동", "도화동", "용강동"],
+      },
     );
   });
 

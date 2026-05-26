@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildNationalResidences } from "./necResidenceIndex";
-import type { NecElectionDistrictsCache } from "./necElectionInfo";
+import type { NecElectionAreaCache, NecElectionDistrictsCache } from "./necElectionInfo";
 
 const districtsCache: NecElectionDistrictsCache = {
   generatedAt: "2026-05-26T00:00:00+09:00",
@@ -63,6 +63,60 @@ const districtsCache: NecElectionDistrictsCache = {
   ],
 };
 
+const areaCache: NecElectionAreaCache = {
+  generatedAt: "2026-05-26T00:00:00+09:00",
+  electionId: "0020260603",
+  sourceName: "선거통계시스템 선거구 및 읍면동현황",
+  sourceUrl: "https://info.nec.go.kr/main/showDocument.xhtml?electionId=0020260603&topMenuId=BI&secondMenuId=BIGI05",
+  rows: [
+    {
+      electionCode: "4",
+      cityCode: "1100",
+      cityName: "서울특별시",
+      jurisdictionName: "마포구",
+      districtName: "마포구",
+      seatCount: 1,
+      neighborhoods: ["공덕동", "아현동", "도화동"],
+    },
+    {
+      electionCode: "5",
+      cityCode: "1100",
+      cityName: "서울특별시",
+      jurisdictionName: "마포구",
+      districtName: "마포구제1선거구",
+      seatCount: 1,
+      neighborhoods: ["공덕동", "아현동", "도화동"],
+    },
+    {
+      electionCode: "5",
+      cityCode: "1100",
+      cityName: "서울특별시",
+      jurisdictionName: "마포구",
+      districtName: "마포구제2선거구",
+      seatCount: 1,
+      neighborhoods: ["용강동", "대흥동"],
+    },
+    {
+      electionCode: "6",
+      cityCode: "1100",
+      cityName: "서울특별시",
+      jurisdictionName: "마포구",
+      districtName: "마포구가선거구",
+      seatCount: 2,
+      neighborhoods: ["공덕동", "아현동"],
+    },
+    {
+      electionCode: "6",
+      cityCode: "1100",
+      cityName: "서울특별시",
+      jurisdictionName: "마포구",
+      districtName: "마포구나선거구",
+      seatCount: 2,
+      neighborhoods: ["도화동", "용강동", "대흥동"],
+    },
+  ],
+};
+
 describe("NEC nationwide residence index", () => {
   it("builds selectable residence scopes from city and local council district combinations", () => {
     const residences = buildNationalResidences(districtsCache);
@@ -97,5 +151,50 @@ describe("NEC nationwide residence index", () => {
         cityCouncilDistrict: "세종특별자치시제1선거구",
       },
     });
+  });
+
+  it("builds actual neighborhood residences when official area mappings are available", () => {
+    const residences = buildNationalResidences(districtsCache, areaCache).filter(
+      (residence) => residence.city === "서울특별시",
+    );
+
+    expect(residences).toHaveLength(5);
+    expect(residences).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: expect.stringMatching(/^nec-1100-1114-dong-/),
+        city: "서울특별시",
+        district: "마포구",
+        neighborhood: "공덕동",
+        electionScope: {
+          districtHeadDistrict: "마포구",
+          cityCouncilDistrict: "마포구제1선거구",
+          localCouncilDistrict: "마포구가선거구",
+        },
+      }),
+      expect.objectContaining({
+        id: expect.stringMatching(/^nec-1100-1114-dong-/),
+        neighborhood: "아현동",
+        electionScope: expect.objectContaining({
+          cityCouncilDistrict: "마포구제1선거구",
+          localCouncilDistrict: "마포구가선거구",
+        }),
+      }),
+      expect.objectContaining({
+        id: expect.stringMatching(/^nec-1100-1114-dong-/),
+        neighborhood: "도화동",
+        electionScope: expect.objectContaining({
+          cityCouncilDistrict: "마포구제1선거구",
+          localCouncilDistrict: "마포구나선거구",
+        }),
+      }),
+      expect.objectContaining({
+        id: expect.stringMatching(/^nec-1100-1114-dong-/),
+        neighborhood: "용강동",
+        electionScope: expect.objectContaining({
+          cityCouncilDistrict: "마포구제2선거구",
+          localCouncilDistrict: "마포구나선거구",
+        }),
+      }),
+    ]));
   });
 });
