@@ -221,22 +221,9 @@ export function App() {
     [ballotFilter, ballotGroups],
   );
 
-  const visibleCandidates = useMemo(
-    () => visibleBallotGroups.flatMap((group) => group.candidates),
-    [visibleBallotGroups],
-  );
-
   const totalCandidateCount = useMemo(
     () => ballotGroups.reduce((sum, group) => sum + group.candidates.length, 0),
     [ballotGroups],
-  );
-
-  const comparisonLines = visibleCandidates.flatMap((candidate) =>
-    candidate.comparisonDetails.slice(0, 1).map((detail) => ({
-      id: `${candidate.id}:${detail}`,
-      candidate: candidate.name,
-      detail,
-    })),
   );
 
   const handleCityChange = (nextCity: string) => {
@@ -431,6 +418,10 @@ export function App() {
               );
             })}
           </div>
+          <div className="source-box">
+            <FileText aria-hidden="true" size={16} />
+            <span>{regionDataset?.source.sourceName ?? manifest.sourceName}</span>
+          </div>
         </aside>
 
         <section className="candidate-area" aria-label="후보 목록">
@@ -478,24 +469,6 @@ export function App() {
           )}
         </section>
 
-        <aside className="comparison-panel" aria-label="요약 비교">
-          <div className="panel-title">
-            <Scale aria-hidden="true" size={18} />
-            <h2>요약 비교</h2>
-          </div>
-          <div className="comparison-list">
-            {comparisonLines.map((line) => (
-              <div className="comparison-row" key={line.id}>
-                <strong>{line.candidate}</strong>
-                <span>{line.detail}</span>
-              </div>
-            ))}
-          </div>
-          <div className="source-box">
-            <FileText aria-hidden="true" size={16} />
-            <span>{regionDataset?.source.sourceName ?? manifest.sourceName}</span>
-          </div>
-        </aside>
       </section>
 
       {selectedCandidate ? (
@@ -551,21 +524,31 @@ function CandidateCard({
         ))}
       </div>
 
-      <p className="summary-text">{candidate.pledgeSummary}</p>
+      <section className="card-section comparison-summary" aria-label={`${candidate.name} 비교 요약`}>
+        <div className="card-section__title">
+          <Scale aria-hidden="true" size={16} />
+          <h4>비교 요약</h4>
+        </div>
+        <p>{candidate.comparison}</p>
+        <ul>
+          {candidate.comparisonDetails.slice(0, 2).map((detail) => (
+            <li key={detail}>{detail}</li>
+          ))}
+        </ul>
+      </section>
 
-      <div className="pledge-list">
-        <h4>공약 요약</h4>
+      <section className="card-section pledge-list" aria-label={`${candidate.name} 공약 요약`}>
+        <div className="card-section__title">
+          <FileText aria-hidden="true" size={16} />
+          <h4>공약 요약</h4>
+        </div>
+        <p className="summary-text">{candidate.pledgeSummary}</p>
         <ul>
           {candidate.pledgeHighlights.map((pledge) => (
             <li key={pledge}>{pledge}</li>
           ))}
         </ul>
-      </div>
-
-      <div className="compare-callout">
-        <Scale aria-hidden="true" size={16} />
-        <span>{candidate.comparison}</span>
-      </div>
+      </section>
 
       <div className="profile-fit">
         <strong>{profile}</strong>

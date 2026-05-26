@@ -83,6 +83,8 @@ describe("local election guide static experience", () => {
     expect(within(candidateCard).getByText("더불어민주당").tagName).toBe("STRONG");
     expect(within(candidateCard).getByText("전과 2건")).toBeInTheDocument();
     expect(within(candidateCard).getByText("57세")).toBeInTheDocument();
+    expect(within(candidateCard).getByText("비교 요약")).toBeInTheDocument();
+    expect(within(candidateCard).getByText(/서울특별시장 투표지에서/)).toBeInTheDocument();
   });
 
   it("opens a full pledge detail view from a candidate card", async () => {

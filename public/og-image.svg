@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f6f5f1"/>
+  <rect x="64" y="64" width="1072" height="502" rx="28" fill="#fffdf8" stroke="#d9d2c3" stroke-width="3"/>
+  <rect x="92" y="92" width="152" height="152" rx="26" fill="#0f766e"/>
+  <path d="M137 183h62M146 134h44v42h-44z" fill="none" stroke="#fffdf8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m157 154 10 10 23-28" fill="none" stroke="#fffdf8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="276" y="136" fill="#766a5c" font-family="Arial, sans-serif" font-size="26" font-weight="800">NEC 자료 기반</text>
+  <text x="276" y="210" fill="#18211f" font-family="Arial, sans-serif" font-size="66" font-weight="900">지방선거 가이드</text>
+  <text x="276" y="274" fill="#33403d" font-family="Arial, sans-serif" font-size="30" font-weight="700">내 주소 기준 후보·공약·전과 한눈에 비교</text>
+  <g transform="translate(92 336)">
+    <rect width="300" height="142" rx="18" fill="#f1f8f5" stroke="#cfe6dc" stroke-width="2"/>
+    <text x="24" y="46" fill="#0f766e" font-family="Arial, sans-serif" font-size="24" font-weight="900">공약 요약</text>
+    <text x="24" y="92" fill="#20332e" font-family="Arial, sans-serif" font-size="26" font-weight="800">5대 공약 PDF 기반</text>
+  </g>
+  <g transform="translate(448 336)">
+    <rect width="300" height="142" rx="18" fill="#fff1c2" stroke="#eed88f" stroke-width="2"/>
+    <text x="24" y="46" fill="#8a520c" font-family="Arial, sans-serif" font-size="24" font-weight="900">전과 기록</text>
+    <text x="24" y="92" fill="#3d3021" font-family="Arial, sans-serif" font-size="26" font-weight="800">공식 공개정보 확인</text>
+  </g>
+  <g transform="translate(804 336)">
+    <rect width="300" height="142" rx="18" fill="#f7f3ea" stroke="#e3ded2" stroke-width="2"/>
+    <text x="24" y="46" fill="#9f1239" font-family="Arial, sans-serif" font-size="24" font-weight="900">후보 비교</text>
+    <text x="24" y="92" fill="#2d3935" font-family="Arial, sans-serif" font-size="26" font-weight="800">투표지별 비교</text>
+  </g>
+  <text x="92" y="535" fill="#5a5147" font-family="Arial, sans-serif" font-size="24" font-weight="700">kimsunghyun1995.github.io/local-election-guide</text>
+</svg>
