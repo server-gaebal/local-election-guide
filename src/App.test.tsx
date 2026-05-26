@@ -9,16 +9,36 @@ import busanRegion from "../public/data/regions/busan-haeundae-woojedong.json";
 import gyeonggiRegion from "../public/data/regions/gyeonggi-seongnam-jeongja.json";
 import seoulRegion from "../public/data/regions/seoul-mapo-gongdeok.json";
 
+const gyeonggiRegionWithGovernor = {
+  ...gyeonggiRegion,
+  candidates: [
+    {
+      ...seoulRegion.candidates[0],
+      id: "gyeonggi-governor-test",
+      residenceId: gyeonggiRegion.residence.id,
+      name: "추미애",
+      party: "더불어민주당",
+      office: "경기도지사",
+      criminalRecord: {
+        summary: "전과 없음",
+        details: "선거통계시스템 후보자 명부 기준 전과기록유무: 없음.",
+        tone: "clean" as const,
+      },
+    },
+    ...gyeonggiRegion.candidates,
+  ],
+};
+
 const testRegionIndex = {
   ...regionIndex,
-  residences: [seoulRegion.residence, gyeonggiRegion.residence, busanRegion.residence],
+  residences: [gyeonggiRegion.residence, busanRegion.residence, seoulRegion.residence],
 };
 
 const jsonFixtures = {
   "data/cache-manifest.json": cacheManifest,
   "data/regions/index.json": testRegionIndex,
   "data/regions/seoul-mapo-gongdeok.json": seoulRegion,
-  "data/regions/gyeonggi-seongnam-jeongja.json": gyeonggiRegion,
+  "data/regions/gyeonggi-seongnam-jeongja.json": gyeonggiRegionWithGovernor,
   "data/regions/busan-haeundae-woojedong.json": busanRegion,
 };
 
@@ -67,6 +87,26 @@ describe("local election guide static experience", () => {
     expect(await screen.findByRole("heading", { name: "백서연" })).toBeInTheDocument();
     expect(screen.getByText("교육·돌봄")).toBeInTheDocument();
     expect(screen.queryByText("한지우")).not.toBeInTheDocument();
+  });
+
+  it("uses the preferred default residence and stable city ordering", async () => {
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "서울특별시 마포구 공덕동에서 투표할 후보" });
+
+    const cityOptions = within(screen.getByLabelText("시도")).getAllByRole("option").map((option) => option.textContent);
+    expect(cityOptions).toEqual(["서울특별시", "부산광역시", "경기도"]);
+  });
+
+  it("selects a region through search", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const searchbox = await screen.findByLabelText("지역 검색");
+    await user.type(searchbox, "부산 해운대");
+    await user.click(screen.getByRole("button", { name: "지역 검색 적용" }));
+
+    expect(await screen.findByRole("heading", { name: "부산광역시 해운대구 우제1동에서 투표할 후보" })).toBeInTheDocument();
   });
 
   it("opens a shared region from the URL query", async () => {
@@ -120,13 +160,18 @@ describe("local election guide static experience", () => {
     expect(within(candidateCard).getByText("전과 2건")).toBeInTheDocument();
     expect(within(candidateCard).getByText("57세")).toBeInTheDocument();
     expect(within(candidateCard).getByText("차별점")).toBeInTheDocument();
-    expect(within(candidateCard).getByText("후보 특징")).toBeInTheDocument();
-    expect(within(candidateCard).getByText("실현 가능성")).toBeInTheDocument();
+    expect(within(candidateCard).getByRole("button", { name: "정원오 차별점 더보기" })).toBeInTheDocument();
+    expect(within(candidateCard).queryByText("후보 특징")).not.toBeInTheDocument();
+    expect(within(candidateCard).queryByText("실현 가능성")).not.toBeInTheDocument();
     expect(within(candidateCard).getByText("팩트체크")).toBeInTheDocument();
     expect(within(candidateCard).getByText("선관위 제공 정보만 기반")).toBeInTheDocument();
     expect(within(candidateCard).getByText("실행 요약")).toBeInTheDocument();
     expect(within(candidateCard).getAllByText("어떻게").length).toBeGreaterThan(0);
-    expect(within(candidateCard).getByText(/서울특별시장 투표지에서/)).toBeInTheDocument();
+    expect(within(candidateCard).getByText(/정책 초점은/)).toBeInTheDocument();
+    expect(candidateCard).toHaveTextContent(/대표 공약:/);
+    expect(candidateCard).toHaveTextContent(/비교 기준: 같은 투표지 후보와 대상·재원·일정/);
+    expect(within(candidateCard).queryByText(/눈에 띄는 고유 공약:/)).not.toBeInTheDocument();
+    expect(within(candidateCard).queryByText(/NEC CDN|원문 기반 요약·비교 생성 대상|후보 사진은/)).not.toBeInTheDocument();
   });
 
   it("opens a full pledge detail view from a candidate card", async () => {
@@ -140,7 +185,11 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByText("범죄 기록")).toBeInTheDocument();
     expect(within(dialog).getByText("5대 공약")).toBeInTheDocument();
     expect(within(dialog).getByText("상대 후보와의 차별점")).toBeInTheDocument();
-    expect(within(dialog).getByText("공약 실현 가능성 검토")).toBeInTheDocument();
+    expect(within(dialog).queryByText("후보 특징")).not.toBeInTheDocument();
+    expect(within(dialog).queryByText("공약 실현 가능성 검토")).not.toBeInTheDocument();
+    expect(within(dialog).getByText(/눈에 띄는 고유 공약:/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/비교 포인트:/)).toBeInTheDocument();
+    expect(within(dialog).queryByText(/NEC CDN|원문 기반 요약·비교 생성 대상|선거구 기준:/)).not.toBeInTheDocument();
     expect(within(dialog).getByText("공약 팩트체크")).toBeInTheDocument();
     expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 5대 공약 텍스트만/)).toBeInTheDocument();
     expect(within(dialog).getByText("프롬프트 보기")).toBeInTheDocument();
@@ -159,12 +208,34 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByText(/죄명과 형량까지 자동 표시하려면/)).toBeInTheDocument();
   });
 
+  it("only opens detailed criminal records for Seoul mayor and Gyeonggi governor candidates", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const seoulMayorCard = await screen.findByRole("article", { name: /정원오 후보 카드/ });
+    expect(within(seoulMayorCard).getByRole("button", { name: "정원오 전과 기록 보기" })).toBeInTheDocument();
+
+    const educationCard = await screen.findByRole("article", { name: /김영배 후보 카드/ });
+    expect(within(educationCard).queryByRole("button", { name: "김영배 전과 기록 보기" })).not.toBeInTheDocument();
+    expect(within(educationCard).getByText("전과 3건")).toBeInTheDocument();
+
+    await user.selectOptions(screen.getByLabelText("시도"), "경기도");
+    await user.selectOptions(screen.getByLabelText("시군구"), "성남시 분당구");
+    await user.selectOptions(screen.getByLabelText("읍면동"), "정자동");
+
+    const gyeonggiGovernorCard = await screen.findByRole("article", { name: /추미애 후보 카드/ });
+    await user.click(within(gyeonggiGovernorCard).getByRole("button", { name: "추미애 전과 기록 보기" }));
+
+    expect(screen.getByRole("dialog", { name: "추미애 전과 기록" })).toBeInTheDocument();
+  });
+
   it("keeps implementation cache metadata out of the voter UI and reuses region fetches", async () => {
     render(<App />);
 
     expect(await screen.findByRole("heading", { name: "서울특별시장 후보" })).toBeInTheDocument();
     expect(screen.queryByText(cacheManifest.version)).not.toBeInTheDocument();
     expect(screen.queryByText("정적 JSON 캐시")).not.toBeInTheDocument();
+    expect(screen.queryByText(/NEC CDN|원문 기반 요약·비교 생성 대상|5대공약 PDF가 제공되어/)).not.toBeInTheDocument();
     await waitFor(() => {
       const fetchMock = vi.mocked(fetch);
       const seoulRegionCalls = fetchMock.mock.calls.filter(([url]) =>

@@ -23,6 +23,7 @@ body {
 }
 
 button,
+input,
 select {
   font: inherit;
 }
@@ -98,7 +99,7 @@ h1 {
 
 .selector-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(160px, 1fr)) auto;
+  grid-template-columns: repeat(3, minmax(150px, 1fr)) minmax(220px, 1.05fr) auto;
   gap: 14px;
   align-content: center;
   align-items: end;
@@ -116,7 +117,8 @@ h1 {
   font-weight: 800;
 }
 
-.field select {
+.field select,
+.field input {
   width: 100%;
   min-height: 46px;
   padding: 0 38px 0 12px;
@@ -126,9 +128,24 @@ h1 {
   border-radius: 8px;
 }
 
+.region-search-field {
+  min-width: 0;
+}
+
+.region-search-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 46px;
+  gap: 8px;
+}
+
+.region-search-control input {
+  min-width: 0;
+  padding-right: 12px;
+}
+
 .profile-switch {
   display: grid;
-  grid-column: 1 / 4;
+  grid-column: 1 / 5;
   gap: 8px;
 }
 
@@ -147,6 +164,7 @@ h1 {
 .profile-switch button,
 .text-mode__button,
 .race-list button,
+.region-search-control button,
 .share-button,
 .open-button,
 .icon-button {
@@ -189,6 +207,14 @@ h1 {
   color: #ffffff;
   background: #0f766e;
   border-color: #0f766e;
+}
+
+.region-search-control button {
+  display: inline-grid;
+  place-items: center;
+  min-height: 46px;
+  color: #ffffff;
+  background: #0f766e;
 }
 
 .share-button {
@@ -536,6 +562,10 @@ h1 {
   font-weight: 900;
 }
 
+.record-pill--static {
+  cursor: default;
+}
+
 .record-pill--clean {
   color: #116149;
   background: #def7ec;
@@ -555,6 +585,7 @@ h1 {
   margin-bottom: 0;
   color: #33403d;
   line-height: 1.58;
+  overflow-wrap: anywhere;
 }
 
 .card-section {
@@ -594,9 +625,29 @@ h1 {
 
 .card-section li,
 .difference-list li {
-  margin-top: 7px;
+  margin-top: 8px;
   color: #3d4844;
-  line-height: 1.45;
+  line-height: 1.58;
+  overflow-wrap: anywhere;
+}
+
+.inline-more-button {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  color: #0f5f53;
+  background: transparent;
+  border: 0;
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.inline-more-button--standalone {
+  margin-top: 2px;
+  padding-top: 2px;
 }
 
 .pledge-action-list {
@@ -632,7 +683,24 @@ h1 {
   line-height: 1.48;
 }
 
-.pledge-action p span,
+.expandable-copy {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.expandable-copy span {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.expandable-copy .inline-more-button {
+  margin-left: 6px;
+}
+
+.pledge-action p > span:first-child,
 .full-pledges em {
   width: fit-content;
   height: fit-content;
@@ -655,12 +723,7 @@ h1 {
   margin-bottom: 0;
   color: #20332e;
   font-weight: 800;
-  line-height: 1.45;
-}
-
-.trait-summary {
-  background: #f8fafc;
-  border-color: #d8e1e8;
+  line-height: 1.58;
 }
 
 .feasibility-summary {

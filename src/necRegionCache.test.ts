@@ -318,12 +318,14 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates[0].comparisonDetails[0]).toContain("비교 후보");
     expect(dataset.candidates[0].comparisonDetails.join(" ")).not.toContain("공통 경쟁 분야");
     expect(dataset.candidates[0].comparisonDetails.join(" ")).not.toContain("비교 범위");
-    expect(dataset.candidates.flatMap((candidate) => candidate.comparisonDetails).join(" ")).not.toContain("후보 사진");
+    const comparisonDetailsText = dataset.candidates.flatMap((candidate) => candidate.comparisonDetails).join(" ");
+    expect(comparisonDetailsText).not.toContain("후보 사진");
+    expect(comparisonDetailsText).not.toContain("NEC CDN");
+    expect(comparisonDetailsText).not.toContain("원문 기반 요약");
     expect(dataset.candidates[0].candidateTraits).toEqual(
       expect.arrayContaining(["더불어민주당 소속", expect.stringContaining("주요 경력:")]),
     );
-    expect(dataset.candidates[0].feasibilityReview?.summary).toBe("원문 근거로 추가 검토 가능");
-    expect(dataset.candidates[0].feasibilityReview?.details.join(" ")).toContain("재원 단서");
+    expect("feasibilityReview" in dataset.candidates[0]).toBe(false);
     expect(dataset.candidates[0].pledgeHighlights).toEqual(["서울 교통망 재편", "청년 주거 지원"]);
     expect(dataset.candidates[0].fullPledges[0].detail).toBe("버스와 지하철 환승 체계를 시비로 개편합니다.");
     expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.publicRecord).toContain("선거공보 PDF 있음");
