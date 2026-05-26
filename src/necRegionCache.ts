@@ -379,16 +379,12 @@ function buildCriminalRecord(isPartyVote: boolean, disclosure?: NecCandidateInfo
     };
   }
 
+  const summary = isCrimeRecordClean(disclosure.crimeRecord) ? "전과 없음" : `전과 ${disclosure.crimeRecord}`;
+
   return {
-    summary: isCrimeRecordClean(disclosure.crimeRecord) ? "전과 없음" : `전과 ${disclosure.crimeRecord}`,
-    details: [
-      `선거통계시스템 후보자 명부 기준 전과기록유무(건수): ${disclosure.crimeRecord}.`,
-      disclosure.crimeDisclosureFiles.length > 0
-        ? `전과 증명서 스캔 파일 ${disclosure.crimeDisclosureFiles.length}건이 공개되어 있습니다.`
-        : "전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-    ].join(" "),
+    summary,
+    details: `선거통계시스템 후보자 명부 기준 ${summary}.`,
     tone: isCrimeRecordClean(disclosure.crimeRecord) ? "clean" : "risk",
-    disclosureFiles: disclosure.crimeDisclosureFiles,
   };
 }
 

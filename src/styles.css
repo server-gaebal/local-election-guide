@@ -1098,20 +1098,6 @@ h1 {
   white-space: nowrap;
 }
 
-.scan-file-list {
-  display: grid;
-  gap: 8px;
-  margin: 0;
-  padding-left: 1.1rem;
-}
-
-.scan-file-list li {
-  overflow-wrap: anywhere;
-  color: #3d4844;
-  font-size: 0.86rem;
-  line-height: 1.45;
-}
-
 @media (max-width: 1180px) {
   .workspace {
     grid-template-columns: 180px minmax(0, 1fr);

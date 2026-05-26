@@ -294,7 +294,6 @@ export function App() {
   const [largeText, setLargeText] = useState(false);
   const [ballotFilter, setBallotFilter] = useState<BallotFilter>(allRaces);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
-  const [crimeCandidate, setCrimeCandidate] = useState<Candidate | null>(null);
   const [shareStatus, setShareStatus] = useState<"idle" | "done">("idle");
 
   useEffect(() => {
@@ -440,7 +439,6 @@ export function App() {
     replaceResidenceInUrl(nextResidence.id);
     setBallotFilter(allRaces);
     setSelectedCandidate(null);
-    setCrimeCandidate(null);
     setShareStatus("idle");
     setRegionSearch(options?.searchLabel ?? "");
   };
@@ -752,7 +750,6 @@ export function App() {
                         ballotCandidates={group.candidates}
                         profile={profile}
                         onOpen={() => setSelectedCandidate(candidate)}
-                        onOpenCrime={() => setCrimeCandidate(candidate)}
                       />
                     ))}
                   </div>
@@ -784,7 +781,6 @@ export function App() {
         />
       ) : null}
 
-      {crimeCandidate ? <CrimeRecordDialog candidate={crimeCandidate} onClose={() => setCrimeCandidate(null)} /> : null}
     </main>
   );
 }
@@ -989,10 +985,6 @@ function formatPolicyLeadList(policyLeads: string[], limit = 2) {
   return policyLeads.slice(0, limit).join(", ");
 }
 
-function hasDetailedCriminalRecord(candidate: Candidate) {
-  return candidate.office === "서울특별시장" || candidate.office === "경기도지사";
-}
-
 function ExpandableText({
   text,
   label,
@@ -1098,13 +1090,11 @@ function CandidateCard({
   ballotCandidates,
   profile,
   onOpen,
-  onOpenCrime,
 }: {
   candidate: Candidate;
   ballotCandidates: Candidate[];
   profile: VoterProfile;
   onOpen: () => void;
-  onOpenCrime: () => void;
 }) {
   const comparisonPreview = getVoterComparisonPreview(candidate, ballotCandidates);
   const comparisonCardDetails = getVoterComparisonCardDetails(candidate, ballotCandidates);
@@ -1134,22 +1124,10 @@ function CandidateCard({
         <span>{candidate.occupation}</span>
       </div>
 
-      {hasDetailedCriminalRecord(candidate) ? (
-        <button
-          type="button"
-          className={`record-pill record-pill--${candidate.criminalRecord.tone}`}
-          onClick={onOpenCrime}
-          aria-label={`${candidate.name} 전과 기록 보기`}
-        >
-          {getCandidateToneIcon(candidate)}
-          <span>{candidate.criminalRecord.summary}</span>
-        </button>
-      ) : (
-        <span className={`record-pill record-pill--static record-pill--${candidate.criminalRecord.tone}`}>
-          {getCandidateToneIcon(candidate)}
-          <span>{candidate.criminalRecord.summary}</span>
-        </span>
-      )}
+      <span className={`record-pill record-pill--static record-pill--${candidate.criminalRecord.tone}`}>
+        {getCandidateToneIcon(candidate)}
+        <span>{candidate.criminalRecord.summary}</span>
+      </span>
 
       <div className="tag-row">
         {candidate.focusTags.map((tag) => (
@@ -1313,8 +1291,8 @@ function CandidateDialog({
 
         <div className="dialog-body">
           <section className="detail-section">
-            <h3>범죄 기록</h3>
-            <p>{candidate.criminalRecord.details}</p>
+            <h3>후보자 공개 정보</h3>
+            <p>{candidate.criminalRecord.summary}</p>
             <div className="public-records">
               {candidate.publicRecord.map((record) => (
                 <span key={record}>{record}</span>
@@ -1432,64 +1410,6 @@ function CandidateDialog({
           <footer className="dialog-source">
             <FileText aria-hidden="true" size={16} />
             <span>선관위 정책공약마당 · 후보자 정보공개</span>
-            <strong>{candidate.cache.normalizedAt.slice(0, 10)}</strong>
-          </footer>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function CrimeRecordDialog({ candidate, onClose }: { candidate: Candidate; onClose: () => void }) {
-  const disclosureFiles = candidate.criminalRecord.disclosureFiles ?? [];
-
-  return (
-    <div className="dialog-backdrop">
-      <section
-        className="candidate-dialog crime-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="crime-dialog-title"
-      >
-        <header className="dialog-header">
-          <div>
-            <p className="eyebrow">{candidate.office}</p>
-            <h2 id="crime-dialog-title">{candidate.name} 전과 기록</h2>
-          </div>
-          <button type="button" className="icon-button" aria-label="닫기" onClick={onClose}>
-            <X aria-hidden="true" size={18} />
-          </button>
-        </header>
-
-        <div className="dialog-body">
-          <section className="detail-section">
-            <h3>{candidate.criminalRecord.summary}</h3>
-            <p>{candidate.criminalRecord.details}</p>
-          </section>
-
-          {disclosureFiles.length > 0 ? (
-            <section className="detail-section">
-              <h3>전과 증명서 원문</h3>
-              <p>선관위 후보자 정보공개에서 스캔 원문 {disclosureFiles.length}건이 확인됐습니다.</p>
-              <ul className="scan-file-list">
-                {disclosureFiles.map((filePath) => (
-                  <li key={filePath}>{filePath}</li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-
-          <section className="detail-section">
-            <h3>확인 범위</h3>
-            <p>
-              현재 화면은 선거통계시스템 후보자 명부의 전과기록유무 건수를 반영합니다. 죄명과 형량까지 자동
-              표시하려면 스캔 원문 OCR 단계를 추가해야 합니다.
-            </p>
-          </section>
-
-          <footer className="dialog-source">
-            <FileText aria-hidden="true" size={16} />
-            <span>선관위 후보자 정보공개</span>
             <strong>{candidate.cache.normalizedAt.slice(0, 10)}</strong>
           </footer>
         </div>
