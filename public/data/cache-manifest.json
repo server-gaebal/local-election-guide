@@ -1,12 +1,12 @@
 {
-  "version": "mock-cache-2026-05-26",
-  "generatedAt": "2026-05-26T12:45:00+09:00",
-  "sourceName": "Mock normalized cache for NEC 5 pledge PDFs",
+  "version": "mixed-nec-cache-2026-05-26",
+  "generatedAt": "2026-05-26T13:50:00+09:00",
+  "sourceName": "NEC policy cache with mock fallbacks",
   "sourceUrl": "https://policy.nec.go.kr/",
-  "dataMode": "mock",
+  "dataMode": "mixed",
   "nec": {
     "electionId": "20260603",
-    "subElectionId": "320260603",
+    "subElectionId": "all-local-races",
     "endpoints": {
       "region": "https://policy.nec.go.kr/plc/commiment/initUCACommimentRegion.do",
       "gu": "https://policy.nec.go.kr/plc/commiment/initUCACommimentGu.do",
@@ -19,10 +19,10 @@
     {
       "id": "seoul-mapo-gongdeok",
       "file": "data/regions/seoul-mapo-gongdeok.json",
-      "cacheKey": "residence:seoul:mapo:gongdeok:v0",
-      "candidateCount": 10,
-      "updatedAt": "2026-05-26 11:30 KST",
-      "contentHash": "0e59a4e0b2cfa094ae4b80a8ab6e8e08a4904460c4bbe483d5a5c5bd4913ac4d"
+      "cacheKey": "nec:policy:20260603:seoul-mapo-gongdeok:v1",
+      "candidateCount": 42,
+      "updatedAt": "2026-05-26 13:50 KST",
+      "contentHash": "98ad9dbb348d53a401fa7b4343637e83840d8e082fa43c3391bdc6df194cdcca"
     },
     {
       "id": "gyeonggi-seongnam-jeongja",
@@ -30,7 +30,7 @@
       "cacheKey": "residence:gyeonggi:seongnam:jeongja:v0",
       "candidateCount": 2,
       "updatedAt": "2026-05-26 11:30 KST",
-      "contentHash": "b0e4ddc2b9d72e643d949ba9d3577f41c9aba9a1b9a7eb09162925b287aa637e"
+      "contentHash": "4912ddb6fbee32f268b1dd7f3427e17f2f4c515116c3aa8ed87405b4453cd548"
     },
     {
       "id": "busan-haeundae-woojedong",
@@ -38,7 +38,7 @@
       "cacheKey": "residence:busan:haeundae:wooje1:v0",
       "candidateCount": 1,
       "updatedAt": "2026-05-26 11:30 KST",
-      "contentHash": "e4978494bdf4749a47689222b7f257b6636155540862f62e1fc16920c3ee7b5d"
+      "contentHash": "b88ab1864d9d8c76a79e3256992a8d40238d1e9f86b5baf02a92e4efaed7ea31"
     }
   ]
 }

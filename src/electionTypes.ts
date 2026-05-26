@@ -26,6 +26,7 @@ export type Candidate = {
   residenceId: string;
   name: string;
   number: number;
+  numberLabel?: string;
   party: string;
   race: RaceType;
   office: string;

@@ -82,7 +82,7 @@
   ],
   "source": {
     "mode": "mock",
-    "generatedAt": "2026-05-26T12:45:00+09:00",
+    "generatedAt": "2026-05-26T13:50:00+09:00",
     "sourceName": "Mock normalized cache for NEC 5 pledge PDFs",
     "sourceUrl": "https://policy.nec.go.kr/",
     "pdfCount": 1

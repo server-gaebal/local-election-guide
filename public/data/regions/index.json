@@ -11,8 +11,8 @@
       "city": "서울특별시",
       "district": "마포구",
       "neighborhood": "공덕동",
-      "cacheKey": "residence:seoul:mapo:gongdeok:v0",
-      "cachedAt": "2026-05-26 11:30 KST"
+      "cacheKey": "nec:policy:20260603:seoul-mapo-gongdeok:v1",
+      "cachedAt": "2026-05-26 13:50 KST"
     },
     {
       "id": "gyeonggi-seongnam-jeongja",

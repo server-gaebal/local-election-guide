@@ -1,8 +1,6 @@
 import {
-  BadgeCheck,
   ChevronRight,
   CircleAlert,
-  Database,
   FileText,
   Filter,
   Landmark,
@@ -12,6 +10,7 @@ import {
   UserRound,
   Vote,
   X,
+  ZoomIn,
 } from "lucide-react";
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
@@ -111,6 +110,7 @@ export function App() {
   const [district, setDistrict] = useState("");
   const [neighborhood, setNeighborhood] = useState("");
   const [profile, setProfile] = useState<VoterProfile>("청년");
+  const [largeText, setLargeText] = useState(false);
   const [ballotFilter, setBallotFilter] = useState<BallotFilter>(allRaces);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
 
@@ -232,6 +232,7 @@ export function App() {
 
   const comparisonLines = visibleCandidates.flatMap((candidate) =>
     candidate.comparisonDetails.slice(0, 1).map((detail) => ({
+      id: `${candidate.id}:${detail}`,
       candidate: candidate.name,
       detail,
     })),
@@ -271,6 +272,14 @@ export function App() {
     setSelectedCandidate(null);
   };
 
+  const handleProfileChange = (nextProfile: VoterProfile) => {
+    setProfile(nextProfile);
+
+    if (nextProfile === "고령층") {
+      setLargeText(true);
+    }
+  };
+
   if (loadError) {
     return (
       <main className="app-shell">
@@ -294,38 +303,20 @@ export function App() {
   }
 
   return (
-    <main className="app-shell">
+    <main className={largeText ? "app-shell app-shell--large-text" : "app-shell"}>
       <header className="topbar">
         <div className="brand-lockup">
           <span className="brand-mark" aria-hidden="true">
             <Vote size={24} />
           </span>
           <div>
-            <p className="eyebrow">{manifest.dataMode === "mock" ? "STATIC MOCK DATA" : "NEC STATIC DATA"}</p>
+            <p className="eyebrow">{getDataModeLabel(manifest.dataMode)}</p>
             <h1>지방선거 가이드</h1>
           </div>
-        </div>
-        <div className="cache-strip" aria-label="캐시 상태">
-          <Database aria-hidden="true" size={16} />
-          <span>정적 JSON 캐시</span>
-          <strong>{manifest.version}</strong>
         </div>
       </header>
 
       <section className="selector-band" aria-label="유권자 조건">
-        <div className="civic-visual" aria-hidden="true">
-          <div className="civic-visual__map">
-            <span className="map-pin map-pin--primary" />
-            <span className="map-pin map-pin--secondary" />
-            <span className="map-route" />
-          </div>
-          <div className="ballot-stack">
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-
         <div className="selector-grid">
           <label className="field">
             <span>시도</span>
@@ -372,12 +363,24 @@ export function App() {
                   type="button"
                   aria-label={item}
                   className={item === profile ? "is-active" : ""}
-                  onClick={() => setProfile(item)}
+                  onClick={() => handleProfileChange(item)}
                 >
                   {item}
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="text-mode">
+            <button
+              type="button"
+              aria-pressed={largeText}
+              className={largeText ? "text-mode__button is-active" : "text-mode__button"}
+              onClick={() => setLargeText((enabled) => !enabled)}
+            >
+              <ZoomIn aria-hidden="true" size={17} />
+              <span>큰 글씨</span>
+            </button>
           </div>
         </div>
       </section>
@@ -397,11 +400,6 @@ export function App() {
           <UserRound aria-hidden="true" size={18} />
           <span>후보자</span>
           <strong>{totalCandidateCount}명</strong>
-        </div>
-        <div className="status-tile status-tile--cache">
-          <Database aria-hidden="true" size={18} />
-          <span>지역 캐시</span>
-          <strong>{selectedResidence.cacheKey}</strong>
         </div>
       </section>
 
@@ -428,10 +426,6 @@ export function App() {
                 </button>
               );
             })}
-          </div>
-          <div className="cache-note">
-            <BadgeCheck aria-hidden="true" size={16} />
-            <span>{selectedResidence.cachedAt}</span>
           </div>
         </aside>
 
@@ -473,8 +467,8 @@ export function App() {
             </div>
           ) : (
             <div className="region-loading" aria-live="polite">
-              <Database aria-hidden="true" size={18} />
-              <span>{selectedResidence.cacheKey} 로딩 중</span>
+              <FileText aria-hidden="true" size={18} />
+              <span>후보자 자료 불러오는 중</span>
             </div>
           )}
         </section>
@@ -486,7 +480,7 @@ export function App() {
           </div>
           <div className="comparison-list">
             {comparisonLines.map((line) => (
-              <div className="comparison-row" key={`${line.candidate}-${line.detail}`}>
+              <div className="comparison-row" key={line.id}>
                 <strong>{line.candidate}</strong>
                 <span>{line.detail}</span>
               </div>
@@ -524,11 +518,11 @@ function CandidateCard({
           <h3>{candidate.name}</h3>
           <strong className="party-name">{candidate.party}</strong>
         </div>
-        <strong className="ballot-number">기호 {candidate.number}</strong>
+        <strong className="ballot-number">{candidate.numberLabel ?? `기호 ${candidate.number}`}</strong>
       </header>
 
       <div className="meta-row">
-        <span>{candidate.age}세</span>
+        <span>{candidate.age > 0 ? `${candidate.age}세` : "연령 정보 확인 필요"}</span>
         <span>{candidate.occupation}</span>
       </div>
 
@@ -571,6 +565,18 @@ function CandidateCard({
       </button>
     </article>
   );
+}
+
+function getDataModeLabel(mode: CacheManifest["dataMode"]) {
+  if (mode === "mock") {
+    return "시제품 데이터";
+  }
+
+  if (mode === "mixed") {
+    return "선관위 자료 기반";
+  }
+
+  return "선관위 자료 기반";
 }
 
 function CandidatePhoto({ candidate }: { candidate: Candidate }) {
@@ -662,9 +668,9 @@ function CandidateDialog({
           </section>
 
           <footer className="dialog-source">
-            <Database aria-hidden="true" size={16} />
-            <span>{candidate.cache.policyPdf}</span>
-            <strong>{candidate.cache.normalizedAt}</strong>
+            <FileText aria-hidden="true" size={16} />
+            <span>선관위 정책공약마당 · 후보자 정보공개</span>
+            <strong>{candidate.cache.normalizedAt.slice(0, 10)}</strong>
           </footer>
         </div>
       </section>

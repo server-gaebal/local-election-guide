@@ -5,12 +5,14 @@ export type CacheManifest = {
   generatedAt: string;
   sourceName: string;
   sourceUrl: string;
-  dataMode: "mock" | "nec";
+  dataMode: "mock" | "nec" | "mixed";
   nec: {
     electionId: string;
     subElectionId: string;
     endpoints: {
       region: string;
+      gu: string;
+      district: string;
       list: string;
       download: string;
     };
