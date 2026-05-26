@@ -74,8 +74,11 @@ async function buildNecRegionDatasets(nextResidences: typeof residences) {
     readJsonFile<NecDownloadsCache>("data/nec/full/downloads.json"),
   ]);
   const downloads = await buildNecDownloadIndex(downloadsCache);
-  const candidateInfo = (await pathExists("data/nec/info/selected-candidates.json"))
-    ? createCandidateInfoIndex((await readJsonFile<NecCandidateInfoCache>("data/nec/info/selected-candidates.json")).records)
+  const candidateInfoPath = (await pathExists("data/nec/info/all-candidates.json"))
+    ? "data/nec/info/all-candidates.json"
+    : "data/nec/info/selected-candidates.json";
+  const candidateInfo = (await pathExists(candidateInfoPath))
+    ? createCandidateInfoIndex((await readJsonFile<NecCandidateInfoCache>(candidateInfoPath)).records)
     : new Map();
   const seoulMapo = nextResidences.find((residence) => residence.id === "seoul-mapo-gongdeok");
 
@@ -161,4 +164,13 @@ await writeJson("public/data/cache-manifest.json", {
   regions: regions.map((region) => region.manifestEntry),
 });
 
+await writeOptionalPublicJsonCopy("data/nec/info/election-districts.json", "public/data/nec/election-districts.json");
+await writeOptionalPublicJsonCopy("data/nec/info/all-candidates.json", "public/data/nec/all-candidates.json");
+
 console.log(`Wrote ${regions.length} region shards to public/data`);
+
+async function writeOptionalPublicJsonCopy(sourcePath: string, targetPath: string) {
+  if (await pathExists(sourcePath)) {
+    await writeJson(targetPath, await readJsonFile<unknown>(sourcePath));
+  }
+}

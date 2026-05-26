@@ -1,5 +1,6 @@
 node_modules/
 dist/
+public/data/nec/
 .lazyweb/
 *.tsbuildinfo
 vite.config.js
