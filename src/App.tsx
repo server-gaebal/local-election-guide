@@ -14,16 +14,21 @@ import {
   X,
 } from "lucide-react";
 import type { CSSProperties } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  loadCacheManifest,
+  loadRegionDataset,
+  loadRegionIndex,
+  type CacheManifest,
+  type RegionDataset,
+  type RegionIndex,
+} from "./dataLoader";
 import {
   type Candidate,
   type RaceType,
   type Residence,
   type VoterProfile,
-  candidates,
-  residences,
-  voterProfiles,
-} from "./mockData";
+} from "./electionTypes";
 
 const allRaces = "전체";
 type BallotFilter = typeof allRaces | string;
@@ -56,8 +61,8 @@ function getCandidateToneIcon(candidate: Candidate) {
   return <CircleAlert aria-hidden="true" size={16} />;
 }
 
-function findInitialResidence(): Residence {
-  return residences[0];
+function findInitialResidence(residences: Residence[]): Residence | null {
+  return residences[0] ?? null;
 }
 
 function getBallotId(candidate: Candidate) {
@@ -98,15 +103,54 @@ function createBallotGroups(candidateList: Candidate[]): BallotGroup[] {
 }
 
 export function App() {
-  const initialResidence = findInitialResidence();
-  const [city, setCity] = useState(initialResidence.city);
-  const [district, setDistrict] = useState(initialResidence.district);
-  const [neighborhood, setNeighborhood] = useState(initialResidence.neighborhood);
+  const [manifest, setManifest] = useState<CacheManifest | null>(null);
+  const [regionIndex, setRegionIndex] = useState<RegionIndex | null>(null);
+  const [regionDataset, setRegionDataset] = useState<RegionDataset | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
   const [profile, setProfile] = useState<VoterProfile>("청년");
   const [ballotFilter, setBallotFilter] = useState<BallotFilter>(allRaces);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
 
-  const cities = useMemo(() => unique(residences.map((residence) => residence.city)), []);
+  useEffect(() => {
+    let isActive = true;
+
+    Promise.all([loadCacheManifest(), loadRegionIndex()])
+      .then(([nextManifest, nextRegionIndex]) => {
+        if (!isActive) {
+          return;
+        }
+
+        const nextResidence = findInitialResidence(nextRegionIndex.residences);
+        setManifest(nextManifest);
+        setRegionIndex(nextRegionIndex);
+
+        if (nextResidence) {
+          setCity(nextResidence.city);
+          setDistrict(nextResidence.district);
+          setNeighborhood(nextResidence.neighborhood);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!isActive) {
+          return;
+        }
+
+        setLoadError(error instanceof Error ? error.message : "정적 데이터를 불러오지 못했습니다.");
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const residences = regionIndex?.residences ?? [];
+  const voterProfiles = regionIndex?.voterProfiles ?? [];
+  const initialResidence = findInitialResidence(residences);
+
+  const cities = useMemo(() => unique(residences.map((residence) => residence.city)), [residences]);
   const districts = useMemo(
     () => unique(residences.filter((residence) => residence.city === city).map((residence) => residence.district)),
     [city],
@@ -129,9 +173,39 @@ export function App() {
         residence.neighborhood === neighborhood,
     ) ?? initialResidence;
 
+  useEffect(() => {
+    if (!selectedResidence) {
+      return;
+    }
+
+    let isActive = true;
+    setRegionDataset(null);
+
+    loadRegionDataset(selectedResidence.id)
+      .then((nextRegionDataset) => {
+        if (isActive) {
+          setRegionDataset(nextRegionDataset);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!isActive) {
+          return;
+        }
+
+        setLoadError(error instanceof Error ? error.message : "지역 후보 데이터를 불러오지 못했습니다.");
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [selectedResidence?.id]);
+
   const regionalCandidates = useMemo(
-    () => candidates.filter((candidate) => candidate.residenceId === selectedResidence.id),
-    [selectedResidence.id],
+    () =>
+      regionDataset && selectedResidence && regionDataset.residence.id === selectedResidence.id
+        ? regionDataset.candidates
+        : [],
+    [regionDataset, selectedResidence?.id],
   );
 
   const ballotGroups = useMemo(() => createBallotGroups(regionalCandidates), [regionalCandidates]);
@@ -165,6 +239,10 @@ export function App() {
 
   const handleCityChange = (nextCity: string) => {
     const nextResidence = residences.find((residence) => residence.city === nextCity) ?? initialResidence;
+    if (!nextResidence) {
+      return;
+    }
+
     setCity(nextResidence.city);
     setDistrict(nextResidence.district);
     setNeighborhood(nextResidence.neighborhood);
@@ -176,6 +254,11 @@ export function App() {
     const nextResidence =
       residences.find((residence) => residence.city === city && residence.district === nextDistrict) ??
       initialResidence;
+
+    if (!nextResidence) {
+      return;
+    }
+
     setDistrict(nextResidence.district);
     setNeighborhood(nextResidence.neighborhood);
     setBallotFilter(allRaces);
@@ -188,6 +271,28 @@ export function App() {
     setSelectedCandidate(null);
   };
 
+  if (loadError) {
+    return (
+      <main className="app-shell">
+        <section className="load-state" role="alert">
+          <h1>데이터를 불러오지 못했습니다</h1>
+          <p>{loadError}</p>
+        </section>
+      </main>
+    );
+  }
+
+  if (!manifest || !regionIndex || !selectedResidence) {
+    return (
+      <main className="app-shell">
+        <section className="load-state">
+          <h1>지방선거 가이드</h1>
+          <p>정적 JSON 캐시를 불러오는 중입니다.</p>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -196,14 +301,14 @@ export function App() {
             <Vote size={24} />
           </span>
           <div>
-            <p className="eyebrow">MOCK DATA</p>
+            <p className="eyebrow">{manifest.dataMode === "mock" ? "STATIC MOCK DATA" : "NEC STATIC DATA"}</p>
             <h1>지방선거 가이드</h1>
           </div>
         </div>
         <div className="cache-strip" aria-label="캐시 상태">
           <Database aria-hidden="true" size={16} />
-          <span>필터 캐시 HIT</span>
-          <strong>{selectedResidence.cacheKey}</strong>
+          <span>정적 JSON 캐시</span>
+          <strong>{manifest.version}</strong>
         </div>
       </header>
 
@@ -277,6 +382,29 @@ export function App() {
         </div>
       </section>
 
+      <section className="status-band" aria-label="선택 요약">
+        <div className="status-tile">
+          <MapPin aria-hidden="true" size={18} />
+          <span>선택 주소</span>
+          <strong>{`${selectedResidence.city} ${selectedResidence.district} ${selectedResidence.neighborhood}`}</strong>
+        </div>
+        <div className="status-tile">
+          <Vote aria-hidden="true" size={18} />
+          <span>받는 투표지</span>
+          <strong>{ballotGroups.length}종</strong>
+        </div>
+        <div className="status-tile">
+          <UserRound aria-hidden="true" size={18} />
+          <span>후보자</span>
+          <strong>{totalCandidateCount}명</strong>
+        </div>
+        <div className="status-tile status-tile--cache">
+          <Database aria-hidden="true" size={18} />
+          <span>지역 캐시</span>
+          <strong>{selectedResidence.cacheKey}</strong>
+        </div>
+      </section>
+
       <section className="workspace">
         <aside className="filter-rail" aria-label="투표지 필터">
           <div className="rail-title">
@@ -319,29 +447,36 @@ export function App() {
             </div>
           </div>
 
-          <div className="candidate-sections">
-            {visibleBallotGroups.map((group) => (
-              <section className="ballot-section" key={group.id} aria-labelledby={`${group.id}-title`}>
-                <header className="ballot-section__header">
-                  <div>
-                    <p>{group.race}</p>
-                    <h3 id={`${group.id}-title`}>{group.title}</h3>
+          {regionDataset ? (
+            <div className="candidate-sections">
+              {visibleBallotGroups.map((group) => (
+                <section className="ballot-section" key={group.id} aria-labelledby={`${group.id}-title`}>
+                  <header className="ballot-section__header">
+                    <div>
+                      <p>{group.race}</p>
+                      <h3 id={`${group.id}-title`}>{group.title}</h3>
+                    </div>
+                    <span>{group.candidates.length}명</span>
+                  </header>
+                  <div className="candidate-grid">
+                    {group.candidates.map((candidate) => (
+                      <CandidateCard
+                        key={candidate.id}
+                        candidate={candidate}
+                        profile={profile}
+                        onOpen={() => setSelectedCandidate(candidate)}
+                      />
+                    ))}
                   </div>
-                  <span>{group.candidates.length}명</span>
-                </header>
-                <div className="candidate-grid">
-                  {group.candidates.map((candidate) => (
-                    <CandidateCard
-                      key={candidate.id}
-                      candidate={candidate}
-                      profile={profile}
-                      onOpen={() => setSelectedCandidate(candidate)}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
+                </section>
+              ))}
+            </div>
+          ) : (
+            <div className="region-loading" aria-live="polite">
+              <Database aria-hidden="true" size={18} />
+              <span>{selectedResidence.cacheKey} 로딩 중</span>
+            </div>
+          )}
         </section>
 
         <aside className="comparison-panel" aria-label="요약 비교">
@@ -359,7 +494,7 @@ export function App() {
           </div>
           <div className="source-box">
             <FileText aria-hidden="true" size={16} />
-            <span>NEC 5대 공약 PDF 수집 전 mock 원문 캐시</span>
+            <span>{regionDataset?.source.sourceName ?? manifest.sourceName}</span>
           </div>
         </aside>
       </section>

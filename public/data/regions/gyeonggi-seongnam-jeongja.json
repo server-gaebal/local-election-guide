@@ -1,0 +1,161 @@
+{
+  "residence": {
+    "id": "gyeonggi-seongnam-jeongja",
+    "city": "경기도",
+    "district": "성남시 분당구",
+    "neighborhood": "정자동",
+    "cacheKey": "residence:gyeonggi:seongnam:jeongja:v0",
+    "cachedAt": "2026-05-26 11:30 KST"
+  },
+  "candidates": [
+    {
+      "id": "baek-seoyeon",
+      "residenceId": "gyeonggi-seongnam-jeongja",
+      "name": "백서연",
+      "number": 1,
+      "party": "경기돌봄연합",
+      "race": "광역의원",
+      "office": "경기도의원 성남 분당3",
+      "age": 43,
+      "occupation": "아동정책 변호사",
+      "color": "#2563eb",
+      "criminalRecord": {
+        "summary": "전과 0건",
+        "details": "모의 데이터 기준 범죄 경력 신고 없음",
+        "tone": "clean"
+      },
+      "publicRecord": [
+        "체납 없음",
+        "병역 해당 없음",
+        "재산 10.2억"
+      ],
+      "focusTags": [
+        "교육·돌봄",
+        "교통",
+        "공공의료"
+      ],
+      "pledgeSummary": "학원·돌봄·통학 이동을 하나의 생활권 문제로 보고 도 예산을 끌어오는 공약입니다.",
+      "pledgeHighlights": [
+        "정자동 초등 돌봄 저녁 8시까지 확대",
+        "판교·정자 통학 셔틀 안전 인증제",
+        "소아 야간 진료 협력 병원 지원"
+      ],
+      "comparison": "돌봄 공약은 가장 촘촘하지만, 산업·상권 공약은 박준모 후보보다 범위가 좁습니다.",
+      "comparisonDetails": [
+        "돌봄 시간과 통학 안전의 실행 단위가 구체적입니다.",
+        "교통은 어린이 이동에 집중되어 일반 출퇴근 대책은 제한적입니다.",
+        "예산은 도비 매칭 전제를 두고 있어 중앙·시 협의가 관건입니다."
+      ],
+      "fullPledges": [
+        {
+          "title": "저녁 돌봄 확대",
+          "detail": "정자동 초등학교와 공공시설을 묶어 저녁 8시까지 돌봄 공백을 줄입니다."
+        },
+        {
+          "title": "통학 셔틀 인증",
+          "detail": "민간 셔틀 차량의 안전 교육, 보험, 운행 기록을 인증하는 제도를 도 조례로 추진합니다."
+        },
+        {
+          "title": "소아 야간 진료",
+          "detail": "소아 야간 진료를 맡는 협력 병원에 인건비와 장비비를 지원합니다."
+        },
+        {
+          "title": "분당형 방과후 바우처",
+          "detail": "저소득·맞벌이 가정의 방과후 수업 부담을 줄이는 바우처를 시범 운영합니다."
+        },
+        {
+          "title": "학교 앞 30km/h 실측",
+          "detail": "학교 주변 차량 속도 데이터를 공개하고 과속 구간에 우선 시설 개선을 시행합니다."
+        }
+      ],
+      "profileRelevance": {
+        "청년": "직접 관련은 낮지만 야간 의료 접근성과 교통 안전은 일부 연결됩니다.",
+        "학부모": "돌봄, 통학, 소아 진료가 모두 직접 관련됩니다.",
+        "소상공인": "상권 지원은 상대적으로 약합니다.",
+        "고령층": "공공의료 접근성은 관련되지만 노인 돌봄 공약은 제한적입니다."
+      },
+      "cache": {
+        "policyPdf": "mock-cache/policy/baek-seoyeon-5pledges.pdf",
+        "normalizedAt": "2026-05-26 11:31 KST"
+      }
+    },
+    {
+      "id": "park-junmo",
+      "residenceId": "gyeonggi-seongnam-jeongja",
+      "name": "박준모",
+      "number": 2,
+      "party": "도시실용당",
+      "race": "기초단체장",
+      "office": "성남시장",
+      "age": 50,
+      "occupation": "전 공공데이터 센터장",
+      "color": "#b45309",
+      "criminalRecord": {
+        "summary": "전과 0건",
+        "details": "모의 데이터 기준 범죄 경력 신고 없음",
+        "tone": "clean"
+      },
+      "publicRecord": [
+        "체납 없음",
+        "병역 완료",
+        "재산 18.6억"
+      ],
+      "focusTags": [
+        "교통",
+        "일자리",
+        "데이터행정"
+      ],
+      "pledgeSummary": "판교·분당 출퇴근 병목과 공공데이터 기반 행정을 핵심으로 내세웁니다.",
+      "pledgeHighlights": [
+        "정자역 환승 동선 재설계",
+        "판교 스타트업 공공구매 500억",
+        "민원 데이터 공개 대시보드"
+      ],
+      "comparison": "교통·일자리 공약은 넓지만, 돌봄과 학교 안전은 백서연 후보보다 덜 구체적입니다.",
+      "comparisonDetails": [
+        "출퇴근 동선과 산업 정책의 연결이 강합니다.",
+        "공공구매 규모는 제시됐지만 기업 선정 기준은 더 필요합니다.",
+        "학부모 관련 공약은 교통 일부에 머뭅니다."
+      ],
+      "fullPledges": [
+        {
+          "title": "정자역 환승 개선",
+          "detail": "버스 정류장 재배치, 보행 동선 분리, 출퇴근 시간 신호 조정을 통합 추진합니다."
+        },
+        {
+          "title": "공공구매 500억",
+          "detail": "판교 스타트업 제품의 실증과 공공구매를 연계하는 예산을 단계적으로 확대합니다."
+        },
+        {
+          "title": "민원 공개 대시보드",
+          "detail": "동별 민원 유형, 처리 기간, 반복 민원을 공개해 행정 우선순위를 조정합니다."
+        },
+        {
+          "title": "탄천 보행 연결",
+          "detail": "탄천 산책로와 상권을 잇는 야간 조명, 공중화장실, 안내 표지 개선을 추진합니다."
+        },
+        {
+          "title": "청년 기술 인턴",
+          "detail": "지역 기업과 청년을 연결하는 6개월 기술 인턴십을 운영합니다."
+        }
+      ],
+      "profileRelevance": {
+        "청년": "기술 인턴십과 판교 일자리 공약이 직접 관련됩니다.",
+        "학부모": "정자역 환승 개선 외에는 학교·돌봄 직접 공약이 적습니다.",
+        "소상공인": "탄천 연결과 공공구매 일부가 지역 상권에 연결됩니다.",
+        "고령층": "보행 환경 개선은 관련되지만 의료·복지 공약은 약합니다."
+      },
+      "cache": {
+        "policyPdf": "mock-cache/policy/park-junmo-5pledges.pdf",
+        "normalizedAt": "2026-05-26 11:31 KST"
+      }
+    }
+  ],
+  "source": {
+    "mode": "mock",
+    "generatedAt": "2026-05-26T12:45:00+09:00",
+    "sourceName": "Mock normalized cache for NEC 5 pledge PDFs",
+    "sourceUrl": "https://policy.nec.go.kr/",
+    "pdfCount": 2
+  }
+}

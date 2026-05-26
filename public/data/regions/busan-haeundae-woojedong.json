@@ -1,0 +1,90 @@
+{
+  "residence": {
+    "id": "busan-haeundae-woojedong",
+    "city": "부산광역시",
+    "district": "해운대구",
+    "neighborhood": "우제1동",
+    "cacheKey": "residence:busan:haeundae:wooje1:v0",
+    "cachedAt": "2026-05-26 11:30 KST"
+  },
+  "candidates": [
+    {
+      "id": "choi-minjae",
+      "residenceId": "busan-haeundae-woojedong",
+      "name": "최민재",
+      "number": 1,
+      "party": "부산생활당",
+      "race": "기초의원",
+      "office": "해운대구의원 우제1",
+      "age": 39,
+      "occupation": "지역 상인회 정책실장",
+      "color": "#047857",
+      "criminalRecord": {
+        "summary": "벌금 1건",
+        "details": "모의 데이터 기준 집회 관련 벌금형 1건",
+        "tone": "notice"
+      },
+      "publicRecord": [
+        "체납 없음",
+        "병역 완료",
+        "재산 4.9억"
+      ],
+      "focusTags": [
+        "상권",
+        "관광",
+        "주차"
+      ],
+      "pledgeSummary": "관광객 동선과 주민 생활 불편을 분리하는 동네 운영형 공약입니다.",
+      "pledgeHighlights": [
+        "해운대역 주변 단기 주차 회전율 공개",
+        "주민 우선 쓰레기 수거 시간 조정",
+        "골목상권 공동 배송 거점"
+      ],
+      "comparison": "주민 민원 해결은 빠르게 설계됐지만, 장기 도시계획은 아직 세부성이 낮습니다.",
+      "comparisonDetails": [
+        "주차와 쓰레기 문제의 체감도는 높습니다.",
+        "관광 수입 배분 구조는 더 설명이 필요합니다.",
+        "전과 기록은 성격과 시점 확인이 필요합니다."
+      ],
+      "fullPledges": [
+        {
+          "title": "주차 회전율 공개",
+          "detail": "해운대역 인근 공영주차장의 시간대별 회전율을 공개하고 요금을 조정합니다."
+        },
+        {
+          "title": "수거 시간 조정",
+          "detail": "관광객 밀집 시간과 주민 생활 시간을 분리해 쓰레기 수거 시간을 조정합니다."
+        },
+        {
+          "title": "공동 배송 거점",
+          "detail": "골목상권 공동 배송 거점을 마련해 물류비와 불법 주정차를 함께 줄입니다."
+        },
+        {
+          "title": "관광 민원 핫라인",
+          "detail": "소음, 무단투기, 주차 민원을 현장 단속과 바로 연결합니다."
+        },
+        {
+          "title": "주민 우선 보행로",
+          "detail": "통학·출근 동선의 보행 폭과 안전 시설을 우선 개선합니다."
+        }
+      ],
+      "profileRelevance": {
+        "청년": "상권 일자리와 야간 민원 공약이 일부 관련됩니다.",
+        "학부모": "통학 보행로 개선이 관련됩니다.",
+        "소상공인": "공동 배송과 관광 동선 조정이 직접 연결됩니다.",
+        "고령층": "보행로 개선은 관련되지만 복지 공약은 적습니다."
+      },
+      "cache": {
+        "policyPdf": "mock-cache/policy/choi-minjae-5pledges.pdf",
+        "normalizedAt": "2026-05-26 11:31 KST"
+      }
+    }
+  ],
+  "source": {
+    "mode": "mock",
+    "generatedAt": "2026-05-26T12:45:00+09:00",
+    "sourceName": "Mock normalized cache for NEC 5 pledge PDFs",
+    "sourceUrl": "https://policy.nec.go.kr/",
+    "pdfCount": 1
+  }
+}

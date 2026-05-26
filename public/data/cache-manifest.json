@@ -1,0 +1,42 @@
+{
+  "version": "mock-cache-2026-05-26",
+  "generatedAt": "2026-05-26T12:45:00+09:00",
+  "sourceName": "Mock normalized cache for NEC 5 pledge PDFs",
+  "sourceUrl": "https://policy.nec.go.kr/",
+  "dataMode": "mock",
+  "nec": {
+    "electionId": "20260603",
+    "subElectionId": "320260603",
+    "endpoints": {
+      "region": "https://policy.nec.go.kr/plc/commiment/initUCACommimentRegion.do",
+      "list": "https://policy.nec.go.kr/plc/commiment/initUCACommimentList.do",
+      "download": "https://policy.nec.go.kr/plc/common/downloadFile.do"
+    }
+  },
+  "regions": [
+    {
+      "id": "seoul-mapo-gongdeok",
+      "file": "data/regions/seoul-mapo-gongdeok.json",
+      "cacheKey": "residence:seoul:mapo:gongdeok:v0",
+      "candidateCount": 10,
+      "updatedAt": "2026-05-26 11:30 KST",
+      "contentHash": "0e59a4e0b2cfa094ae4b80a8ab6e8e08a4904460c4bbe483d5a5c5bd4913ac4d"
+    },
+    {
+      "id": "gyeonggi-seongnam-jeongja",
+      "file": "data/regions/gyeonggi-seongnam-jeongja.json",
+      "cacheKey": "residence:gyeonggi:seongnam:jeongja:v0",
+      "candidateCount": 2,
+      "updatedAt": "2026-05-26 11:30 KST",
+      "contentHash": "b0e4ddc2b9d72e643d949ba9d3577f41c9aba9a1b9a7eb09162925b287aa637e"
+    },
+    {
+      "id": "busan-haeundae-woojedong",
+      "file": "data/regions/busan-haeundae-woojedong.json",
+      "cacheKey": "residence:busan:haeundae:wooje1:v0",
+      "candidateCount": 1,
+      "updatedAt": "2026-05-26 11:30 KST",
+      "contentHash": "e4978494bdf4749a47689222b7f257b6636155540862f62e1fc16920c3ee7b5d"
+    }
+  ]
+}

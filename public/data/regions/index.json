@@ -1,0 +1,34 @@
+{
+  "voterProfiles": [
+    "청년",
+    "학부모",
+    "소상공인",
+    "고령층"
+  ],
+  "residences": [
+    {
+      "id": "seoul-mapo-gongdeok",
+      "city": "서울특별시",
+      "district": "마포구",
+      "neighborhood": "공덕동",
+      "cacheKey": "residence:seoul:mapo:gongdeok:v0",
+      "cachedAt": "2026-05-26 11:30 KST"
+    },
+    {
+      "id": "gyeonggi-seongnam-jeongja",
+      "city": "경기도",
+      "district": "성남시 분당구",
+      "neighborhood": "정자동",
+      "cacheKey": "residence:gyeonggi:seongnam:jeongja:v0",
+      "cachedAt": "2026-05-26 11:30 KST"
+    },
+    {
+      "id": "busan-haeundae-woojedong",
+      "city": "부산광역시",
+      "district": "해운대구",
+      "neighborhood": "우제1동",
+      "cacheKey": "residence:busan:haeundae:wooje1:v0",
+      "cachedAt": "2026-05-26 11:30 KST"
+    }
+  ]
+}
