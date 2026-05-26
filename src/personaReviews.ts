@@ -1,4 +1,4 @@
-import type { VoterProfile } from "./electionTypes";
+import type { Candidate, VoterProfile } from "./electionTypes";
 import gyeonggiHongSeonggyuPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/5-경기도-홍성규-100153796-5pledges.txt?raw";
 import gyeonggiKimHyeonukPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/6-경기도-김현욱-100158402-5pledges.txt?raw";
 import gyeonggiYangHyangjaPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/2-경기도-양향자-100163432-5pledges.txt?raw";
@@ -57,15 +57,15 @@ type PersonaReviewCandidateSource = {
 export const personaReviewProfiles = ["청년", "학부모", "소상공인", "고령층"] as const satisfies readonly VoterProfile[];
 
 export const personaReviewSourceNotice =
-  "코덱스가 선거관리위원회에서 제공한 후보자 정보와 5대 공약 텍스트만으로 판단한 정보입니다. 절대 정치색 들어가지 않았습니다.";
+  "코덱스가 선거관리위원회에서 제공한 후보자 정보와 공개 공약·공보 텍스트만으로 판단한 정보입니다. 절대 정치색 들어가지 않았습니다.";
 
 export const personaReviewScopeNotice =
-  "현재 페르소나 평가는 서울특별시장·경기도지사 후보에만 우선 적용했습니다. 다른 선거는 추후 적용 예정입니다.";
+  "페르소나 평가는 모든 후보 카드에 적용하되, 후보별 공개 자료 수준에 따라 질문과 주의점의 구체성이 달라질 수 있습니다.";
 
 const personaReviewMetadataSourcePath = "data/nec/full/races/3-시-도지사선거.json";
 
 function buildPersonaPrompt(persona: string) {
-  return `Work in /Users/user/cursorProjects/local-election-guide. Read-only task. Persona: ${persona}. Evaluate only Seoul mayor and Gyeonggi governor candidates using NEC-provided information already cached in the repo: candidate metadata and five pledge text. Do not use external opinions, polls, ideology, news, party stereotypes, or inferred political leanings. Output structured JSON-like notes keyed by candidate id with: personaFitSummary as one sentence, voterQuestions as 2-3 concrete questions, highlights as 2-3 NEC-grounded points, and cautions as 1-2 conservative caveats where details or feasibility are unclear. Do not edit files.`;
+  return `Work in /Users/user/cursorProjects/local-election-guide. Read-only task. Persona: ${persona}. Evaluate local-election candidates using only NEC-provided information already cached in the repo: candidate metadata, five pledge text, and campaign bulletin text. Do not use external opinions, polls, ideology, news, party stereotypes, or inferred political leanings. Output structured JSON-like notes keyed by candidate id with: personaFitSummary as one sentence, voterQuestions as 2-3 concrete questions, highlights as 2-3 NEC-grounded points, and cautions as 1-2 conservative caveats where details, authority, budget, or feasibility are unclear. Do not edit files.`;
 }
 
 const personaPrompts: Record<VoterProfile, string> = {
@@ -73,6 +73,36 @@ const personaPrompts: Record<VoterProfile, string> = {
   학부모: buildPersonaPrompt("a South Korean parent voter"),
   소상공인: buildPersonaPrompt("a South Korean small-business voter"),
   고령층: buildPersonaPrompt("an elderly South Korean voter"),
+};
+
+const personaFallbackGuides: Record<
+  VoterProfile,
+  {
+    focus: string;
+    pattern: RegExp;
+    question: string;
+  }
+> = {
+  청년: {
+    focus: "청년의 주거·교통·일자리 부담",
+    pattern: /청년|청소년|대학생|취업|창업|일자리|고용|주거|주택|교통|통근|월세|임대|창업|디지털|AI/i,
+    question: "청년에게 실제로 적용되는 대상 연령, 소득 기준, 지원 규모는 어떻게 정해져 있나?",
+  },
+  학부모: {
+    focus: "돌봄·교육·통학 안전",
+    pattern: /교육|학교|학생|학부모|아동|아이|보육|돌봄|통학|급식|안전|어린이|청소년/i,
+    question: "아이 연령대, 학교급, 돌봄 시간대별로 실제 이용 조건이 어떻게 달라지나?",
+  },
+  소상공인: {
+    focus: "상권·규제·교통 접근성과 비용 부담",
+    pattern: /소상공|자영업|상권|시장|골목|규제|세금|임대료|창업|교통|주차|관광|경제|기업/i,
+    question: "지원 대상 업종, 상권 범위, 신청 절차와 예산 규모가 원문에 구체적으로 적혀 있나?",
+  },
+  고령층: {
+    focus: "복지·의료·이동 편의와 행정 접근성",
+    pattern: /어르신|노인|고령|시니어|복지|의료|건강|돌봄|요양|보행|교통|안전|연금|장애/i,
+    question: "고령층이 오프라인으로 신청하거나 이용할 수 있는 창구와 이동 지원이 포함되어 있나?",
+  },
 };
 
 const personaReviewCandidateSources: Record<string, PersonaReviewCandidateSource> = {
@@ -1028,6 +1058,10 @@ export function getCandidatePersonaReview(candidateId: string, profile: VoterPro
   };
 }
 
+export function getCandidatePersonaReviewForCandidate(candidate: Candidate, profile: VoterProfile): PersonaReview {
+  return getCandidatePersonaReview(candidate.id, profile) ?? buildFallbackPersonaReview(candidate, profile);
+}
+
 export function getPersonaReviewPrompt(profile: VoterProfile) {
   return personaPrompts[profile];
 }
@@ -1087,6 +1121,147 @@ function buildPersonaReviewEvidence(candidateId: string): PersonaReviewEvidence[
       snippet: pledge.detail,
     })),
   ];
+}
+
+function buildFallbackPersonaReview(candidate: Candidate, profile: VoterProfile): PersonaReview {
+  const guide = personaFallbackGuides[profile];
+  const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
+  const displayPledges = sourcePledges.length > 0 ? sourcePledges : buildCandidateSourcePledges(candidate);
+  const usefulPledges = displayPledges.filter((pledge) => isUsefulPersonaPledge(pledge));
+  const matchedPledges = usefulPledges.filter((pledge) => guide.pattern.test(`${pledge.title} ${pledge.detail}`));
+  const leadPledges = (matchedPledges.length > 0 ? matchedPledges : usefulPledges).slice(0, 2);
+  const leadTitles = leadPledges.map((pledge) => pledge.title);
+  const summary = buildFallbackPersonaSummary(candidate, profile, guide.focus, leadTitles, matchedPledges.length > 0);
+
+  return {
+    summary,
+    questions: buildFallbackPersonaQuestions(guide.question, leadTitles),
+    highlights: buildFallbackPersonaHighlights(candidate, profile, guide.focus, leadPledges, usefulPledges.length),
+    cautions: buildFallbackPersonaCautions(profile, matchedPledges.length, usefulPledges.length),
+    evidence: buildFallbackPersonaEvidence(candidate, displayPledges),
+    prompt: buildCandidatePersonaPrompt(candidate, profile),
+    sourceNotice: personaReviewSourceNotice,
+  };
+}
+
+function buildCandidateSourcePledges(candidate: Candidate): PersonaReviewSourcePledge[] {
+  const sourcePath = getCandidateSourcePath(candidate);
+
+  return candidate.fullPledges.map((pledge) => ({
+    title: pledge.title,
+    detail: pledge.detail,
+    sourcePath,
+  }));
+}
+
+function buildFallbackPersonaSummary(
+  candidate: Candidate,
+  profile: VoterProfile,
+  focus: string,
+  leadTitles: string[],
+  hasProfileMatch: boolean,
+) {
+  if (leadTitles.length > 0) {
+    const leadText = leadTitles.join(", ");
+
+    return hasProfileMatch
+      ? `${leadText} 공약이 ${profile} 관점의 ${focus}와 직접 맞닿아 있습니다.`
+      : `${leadText} 공약을 중심으로 ${profile} 관점에서 대상과 실행 방식을 확인할 필요가 있습니다.`;
+  }
+
+  if (!isImplementationPlaceholder(candidate.profileRelevance[profile])) {
+    return candidate.profileRelevance[profile];
+  }
+
+  return `공개 공약 정보가 제한적이어서 ${profile} 관점의 직접 효과는 대상, 예산, 시행 일정을 추가로 확인해야 합니다.`;
+}
+
+function buildFallbackPersonaQuestions(profileQuestion: string, leadTitles: string[]) {
+  const lead = leadTitles[0] ?? "주요 공약";
+
+  return [
+    `${lead}의 실제 지원 대상과 적용 지역은 어디까지인가?`,
+    profileQuestion,
+    "재원, 시행 일정, 담당 기관이 공개 원문에 구체적으로 제시되어 있나?",
+  ];
+}
+
+function buildFallbackPersonaHighlights(
+  candidate: Candidate,
+  profile: VoterProfile,
+  focus: string,
+  leadPledges: PersonaReviewSourcePledge[],
+  usefulPledgeCount: number,
+) {
+  const pledgeHighlights = leadPledges.map((pledge) => `공개 공약에서 '${pledge.title}' 항목을 확인할 수 있습니다.`);
+
+  return [
+    ...pledgeHighlights,
+    `${candidate.office} ${candidate.name} 후보의 공개 자료를 ${profile} 관점의 ${focus}에 맞춰 재정리했습니다.`,
+    usefulPledgeCount > 0
+      ? `근거는 후보자 기본정보와 공개 공약 ${Math.min(usefulPledgeCount, 5)}개 항목입니다.`
+      : "공개 자료가 후보자 기본정보 중심이라 공약 세부 근거는 제한적입니다.",
+  ].slice(0, 3);
+}
+
+function buildFallbackPersonaCautions(profile: VoterProfile, matchedCount: number, usefulPledgeCount: number) {
+  const cautions = [
+    "공개 자료만으로 예산, 권한, 세부 일정의 실현 가능성을 단정하지 않습니다.",
+    matchedCount === 0
+      ? `${profile}을 직접 대상으로 한 공약인지 원문 세부 항목에서 추가 확인이 필요합니다.`
+      : "대상 규모와 신청 조건은 공약 제목만으로 충분히 확인되지 않을 수 있습니다.",
+  ];
+
+  if (usefulPledgeCount === 0) {
+    cautions.push("공약 본문이 부족한 후보는 후보자 정보와 원문 공개 여부 위주로만 볼 수 있습니다.");
+  }
+
+  return cautions;
+}
+
+function buildFallbackPersonaEvidence(candidate: Candidate, pledges: PersonaReviewSourcePledge[]): PersonaReviewEvidence[] {
+  const regionSourcePath = `public/data/regions/${candidate.residenceId}.json`;
+  const pledgeEvidence = pledges.slice(0, 5).map((pledge) => ({
+    kind: "fivePledge" as const,
+    candidateId: candidate.id,
+    label: pledge.title,
+    sourcePath: pledge.sourcePath,
+    snippet: getEvidenceSnippet(pledge),
+  }));
+
+  return [
+    {
+      kind: "candidateMetadata",
+      candidateId: candidate.id,
+      label: `${candidate.office} ${candidate.name} 후보자 정보: name, party, occupation, publicRecord, criminalRecord`,
+      sourcePath: regionSourcePath,
+    },
+    ...pledgeEvidence,
+  ];
+}
+
+function buildCandidatePersonaPrompt(candidate: Candidate, profile: VoterProfile) {
+  return `${personaPrompts[profile]} Candidate id: ${candidate.id}. Candidate office: ${candidate.office}. Use the candidate object from ${getCandidateSourcePath(candidate)} as the local source boundary.`;
+}
+
+function getCandidateSourcePath(candidate: Candidate) {
+  return candidate.cache.policyPdf || `public/data/regions/${candidate.residenceId}.json`;
+}
+
+function isUsefulPersonaPledge(pledge: PersonaReviewSourcePledge) {
+  return pledge.title.length > 0 && !isImplementationPlaceholder(pledge.title);
+}
+
+function getEvidenceSnippet(pledge: PersonaReviewSourcePledge) {
+  if (!pledge.detail || isImplementationPlaceholder(pledge.detail)) {
+    return undefined;
+  }
+
+  return shortenSourceSnippet(normalizePledgeLine(pledge.detail), 180);
+}
+
+function isImplementationPlaceholder(value: string) {
+  return /NEC CDN|원문 기반 요약|요약·비교 생성 대상|후보 사진|PDF 원문에서 추출한|본문 요약은 다음|텍스트 정제 후|5대공약 PDF가 제공|원문 PDF 확보|링크 없음|정제 단계/.test(value);
 }
 
 function splitFivePledgeText(rawText: string) {

@@ -33,7 +33,7 @@ import {
 } from "./electionTypes";
 import { getCandidateFactCheck } from "./factChecks";
 import {
-  getCandidatePersonaReview,
+  getCandidatePersonaReviewForCandidate,
   getCandidatePersonaSourcePledges,
   personaReviewScopeNotice,
 } from "./personaReviews";
@@ -997,7 +997,7 @@ function CandidateCard({
   const comparisonPreview = getVoterComparisonPreview(candidate, ballotCandidates);
   const comparisonCardDetails = getVoterComparisonCardDetails(candidate, ballotCandidates);
   const factCheckReview = getCandidateFactCheck(candidate.id);
-  const personaReview = getCandidatePersonaReview(candidate.id, profile);
+  const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
   const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
   const displayPledges = sourcePledges.length > 0 ? sourcePledges : candidate.fullPledges;
   const primaryPledges = displayPledges.slice(0, 2);
@@ -1171,7 +1171,7 @@ function CandidateDialog({
 }) {
   const comparisonDetails = getVoterComparisonDetails(candidate, ballotCandidates);
   const factCheckReview = getCandidateFactCheck(candidate.id);
-  const personaReview = getCandidatePersonaReview(candidate.id, profile);
+  const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
   const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
   const displayPledges = sourcePledges.length > 0 ? sourcePledges : candidate.fullPledges;
 

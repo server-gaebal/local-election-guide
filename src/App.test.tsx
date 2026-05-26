@@ -203,7 +203,7 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByText(/다른 후보와 나눠볼 지점:/)).toBeInTheDocument();
     expect(within(dialog).queryByText(/NEC CDN|원문 기반 요약·비교 생성 대상|선거구 기준:|비교 기준:/)).not.toBeInTheDocument();
     expect(within(dialog).getByText("공약 팩트체크")).toBeInTheDocument();
-    expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 5대 공약 텍스트만/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 공개 공약·공보 텍스트만/)).toBeInTheDocument();
     expect(within(dialog).getAllByText(/대중교통 간 네트워크 효율성/).length).toBeGreaterThan(0);
     expect(within(dialog).getAllByText(/월 100만 원/).length).toBeGreaterThan(0);
     expect(within(dialog).getAllByText(/200개소/).length).toBeGreaterThan(0);
@@ -225,6 +225,23 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByRole("heading", { name: "전과 2건" })).toBeInTheDocument();
     expect(within(dialog).getByText(/선관위 후보자 정보공개에서 스캔 원문 1건/)).toBeInTheDocument();
     expect(within(dialog).getByText(/죄명과 형량까지 자동 표시하려면/)).toBeInTheDocument();
+  });
+
+  it("shows source-bounded persona details for candidates outside the curated set", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const educationCard = await screen.findByRole("article", { name: /김영배 후보 카드/ });
+    expect(within(educationCard).getByText("선관위 제공 정보만 기반")).toBeInTheDocument();
+
+    await user.click(within(educationCard).getByRole("button", { name: "전체 공약 보기" }));
+
+    const dialog = screen.getByRole("dialog", { name: "김영배 전체 공약" });
+    expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 공개 공약·공보 텍스트만/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/모든 후보 카드에 적용/)).toBeInTheDocument();
+    expect(within(dialog).getByText("근거 출처")).toBeInTheDocument();
+    expect(within(dialog).getByText("프롬프트 보기")).toBeInTheDocument();
+    expect(within(dialog).getByText(/서울특별시교육감 김영배 후보자 정보/)).toBeInTheDocument();
   });
 
   it("only opens detailed criminal records for Seoul mayor and Gyeonggi governor candidates", async () => {

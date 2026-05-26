@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   getCandidatePersonaReview,
+  getCandidatePersonaReviewForCandidate,
   getCandidatePersonaSourcePledges,
   getPersonaReviewCoverageReport,
   getPersonaReviewPrompt,
@@ -8,6 +9,7 @@ import {
   personaReviewScopeNotice,
   personaReviewSourceNotice,
 } from "./personaReviews";
+import type { Candidate } from "./electionTypes";
 
 const supportedPersonaCandidateIds = [
   "20260603-320260603-100157144",
@@ -33,7 +35,7 @@ describe("candidate persona reviews", () => {
     expect(youthReview?.prompt).toContain("Do not use external opinions");
     expect(youthReview?.summary).toContain("청년");
     expect(parentReview?.questions[0]).toContain("어린이");
-    expect(personaReviewScopeNotice).toContain("서울특별시장·경기도지사");
+    expect(personaReviewScopeNotice).toContain("모든 후보 카드");
     expect(personaReviewSourceNotice).toContain("선거관리위원회");
   });
 
@@ -118,5 +120,49 @@ describe("candidate persona reviews", () => {
 
   it("does not invent persona reviews outside the supported races", () => {
     expect(getCandidatePersonaReview("local-council-candidate", "청년")).toBeUndefined();
+  });
+
+  it("builds source-bounded fallback persona reviews for candidates outside the curated set", () => {
+    const candidate = {
+      id: "education-candidate",
+      residenceId: "seoul-mapo-gongdeok",
+      name: "김영배",
+      number: 1,
+      party: "교육정당",
+      race: "교육감",
+      office: "서울특별시교육감",
+      age: 52,
+      occupation: "교육자",
+      color: "#0f766e",
+      criminalRecord: { summary: "전과 없음", details: "없음", tone: "clean" },
+      publicRecord: ["후보자 정보공개"],
+      focusTags: ["교육감", "서울특별시"],
+      pledgeSummary: "교육과 돌봄 공약을 중심으로 제시했습니다.",
+      pledgeHighlights: ["학교 돌봄 확대", "통학 안전 강화"],
+      comparison: "서울특별시교육감 후보와 비교 대상입니다.",
+      comparisonDetails: [],
+      fullPledges: [
+        { title: "학교 돌봄 확대", detail: "방과후 돌봄과 통학 안전 지원을 확대합니다." },
+        { title: "AI 교육 기반 구축", detail: "학교 교육과정의 디지털 전환을 지원합니다." },
+      ],
+      profileRelevance: {
+        청년: "청년 관점에서는 교육 일자리와 디지털 역량을 확인해야 합니다.",
+        학부모: "학부모 관점에서는 돌봄과 통학 안전을 확인해야 합니다.",
+        소상공인: "소상공인 관점에서는 지역 교육 서비스와 상권 연결성을 확인해야 합니다.",
+        고령층: "고령층 관점에서는 평생교육 접근성을 확인해야 합니다.",
+      },
+      cache: { policyPdf: "public/data/regions/seoul-mapo-gongdeok.json", normalizedAt: "2026-05-26T00:00:00.000Z" },
+    } satisfies Candidate;
+
+    const review = getCandidatePersonaReviewForCandidate(candidate, "학부모");
+
+    expect(review.summary).toContain("학부모");
+    expect(review.questions.length).toBeGreaterThanOrEqual(2);
+    expect(review.highlights.some((item) => item.includes("학교 돌봄 확대"))).toBe(true);
+    expect(review.cautions.length).toBeGreaterThanOrEqual(1);
+    expect(review.evidence.some((source) => source.kind === "candidateMetadata")).toBe(true);
+    expect(review.evidence.some((source) => source.label === "학교 돌봄 확대")).toBe(true);
+    expect(review.sourceNotice).toContain("공개 공약·공보 텍스트");
+    expect(review.prompt).toContain("Candidate id: education-candidate");
   });
 });
