@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildNationalResidences } from "./necResidenceIndex";
+import { buildNationalResidences, preserveStableResidenceIds } from "./necResidenceIndex";
 import type { NecElectionAreaCache, NecElectionDistrictsCache } from "./necElectionInfo";
 
 const districtsCache: NecElectionDistrictsCache = {
@@ -196,5 +196,35 @@ describe("NEC nationwide residence index", () => {
         }),
       }),
     ]));
+  });
+
+  it("preserves existing stable ids for matching generated neighborhoods", () => {
+    const generatedResidences = buildNationalResidences(districtsCache, areaCache);
+    const stableResidences = [
+      {
+        id: "seoul-mapo-gongdeok",
+        city: "서울특별시",
+        district: "마포구",
+        neighborhood: "공덕동",
+        cacheKey: "residence:seoul:mapo:gongdeok:v1",
+        cachedAt: "2026-05-26 13:30 KST",
+      },
+    ];
+
+    const residences = preserveStableResidenceIds(generatedResidences, stableResidences);
+
+    expect(residences.find((residence) => residence.neighborhood === "공덕동")).toMatchObject({
+      id: "seoul-mapo-gongdeok",
+      city: "서울특별시",
+      district: "마포구",
+      electionScope: {
+        districtHeadDistrict: "마포구",
+        cityCouncilDistrict: "마포구제1선거구",
+        localCouncilDistrict: "마포구가선거구",
+      },
+    });
+    expect(residences.find((residence) => residence.neighborhood === "아현동")?.id).toMatch(
+      /^nec-1100-1114-dong-/,
+    );
   });
 });
