@@ -599,6 +599,53 @@ h1 {
   line-height: 1.45;
 }
 
+.pledge-action-list {
+  display: grid;
+  gap: 10px;
+}
+
+.pledge-action {
+  display: grid;
+  gap: 5px;
+  padding: 0 0 0 11px;
+  border-left: 3px solid #0f766e;
+}
+
+.pledge-action__meta {
+  width: fit-content;
+  color: #6a5b45;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.pledge-action strong {
+  color: #18211f;
+  line-height: 1.32;
+}
+
+.pledge-action p {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  margin: 0;
+  color: #3d4844;
+  line-height: 1.48;
+}
+
+.pledge-action p span,
+.full-pledges em {
+  width: fit-content;
+  height: fit-content;
+  padding: 2px 6px;
+  color: #0f5f53;
+  background: #e6f4ef;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
 .comparison-summary {
   background: #f1f8f5;
   border-color: #cfe6dc;
@@ -766,6 +813,9 @@ h1 {
 }
 
 .full-pledges span {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
   color: #3d4844;
   line-height: 1.5;
 }

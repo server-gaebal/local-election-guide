@@ -577,6 +577,18 @@ function getFeasibilityReview(candidate: Candidate) {
   );
 }
 
+function shortenUiText(value: string, maxLength: number) {
+  if (value.length <= maxLength) {
+    return value;
+  }
+
+  return `${value.slice(0, maxLength - 1).trim()}…`;
+}
+
+function getPledgeDetailLabel(pledge: Candidate["fullPledges"][number]) {
+  return /링크 없음|원문 텍스트 확보|원문 PDF 확보|원문 확보/.test(pledge.title) ? "상태" : "어떻게";
+}
+
 function CandidateCard({
   candidate,
   profile,
@@ -590,6 +602,7 @@ function CandidateCard({
 }) {
   const candidateTraits = getCandidateTraits(candidate);
   const feasibilityReview = getFeasibilityReview(candidate);
+  const primaryPledges = candidate.fullPledges.slice(0, 2);
 
   return (
     <article className="candidate-card" aria-label={`${candidate.name} 후보 카드`}>
@@ -660,17 +673,24 @@ function CandidateCard({
         <p>{feasibilityReview.summary}</p>
       </section>
 
-      <section className="card-section pledge-list" aria-label={`${candidate.name} 공약 요약`}>
+      <section className="card-section pledge-list" aria-label={`${candidate.name} 실행 요약`}>
         <div className="card-section__title">
           <FileText aria-hidden="true" size={16} />
-          <h4>공약 요약</h4>
+          <h4>실행 요약</h4>
         </div>
         <p className="summary-text">{candidate.pledgeSummary}</p>
-        <ul>
-          {candidate.pledgeHighlights.map((pledge) => (
-            <li key={pledge}>{pledge}</li>
+        <div className="pledge-action-list">
+          {primaryPledges.map((pledge, index) => (
+            <article className="pledge-action" key={pledge.title}>
+              <span className="pledge-action__meta">공약 {index + 1}</span>
+              <strong>{pledge.title}</strong>
+              <p>
+                <span>{getPledgeDetailLabel(pledge)}</span>
+                {shortenUiText(pledge.detail, 132)}
+              </p>
+            </article>
           ))}
-        </ul>
+        </div>
       </section>
 
       <div className="profile-fit">
@@ -770,7 +790,10 @@ function CandidateDialog({
               {candidate.fullPledges.map((pledge) => (
                 <li key={pledge.title}>
                   <strong>{pledge.title}</strong>
-                  <span>{pledge.detail}</span>
+                  <span>
+                    <em>{getPledgeDetailLabel(pledge)}</em>
+                    {pledge.detail}
+                  </span>
                 </li>
               ))}
             </ol>

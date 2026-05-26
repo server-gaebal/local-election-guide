@@ -145,6 +145,51 @@ describe("NEC residence cache builder", () => {
     ]);
   });
 
+  it("prefers implementation method details so voters can see how a pledge would be done", () => {
+    const text = `
+공약순위: 1 제목 : 수도권 30분 출근 대전환
+□ 목 표
+○ 길 위에 버리는 시간을 도민에게 돌려주기 위한 광역교통망 구축
+○ 이동에 대한 부담과 피로도를 덜어 도민의 보편적 이동권 보장을 확대
+□ 이행방법
+○ GTX 지체 없는 개통 추진
+ - GTX-A·B: 안정적 사업 추진 및 원활한 공사 행정지원 지속
+ - GTX-C·D: 조속한 착공을 위해 행정지원
+○ 수도권 원(One)패스
+ - 수도권의 다양한 교통패스를 하나의 수도권 원패스로 통합
+□ 이행기간
+○ 2026년~2027년, 연구용역 실시 및 도 재정사업에 대한 사업계획 수립
+`;
+
+    expect(extractPledges(text)[0]).toEqual({
+      title: "수도권 30분 출근 대전환",
+      detail:
+        "GTX 지체 없는 개통 추진 GTX-A·B: 안정적 사업 추진 및 원활한 공사 행정지원 지속 GTX-C·D: 조속한 착공을 위해 행정지원 수도권 원(One)패스",
+    });
+  });
+
+  it("does not turn candidate disclosure tables into campaign bulletin pledges", () => {
+    const text = `
+책자형선거공보 | 경기도의회의원선거 / 가평군 선거구
+가평 예산,
+바꾸겠습니다!
+후보자 정보공개 자료
+1. 인적사항
+기호 소속정당명 후보자성명 성별
+1       더불어민주당      박재현       남                    노인전문
+(52세) (사회복지학) 박사과정 (현) 서정대학교
+요양원시설장
+4~5 | 정책로드맵
+내 상황에 맞는 정책, 한 눈에 찾는 박재현의 공약 패키지     정책 로드맵
+1                                             2            마을안길, 주차장,                       3
+               공용화장실 추가 및 개방형화장실 지원                                                                     마을별 소규모 상하수도 설치 추진
+4                                             5            군립의료원,                           6
+               어르신 및 교통약자 교통사각지대 해소                                                                     관광연계형 활성화 시범사업 도입 추진
+`;
+
+    expect(extractPledges(text)).toEqual([]);
+  });
+
   it("builds the selected residence ballot from matching NEC districts only", () => {
     const downloads: NecDownloadIndex = new Map([
       [
@@ -266,9 +311,12 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates[0].age).toBe(57);
     expect(dataset.candidates[0].criminalRecord.summary).toBe("전과 2건");
     expect(dataset.candidates[0].criminalRecord.tone).toBe("risk");
+    expect(dataset.candidates[0].publicRecord).toContain("재산신고액: 18억 2,389만 7천원");
+    expect(dataset.candidates[0].publicRecord).toContain("납세 납부액: 8,442만 3천원");
     expect(dataset.candidates[0].pledgeSummary).toContain("교통·주거·청년");
-    expect(dataset.candidates[0].comparison).toContain("교통·주거");
+    expect(dataset.candidates[0].comparison).toContain("서울 교통망 재편");
     expect(dataset.candidates[0].comparisonDetails[0]).toContain("차별점");
+    expect(dataset.candidates.flatMap((candidate) => candidate.comparisonDetails).join(" ")).not.toContain("후보 사진");
     expect(dataset.candidates[0].candidateTraits).toEqual(
       expect.arrayContaining(["더불어민주당 소속", expect.stringContaining("주요 경력:")]),
     );
@@ -277,8 +325,21 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates[0].pledgeHighlights).toEqual(["서울 교통망 재편", "청년 주거 지원"]);
     expect(dataset.candidates[0].fullPledges[0].detail).toBe("버스와 지하철 환승 체계를 시비로 개편합니다.");
     expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.publicRecord).toContain("선거공보 PDF 있음");
-    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeSummary).toContain("선거공보 PDF가 제공됩니다");
-    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeHighlights).toContain("선거공보 PDF 제공");
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeSummary).toContain("선거공보 PDF가 공개되어 있습니다");
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeHighlights).toContain("선거공보 PDF 공개");
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeHighlights.join(" ")).not.toContain("후보 사진");
+    const noDocumentCandidate = dataset.candidates.find((candidate) => candidate.name === "장덕준");
+    expect(noDocumentCandidate?.publicRecord).toContain("공약 원문 PDF 링크 없음");
+    expect(noDocumentCandidate?.pledgeSummary).toBe(
+      "NEC 후보자 명부에는 등록되어 있지만 5대공약·선거공보 PDF 링크는 제공되지 않았습니다.",
+    );
+    expect(noDocumentCandidate?.pledgeHighlights).toEqual(["후보 메타데이터 확보", "원문 PDF 링크 없음", "NEC 공개 여부 확인 필요"]);
+    expect(noDocumentCandidate?.fullPledges).toEqual([
+      {
+        title: "공약 원문 PDF 링크 없음",
+        detail: "현재 확보한 NEC 후보자 명부·정책공약마당 응답에 5대공약 또는 선거공보 PDF 링크가 없습니다.",
+      },
+    ]);
     expect(dataset.source.mode).toBe("nec");
   });
 
@@ -325,6 +386,54 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates.map((candidate) => candidate.office)).toEqual([
       "수원시장",
       "수원시의원 수원시나선거구",
+    ]);
+  });
+
+  it("shows an extracted campaign bulletin fallback when pledge parsing finds no structured items", () => {
+    const downloads: NecDownloadIndex = new Map([
+      [
+        "bulletin-only",
+        {
+          textPath: "data/nec/full/bulletin-texts/sample.txt",
+          sourceType: "campaignBulletin",
+          sourceLabel: "선거공보",
+          pledgeTitles: [],
+          pledges: [],
+          policyTags: [],
+        },
+      ],
+    ]);
+    const dataset = buildResidenceDatasetFromNec({
+      residence: suwonResidence,
+      generatedAt: "2026-05-26T13:30:00+09:00",
+      downloads,
+      candidates: [
+        necRow({
+          id: "bulletin-only",
+          raceTypeCode: "6",
+          raceName: "구·시·군의회의원선거",
+          districtName: "수원시나선거구",
+          name: "공보후보",
+          fivePledgePdf: null,
+          campaignBulletinPdf: {
+            requestedFileName: "공보후보_선거공보.pdf",
+            requestedFullPath: "20260603/PDF/PBINFO/4101/003_100_20260520_1.pdf",
+            downloadUrl: "https://policy.nec.go.kr/bulletin.pdf",
+          },
+        }),
+      ],
+    });
+
+    const candidate = dataset.candidates[0];
+
+    expect(candidate.pledgeSummary).toContain("선거공보 원문 텍스트를 확보했습니다");
+    expect(candidate.pledgeHighlights).toContain("선거공보 텍스트 확보");
+    expect(candidate.pledgeHighlights.join(" ")).not.toContain("대기");
+    expect(candidate.fullPledges).toEqual([
+      {
+        title: "선거공보 원문 텍스트 확보",
+        detail: "data/nec/full/bulletin-texts/sample.txt",
+      },
     ]);
   });
 

@@ -9,9 +9,14 @@ import busanRegion from "../public/data/regions/busan-haeundae-woojedong.json";
 import gyeonggiRegion from "../public/data/regions/gyeonggi-seongnam-jeongja.json";
 import seoulRegion from "../public/data/regions/seoul-mapo-gongdeok.json";
 
+const testRegionIndex = {
+  ...regionIndex,
+  residences: [seoulRegion.residence, gyeonggiRegion.residence, busanRegion.residence],
+};
+
 const jsonFixtures = {
   "data/cache-manifest.json": cacheManifest,
-  "data/regions/index.json": regionIndex,
+  "data/regions/index.json": testRegionIndex,
   "data/regions/seoul-mapo-gongdeok.json": seoulRegion,
   "data/regions/gyeonggi-seongnam-jeongja.json": gyeonggiRegion,
   "data/regions/busan-haeundae-woojedong.json": busanRegion,
@@ -116,6 +121,8 @@ describe("local election guide static experience", () => {
     expect(within(candidateCard).getByText("차별점")).toBeInTheDocument();
     expect(within(candidateCard).getByText("후보 특징")).toBeInTheDocument();
     expect(within(candidateCard).getByText("실현 가능성")).toBeInTheDocument();
+    expect(within(candidateCard).getByText("실행 요약")).toBeInTheDocument();
+    expect(within(candidateCard).getAllByText("어떻게").length).toBeGreaterThan(0);
     expect(within(candidateCard).getByText(/서울특별시장 투표지에서/)).toBeInTheDocument();
   });
 
