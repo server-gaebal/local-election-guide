@@ -974,6 +974,50 @@ h1 {
   gap: 12px;
 }
 
+.persona-evidence {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #e3ded2;
+  border-radius: 8px;
+}
+
+.persona-evidence ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.persona-evidence li {
+  display: grid;
+  gap: 3px;
+}
+
+.persona-evidence strong {
+  color: #0f5f53;
+  font-size: 0.78rem;
+}
+
+.persona-evidence span {
+  color: #18211f;
+  font-weight: 800;
+}
+
+.persona-evidence em {
+  color: #40504c;
+  font-style: normal;
+  line-height: 1.5;
+}
+
+.persona-evidence small {
+  color: #66716e;
+  font-size: 0.76rem;
+  overflow-wrap: anywhere;
+}
+
 .prompt-disclosure {
   padding: 10px;
   background: #f2eee5;

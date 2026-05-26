@@ -165,13 +165,25 @@ describe("local election guide static experience", () => {
     expect(within(candidateCard).queryByText("실현 가능성")).not.toBeInTheDocument();
     expect(within(candidateCard).getByText("팩트체크")).toBeInTheDocument();
     expect(within(candidateCard).getByText("선관위 제공 정보만 기반")).toBeInTheDocument();
-    expect(within(candidateCard).getByText("실행 요약")).toBeInTheDocument();
+    expect(within(candidateCard).getByText("공약 요약")).toBeInTheDocument();
+    expect(within(candidateCard).queryByText("실행 요약")).not.toBeInTheDocument();
     expect(within(candidateCard).getAllByText("어떻게").length).toBeGreaterThan(0);
     expect(within(candidateCard).getByText(/정책 초점은/)).toBeInTheDocument();
-    expect(candidateCard).toHaveTextContent(/대표 공약:/);
-    expect(candidateCard).toHaveTextContent(/비교 기준: 같은 투표지 후보와 대상·재원·일정/);
+    expect(candidateCard).toHaveTextContent(/앞세운 공약:/);
+    expect(candidateCard).toHaveTextContent(/같은 투표지에서는 .* 공약을 중심으로 차이가 납니다/);
+    expect(candidateCard).not.toHaveTextContent(/비교 기준:/);
+    expect((candidateCard.textContent ?? "").indexOf("공약 요약")).toBeLessThan(
+      (candidateCard.textContent ?? "").indexOf("차별점"),
+    );
     expect(within(candidateCard).queryByText(/눈에 띄는 고유 공약:/)).not.toBeInTheDocument();
     expect(within(candidateCard).queryByText(/NEC CDN|원문 기반 요약·비교 생성 대상|후보 사진은/)).not.toBeInTheDocument();
+    expect(within(candidateCard).queryByText(/NEC 5대공약 원문 텍스트에서/)).not.toBeInTheDocument();
+    expect(within(candidateCard).getAllByText(/대중교통 간 네트워크 효율성/).length).toBeGreaterThan(0);
+    expect(within(candidateCard).queryByText(/본문 요약은 다음 정제 단계/)).not.toBeInTheDocument();
+    expect(within(candidateCard).getAllByText(/30분 통근도시 실현으로 시민에게 쉼표를/).length).toBeGreaterThan(0);
+    expect(within(candidateCard).getAllByText(/10분 역세권/).length).toBeGreaterThan(0);
+    expect(within(candidateCard).getAllByText(/5분 정류소/).length).toBeGreaterThan(0);
+    expect(within(candidateCard).queryByText(/(^|\s)분 역세권/)).not.toBeInTheDocument();
   });
 
   it("opens a full pledge detail view from a candidate card", async () => {
@@ -188,10 +200,17 @@ describe("local election guide static experience", () => {
     expect(within(dialog).queryByText("후보 특징")).not.toBeInTheDocument();
     expect(within(dialog).queryByText("공약 실현 가능성 검토")).not.toBeInTheDocument();
     expect(within(dialog).getByText(/눈에 띄는 고유 공약:/)).toBeInTheDocument();
-    expect(within(dialog).getByText(/비교 포인트:/)).toBeInTheDocument();
-    expect(within(dialog).queryByText(/NEC CDN|원문 기반 요약·비교 생성 대상|선거구 기준:/)).not.toBeInTheDocument();
+    expect(within(dialog).getByText(/다른 후보와 나눠볼 지점:/)).toBeInTheDocument();
+    expect(within(dialog).queryByText(/NEC CDN|원문 기반 요약·비교 생성 대상|선거구 기준:|비교 기준:/)).not.toBeInTheDocument();
     expect(within(dialog).getByText("공약 팩트체크")).toBeInTheDocument();
-    expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 5대 공약 텍스트만/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 공개 공약·공보 텍스트만/)).toBeInTheDocument();
+    expect(within(dialog).getAllByText(/대중교통 간 네트워크 효율성/).length).toBeGreaterThan(0);
+    expect(within(dialog).getAllByText(/월 100만 원/).length).toBeGreaterThan(0);
+    expect(within(dialog).getAllByText(/200개소/).length).toBeGreaterThan(0);
+    expect(within(dialog).getAllByText(/4050\+센터/).length).toBeGreaterThan(0);
+    expect(within(dialog).getAllByText(/data\/nec\/full\/pdfs\/3-시-도지사선거/).length).toBeGreaterThan(0);
+    expect(within(dialog).queryByText(/본문 요약은 다음 정제 단계/)).not.toBeInTheDocument();
+    expect(within(dialog).queryByText(/월 만 원|임기 중 개소|플러스재단을 플러스재단/)).not.toBeInTheDocument();
     expect(within(dialog).getByText("프롬프트 보기")).toBeInTheDocument();
   });
 
@@ -206,6 +225,25 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByRole("heading", { name: "전과 2건" })).toBeInTheDocument();
     expect(within(dialog).getByText(/선관위 후보자 정보공개에서 스캔 원문 1건/)).toBeInTheDocument();
     expect(within(dialog).getByText(/죄명과 형량까지 자동 표시하려면/)).toBeInTheDocument();
+  });
+
+  it("shows first-wave detailed persona details for selected city and race candidates", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const educationCard = await screen.findByRole("article", { name: /김영배 후보 카드/ });
+    expect(within(educationCard).getByText("선관위 제공 정보만 기반")).toBeInTheDocument();
+
+    await user.click(within(educationCard).getByRole("button", { name: "전체 공약 보기" }));
+
+    const dialog = screen.getByRole("dialog", { name: "김영배 전체 공약" });
+    expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 공개 공약·공보 텍스트만/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/모든 후보 카드에 적용/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/서울·경기·강원·대전의 광역단체장·교육감·기초단체장/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/서울특별시 교육감 상세 정리 대상/)).toBeInTheDocument();
+    expect(within(dialog).getByText("근거 출처")).toBeInTheDocument();
+    expect(within(dialog).getByText("프롬프트 보기")).toBeInTheDocument();
+    expect(within(dialog).getByText(/서울특별시교육감 김영배 후보자 정보/)).toBeInTheDocument();
   });
 
   it("only opens detailed criminal records for Seoul mayor and Gyeonggi governor candidates", async () => {

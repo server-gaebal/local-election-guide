@@ -1,31 +1,266 @@
-import type { VoterProfile } from "./electionTypes";
+import type { Candidate, VoterProfile } from "./electionTypes";
+import gyeonggiHongSeonggyuPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/5-경기도-홍성규-100153796-5pledges.txt?raw";
+import gyeonggiKimHyeonukPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/6-경기도-김현욱-100158402-5pledges.txt?raw";
+import gyeonggiYangHyangjaPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/2-경기도-양향자-100163432-5pledges.txt?raw";
+import gyeonggiChoEungcheonPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/4-경기도-조응천-100163471-5pledges.txt?raw";
+import gyeonggiChooMiaePledgesText from "../data/nec/full/pdfs/3-시-도지사선거/1-경기도-추미애-100163148-5pledges.txt?raw";
+import seoulGwonYeonggukPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/7-서울특별시-권영국-100162720-5pledges.txt?raw";
+import seoulIgangsanPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/6-서울특별시-이강산-100162642-5pledges.txt?raw";
+import seoulJeongWonohPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/1-서울특별시-정원오-100157144-5pledges.txt?raw";
+import seoulKimJeongcheolPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/4-서울특별시-김정철-100158541-5pledges.txt?raw";
+import seoulOhSehunPledgesText from "../data/nec/full/pdfs/3-시-도지사선거/2-서울특별시-오세훈-100162984-5pledges.txt?raw";
+import seoulYuJihyePledgesText from "../data/nec/full/pdfs/3-시-도지사선거/5-서울특별시-유지혜-100162632-5pledges.txt?raw";
 
 export type PersonaReview = {
   summary: string;
   questions: string[];
   highlights: string[];
   cautions: string[];
+  evidence: PersonaReviewEvidence[];
   prompt: string;
   sourceNotice: string;
 };
 
-type PersonaReviewInput = Omit<PersonaReview, "prompt" | "sourceNotice">;
+export type PersonaReviewEvidence = {
+  kind: "candidateMetadata" | "fivePledge";
+  candidateId: string;
+  label: string;
+  sourcePath: string;
+  snippet?: string;
+};
+
+export type PersonaReviewCoverageItem = {
+  candidateId: string;
+  name: string;
+  office: string;
+  profiles: readonly VoterProfile[];
+  sourcePath: string;
+  evidence: PersonaReviewEvidence[];
+};
+
+export type PersonaReviewSourcePledge = {
+  title: string;
+  detail: string;
+  sourcePath: string;
+};
+
+type PersonaReviewInput = Omit<PersonaReview, "evidence" | "prompt" | "sourceNotice">;
+
+type PersonaReviewCandidateSource = {
+  name: string;
+  office: "서울특별시장" | "경기도지사";
+  pledgeSourcePath: string;
+  pledgeText: string;
+  pledgeTitles: string[];
+};
+
+export const personaReviewProfiles = ["청년", "학부모", "소상공인", "고령층"] as const satisfies readonly VoterProfile[];
 
 export const personaReviewSourceNotice =
-  "코덱스가 선거관리위원회에서 제공한 후보자 정보와 5대 공약 텍스트만으로 판단한 정보입니다. 절대 정치색 들어가지 않았습니다.";
+  "코덱스가 선거관리위원회에서 제공한 후보자 정보와 공개 공약·공보 텍스트만으로 판단한 정보입니다. 절대 정치색 들어가지 않았습니다.";
 
 export const personaReviewScopeNotice =
-  "현재 페르소나 평가는 서울특별시장·경기도지사 후보에만 우선 적용했습니다. 다른 선거는 추후 적용 예정입니다.";
+  "페르소나 평가는 모든 후보 카드에 적용합니다. 서울·경기·강원·대전의 광역단체장·교육감·기초단체장은 후보별 공약을 더 촘촘히 정리했고, 그 외 후보는 공개 자료 수준에 따라 질문과 주의점의 구체성이 달라질 수 있습니다.";
+
+const personaReviewMetadataSourcePath = "data/nec/full/races/3-시-도지사선거.json";
+const detailedPersonaReviewRaceSet = new Set<Candidate["race"]>(["광역단체장", "교육감", "기초단체장"]);
+const detailedPersonaReviewCityByResidencePrefix: Record<string, string> = {
+  "nec-1100-": "서울특별시",
+  "nec-3000-": "대전광역시",
+  "nec-4100-": "경기도",
+  "nec-5200-": "강원특별자치도",
+  "seoul-": "서울특별시",
+  "daejeon-": "대전광역시",
+  "gyeonggi-": "경기도",
+  "gangwon-": "강원특별자치도",
+};
+const detailedPersonaReviewCityNames = Object.values(detailedPersonaReviewCityByResidencePrefix);
+
+function buildPersonaPrompt(persona: string) {
+  return `Work in /Users/user/cursorProjects/local-election-guide. Read-only task. Persona: ${persona}. Evaluate local-election candidates using only NEC-provided information already cached in the repo: candidate metadata, five pledge text, and campaign bulletin text. Do not use external opinions, polls, ideology, news, party stereotypes, or inferred political leanings. Output structured JSON-like notes keyed by candidate id with: personaFitSummary as one sentence, voterQuestions as 2-3 concrete questions, highlights as 2-3 NEC-grounded points, and cautions as 1-2 conservative caveats where details, authority, budget, or feasibility are unclear. Do not edit files.`;
+}
 
 const personaPrompts: Record<VoterProfile, string> = {
-  청년:
-    "Work in /Users/user/cursorProjects/local-election-guide. Read-only task. Persona: young South Korean voter. Evaluate only Seoul mayor and Gyeonggi governor candidates using NEC-provided information already cached in the repo: candidate metadata and five pledge text. Do not use external opinions, polls, ideology, news, or inferred political leanings. Output structured JSON-like notes keyed by candidate id with: personaFitSummary as one sentence, voterQuestions as 2-3 concrete questions, highlights as 2-3 NEC-grounded points, and cautions as 1-2 conservative caveats where details or feasibility are unclear. Do not edit files.",
-  학부모:
-    "Work in /Users/user/cursorProjects/local-election-guide. Read-only task. Persona: a South Korean parent voter. Evaluate only Seoul mayor and Gyeonggi governor candidates using NEC-provided information already cached in the repository, specifically candidate metadata and the five-pledge text files. Do not use external opinions, polls, ideology, news, or inferred political leanings. For each candidate, output JSON-like notes keyed by candidate id with: personaFitSummary as one sentence; voterQuestions as 2-3 concrete questions; highlights as 2-3 NEC-grounded points; cautions as 1-2 conservative caveats when details or feasibility are unclear. Do not edit files.",
-  소상공인:
-    "Work in /Users/user/cursorProjects/local-election-guide. Read-only task. Persona: a South Korean small-business voter. Evaluate ONLY Seoul mayor and Gyeonggi governor candidates using NEC-provided information already cached in the repo: candidate metadata and the five pledge text files. Do not use external opinions, polls, ideology, news, or inferred political leanings. For each candidate, output JSON-like notes keyed by candidate id with: personaFitSummary as one sentence, voterQuestions as 2-3 concrete questions, highlights as 2-3 NEC-grounded points, and cautions as 1-2 conservative caveats when details or feasibility are unclear.",
-  고령층:
-    "Using only the NEC-provided candidate metadata and five-pledge texts cached in this repository, evaluate Seoul mayor and Gyeonggi governor candidates from the persona of an elderly South Korean voter. Do not use external opinions, polls, ideology, news, party stereotypes, or inferred political leanings. For each candidate id, output JSON-like notes with: personaFitSummary (one sentence), voterQuestions (2-3 concrete questions), highlights (2-3 NEC-grounded points), cautions (1-2 conservative caveats where details or feasibility are unclear). Ground every note only in the cached NEC metadata or pledge text.",
+  청년: buildPersonaPrompt("young South Korean voter"),
+  학부모: buildPersonaPrompt("a South Korean parent voter"),
+  소상공인: buildPersonaPrompt("a South Korean small-business voter"),
+  고령층: buildPersonaPrompt("an elderly South Korean voter"),
+};
+
+const personaFallbackGuides: Record<
+  VoterProfile,
+  {
+    focus: string;
+    pattern: RegExp;
+    question: string;
+  }
+> = {
+  청년: {
+    focus: "청년의 주거·교통·일자리 부담",
+    pattern: /청년|청소년|대학생|취업|창업|일자리|고용|주거|주택|교통|통근|월세|임대|창업|디지털|AI/i,
+    question: "청년에게 실제로 적용되는 대상 연령, 소득 기준, 지원 규모는 어떻게 정해져 있나?",
+  },
+  학부모: {
+    focus: "돌봄·교육·통학 안전",
+    pattern: /교육|학교|학생|학부모|아동|아이|보육|돌봄|통학|급식|안전|어린이|청소년/i,
+    question: "아이 연령대, 학교급, 돌봄 시간대별로 실제 이용 조건이 어떻게 달라지나?",
+  },
+  소상공인: {
+    focus: "상권·규제·교통 접근성과 비용 부담",
+    pattern: /소상공|자영업|상권|시장|골목|규제|세금|임대료|창업|교통|주차|관광|경제|기업/i,
+    question: "지원 대상 업종, 상권 범위, 신청 절차와 예산 규모가 원문에 구체적으로 적혀 있나?",
+  },
+  고령층: {
+    focus: "복지·의료·이동 편의와 행정 접근성",
+    pattern: /어르신|노인|고령|시니어|복지|의료|건강|돌봄|요양|보행|교통|안전|연금|장애/i,
+    question: "고령층이 오프라인으로 신청하거나 이용할 수 있는 창구와 이동 지원이 포함되어 있나?",
+  },
+};
+
+const personaReviewCandidateSources: Record<string, PersonaReviewCandidateSource> = {
+  "20260603-320260603-100157144": {
+    name: "정원오",
+    office: "서울특별시장",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/1-서울특별시-정원오-100157144-5pledges.txt",
+    pledgeText: seoulJeongWonohPledgesText,
+    pledgeTitles: [
+      "30분 통근도시 실현으로 시민에게 쉼표를",
+      "서울 공간 대전환 - 도심 광역중심 체계로의 전환",
+      "도전과 실패가 경력이 되고 자산이 되는 청년창업수도 서울",
+      "24시간 공백 없는 아이돌봄 지원체계 구축",
+      "4050+센터와 시니어라이프캠퍼스로 서울시민 활력회복",
+    ],
+  },
+  "20260603-320260603-100162984": {
+    name: "오세훈",
+    office: "서울특별시장",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/2-서울특별시-오세훈-100162984-5pledges.txt",
+    pledgeText: seoulOhSehunPledgesText,
+    pledgeTitles: [
+      "(주택1) 멈췄던 공급에 속도를! 압도적 주택공급",
+      "(주택2) 무너진 주거이동 안전망을 복원하겠습니다",
+      "(교통) 이동의 답답함을 풀어내는 서울 교통 대전환",
+      "(복지) 더 따뜻한 서울, 약자와의 동행 시즌 2",
+      "(산업일자리) 매년 100만 기회, 내일이 더 기대되는 서울",
+    ],
+  },
+  "20260603-320260603-100158541": {
+    name: "김정철",
+    office: "서울특별시장",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/4-서울특별시-김정철-100158541-5pledges.txt",
+    pledgeText: seoulKimJeongcheolPledgesText,
+    pledgeTitles: [
+      "AI 행정혁신을 통한 찾아오는 서울",
+      "규제 혁신을 통한 막힘없는 서울",
+      "시민·관변단체 구조 개혁을 통한 효율적인 서울",
+      "복지의 재설계를 통한 받쳐주는 서울",
+      "1인 가구 중심 도시로 재설계되는 서울",
+    ],
+  },
+  "20260603-320260603-100162632": {
+    name: "유지혜",
+    office: "서울특별시장",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/5-서울특별시-유지혜-100162632-5pledges.txt",
+    pledgeText: seoulYuJihyePledgesText,
+    pledgeTitles: [
+      "여성폭력·성착취 없는 서울",
+      "여아부터 노년까지 모여살기 좋은 서울",
+      "미래의 여성 인재를 키우고, 여성 인재의 미래를 만드는 서울",
+      "여성이 안심하고 일할 수 있는 서울",
+      "여성의료 사각지대 해소, 여성건강 유해요인은 사전 차단",
+    ],
+  },
+  "20260603-320260603-100162642": {
+    name: "이강산",
+    office: "서울특별시장",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/6-서울특별시-이강산-100162642-5pledges.txt",
+    pledgeText: seoulIgangsanPledgesText,
+    pledgeTitles: [
+      "자국민 보호 우선주의",
+      "종교 자유 수호",
+      "공공장소의 가치회복",
+      "생명 존중·출산 장려",
+      "법치 수호·사법 파괴 저지",
+    ],
+  },
+  "20260603-320260603-100162720": {
+    name: "권영국",
+    office: "서울특별시장",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/7-서울특별시-권영국-100162720-5pledges.txt",
+    pledgeText: seoulGwonYeonggukPledgesText,
+    pledgeTitles: [
+      "모든 시민이 노동권의 주체가 되는 서울",
+      "주거·교통·의료·먹거리 기본서비스를 공공이 책임지는 서울",
+      "돌봄의 무게를 덜고, 돌봄이 활력이 되는 공공돌봄도시 서울",
+      "에너지자립과 자원순환으로 기후위기에 대응하고, 지역과 상생하는 서울",
+      "평등과 안전으로 혐오와 차별 없는 서울",
+    ],
+  },
+  "20260603-320260603-100163148": {
+    name: "추미애",
+    office: "경기도지사",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/1-경기도-추미애-100163148-5pledges.txt",
+    pledgeText: gyeonggiChooMiaePledgesText,
+    pledgeTitles: [
+      "수도권 30분 출근 대전환",
+      "교통생활권 주거",
+      "함께 성장하는 대한민국 경제 1번지",
+      "든든한 안심·복지 및 문화 향유",
+      "안심생활·안전일터 및 혁신행정",
+    ],
+  },
+  "20260603-320260603-100163432": {
+    name: "양향자",
+    office: "경기도지사",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/2-경기도-양향자-100163432-5pledges.txt",
+    pledgeText: gyeonggiYangHyangjaPledgesText,
+    pledgeTitles: [
+      "AI·반도체 중심 대전환으로 도민 1인당 GRDP 1억원 시대",
+      "첨단산업을 이끌 글로벌 과학기술 인재 양성",
+      "빠르고 편리한 Door-to-Door 교통체계 구축",
+      "살고 싶은 집, 수요 맞춤형 주거 공급과 서민 주거안정 지원",
+      "성장·전환·재도전 등 삶을 바꾸는 복지 실현",
+    ],
+  },
+  "20260603-320260603-100163471": {
+    name: "조응천",
+    office: "경기도지사",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/4-경기도-조응천-100163471-5pledges.txt",
+    pledgeText: gyeonggiChoEungcheonPledgesText,
+    pledgeTitles: [
+      "전세대란 해법과 거주 이전 자유 회복, 자족도시 경기도로 가는 부동산 정책",
+      "출퇴근 고통 해소와 반도체 광역망, 첨단경제 광역 거점 경기도로 가는 교통 정책",
+      "경기남부공항·북부 규제혁신·K-방산·AI 의료특구, 대한민국 첨단 경제 중심 경기도로 가는 산업·규제 정책",
+      "지역의료 사각지대 해소와 돌봄 사각 메우기, 도민 삶과 밀착된 의료·복지 정책",
+      "AI 민원행정·악성민원 대응·1인 가구 안전망, 합리적이고 포용적인 경기도로 가는 시민 맞춤 정책",
+    ],
+  },
+  "20260603-320260603-100153796": {
+    name: "홍성규",
+    office: "경기도지사",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/5-경기도-홍성규-100153796-5pledges.txt",
+    pledgeText: gyeonggiHongSeonggyuPledgesText,
+    pledgeTitles: [
+      "노동부지사 임명, 노·정교섭 정례화",
+      "경기도형 순환경제 모델로 수도권 쓰레기 문제 근본 해결",
+      "경기도가 책임지는 공공통합돌봄 실현",
+      "경기공공은행 설립으로 지역경제 선순환",
+      "차별금지조례 제정, 누구도 소외되지 않는 평등한 경기도",
+    ],
+  },
+  "20260603-320260603-100158402": {
+    name: "김현욱",
+    office: "경기도지사",
+    pledgeSourcePath: "data/nec/full/pdfs/3-시-도지사선거/6-경기도-김현욱-100158402-5pledges.txt",
+    pledgeText: gyeonggiKimHyeonukPledgesText,
+    pledgeTitles: [
+      "국민발의제도 실현",
+      "행정계층 및 행정구역 통폐합",
+      "행정, 소방, 교육, 경찰업무 통폐합",
+      "무상의료 및 무상장례 실현",
+      "무상주택 실현",
+    ],
+  },
 };
 
 const personaReviews: Record<string, Partial<Record<VoterProfile, PersonaReviewInput>>> = {
@@ -801,6 +1036,25 @@ const personaReviews: Record<string, Partial<Record<VoterProfile, PersonaReviewI
   },
 };
 
+const sourcePledgeDetailOverrides: Record<string, Record<number, string>> = {
+  "20260603-320260603-100157144": {
+    0: "‘30분 통근도시 실현’을 위해 10분 역세권 및 5분 정류소 달성, 기존 철도망 결합, 대중교통 간 네트워크 효율성 확대와 교통비 부담 완화를 제시했습니다.",
+    2: "창업도전캠퍼스 조성, 법률·세무·행정 자문, 창업도전수당 월 100만 원 12개월 지급, 첫출발지원자금 평균 4,000만 원 지급을 제시했습니다.",
+    3: "초등 돌봄시설을 임기 중 200개소 추가 확충하고, 공공 아이돌봄 기관 추가 지정과 아이돌봄사 4천명 추가 확충, 긴급 돌봄 30분 이내 연결을 제시했습니다.",
+    4: "4050세대 종합 지원체계 마련, 50플러스재단을 4050플러스재단으로 확대개편, 기존 센터를 4050플러스센터로 확대하고 시니어라이프캠퍼스 조성을 제시했습니다.",
+  },
+  "20260603-320260603-100162984": {
+    0: "핵심전략정비구역 지정으로 3년 내 8.5만호 신속 착공, 정비사업 규제 혁파와 신통AI기획·신통120·신통확산을 제시했습니다.",
+    1: "‘31년까지 공공주택 약 13만호 공급, 공공임대주택 12.3만 호와 부담 가능한 민간임대 지원을 제시했습니다.",
+    4: "넥스트이코노미 서울 전략으로 연간 일자리 15.1만개, 직업훈련·일자리알선으로 연간 고용 10.9만명, 공공일자리 26.2만개, 관광산업 고용 46.3만명을 제시했습니다.",
+  },
+  "20260603-320260603-100163471": {
+    0: "1기 신도시 재정비 정상화, 도지사 직속 1기 신도시 통합정비지원단 설치, 용적률 인센티브 부여와 전세대란 대응본부 설치를 제시했습니다.",
+    1: "선계획 교통 원칙을 명문화해 3기 신도시·1기 신도시 재정비·신규 산업단지 등 광역 사업에 입주·운영 시점 광역교통 완성도 평가를 반영한다고 제시했습니다.",
+    4: "AI 기반 민원행정 체계 구축, 어르신 배려 창구 운영, 악성·과잉 민원 대응 전담부서와 1인 가구 생활커뮤니티센터 조성을 제시했습니다.",
+  },
+};
+
 export function getCandidatePersonaReview(candidateId: string, profile: VoterProfile): PersonaReview | undefined {
   const review = personaReviews[candidateId]?.[profile];
 
@@ -810,11 +1064,434 @@ export function getCandidatePersonaReview(candidateId: string, profile: VoterPro
 
   return {
     ...review,
+    evidence: buildPersonaReviewEvidence(candidateId),
     prompt: personaPrompts[profile],
     sourceNotice: personaReviewSourceNotice,
   };
 }
 
+export function getCandidatePersonaReviewForCandidate(candidate: Candidate, profile: VoterProfile): PersonaReview {
+  const curatedReview = getCandidatePersonaReview(candidate.id, profile);
+  const detailedCity = getDetailedPersonaReviewCity(candidate);
+
+  if (curatedReview) {
+    return curatedReview;
+  }
+
+  if (detailedCity) {
+    return buildDetailedPersonaReview(candidate, profile, detailedCity);
+  }
+
+  return buildFallbackPersonaReview(candidate, profile);
+}
+
 export function getPersonaReviewPrompt(profile: VoterProfile) {
   return personaPrompts[profile];
+}
+
+export function getCandidatePersonaSourcePledges(candidateId: string): PersonaReviewSourcePledge[] {
+  const source = personaReviewCandidateSources[candidateId];
+
+  if (!source) {
+    return [];
+  }
+
+  const pledgeBlocks = splitFivePledgeText(source.pledgeText);
+
+  return source.pledgeTitles.map((title, index) => ({
+    title,
+    detail: getSourcePledgeDetail(candidateId, index, pledgeBlocks[index] ?? source.pledgeText),
+    sourcePath: source.pledgeSourcePath,
+  }));
+}
+
+export function getPersonaReviewCoverageReport(): PersonaReviewCoverageItem[] {
+  return Object.entries(personaReviews).map(([candidateId, reviews]) => {
+    const source = personaReviewCandidateSources[candidateId];
+
+    return {
+      candidateId,
+      name: source?.name ?? "후보자 정보 확인 필요",
+      office: source?.office ?? "지원 범위 확인 필요",
+      profiles: personaReviewProfiles.filter((profile) => Boolean(reviews[profile])),
+      sourcePath: source?.pledgeSourcePath ?? "",
+      evidence: buildPersonaReviewEvidence(candidateId),
+    };
+  });
+}
+
+function buildPersonaReviewEvidence(candidateId: string): PersonaReviewEvidence[] {
+  const source = personaReviewCandidateSources[candidateId];
+
+  if (!source) {
+    return [];
+  }
+
+  const sourcePledges = getCandidatePersonaSourcePledges(candidateId);
+
+  return [
+    {
+      kind: "candidateMetadata",
+      candidateId,
+      label: `${source.office} ${source.name} 후보자 정보: name, candidateNumber, occupation, education, districtName`,
+      sourcePath: personaReviewMetadataSourcePath,
+    },
+    ...sourcePledges.map((pledge) => ({
+      kind: "fivePledge" as const,
+      candidateId,
+      label: pledge.title,
+      sourcePath: source.pledgeSourcePath,
+      snippet: pledge.detail,
+    })),
+  ];
+}
+
+function buildDetailedPersonaReview(candidate: Candidate, profile: VoterProfile, city: string): PersonaReview {
+  const guide = personaFallbackGuides[profile];
+  const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
+  const displayPledges = sourcePledges.length > 0 ? sourcePledges : buildCandidateSourcePledges(candidate);
+  const usefulPledges = displayPledges.filter((pledge) => isUsefulPersonaPledge(pledge));
+  const matchedPledges = usefulPledges.filter((pledge) => guide.pattern.test(`${pledge.title} ${pledge.detail}`));
+  const leadPledges = (matchedPledges.length > 0 ? matchedPledges : usefulPledges).slice(0, 3);
+
+  return {
+    summary: buildDetailedPersonaSummary(candidate, profile, guide.focus, city, leadPledges, matchedPledges.length > 0),
+    questions: buildDetailedPersonaQuestions(candidate, profile, guide.question, leadPledges),
+    highlights: buildDetailedPersonaHighlights(candidate, profile, guide.focus, city, leadPledges, usefulPledges.length),
+    cautions: buildDetailedPersonaCautions(candidate, profile, matchedPledges.length, usefulPledges.length),
+    evidence: buildFallbackPersonaEvidence(candidate, displayPledges),
+    prompt: buildDetailedCandidatePersonaPrompt(candidate, profile, city),
+    sourceNotice: personaReviewSourceNotice,
+  };
+}
+
+function buildFallbackPersonaReview(candidate: Candidate, profile: VoterProfile): PersonaReview {
+  const guide = personaFallbackGuides[profile];
+  const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
+  const displayPledges = sourcePledges.length > 0 ? sourcePledges : buildCandidateSourcePledges(candidate);
+  const usefulPledges = displayPledges.filter((pledge) => isUsefulPersonaPledge(pledge));
+  const matchedPledges = usefulPledges.filter((pledge) => guide.pattern.test(`${pledge.title} ${pledge.detail}`));
+  const leadPledges = (matchedPledges.length > 0 ? matchedPledges : usefulPledges).slice(0, 2);
+  const leadTitles = leadPledges.map((pledge) => pledge.title);
+  const summary = buildFallbackPersonaSummary(candidate, profile, guide.focus, leadTitles, matchedPledges.length > 0);
+
+  return {
+    summary,
+    questions: buildFallbackPersonaQuestions(guide.question, leadTitles),
+    highlights: buildFallbackPersonaHighlights(candidate, profile, guide.focus, leadPledges, usefulPledges.length),
+    cautions: buildFallbackPersonaCautions(profile, matchedPledges.length, usefulPledges.length),
+    evidence: buildFallbackPersonaEvidence(candidate, displayPledges),
+    prompt: buildCandidatePersonaPrompt(candidate, profile),
+    sourceNotice: personaReviewSourceNotice,
+  };
+}
+
+function buildDetailedPersonaSummary(
+  candidate: Candidate,
+  profile: VoterProfile,
+  focus: string,
+  city: string,
+  leadPledges: PersonaReviewSourcePledge[],
+  hasProfileMatch: boolean,
+) {
+  const scope = `${city} ${candidate.race}`;
+  const leadSubject = formatPersonaLeadSubject(leadPledges.map((pledge) => pledge.title));
+
+  if (leadSubject) {
+    return hasProfileMatch
+      ? `${scope} 상세 정리 대상입니다. ${leadSubject}은 ${profile} 관점의 ${focus}와 직접 맞닿아 있습니다.`
+      : `${scope} 상세 정리 대상입니다. ${leadSubject}을 중심으로 ${profile} 관점에서 대상, 권한, 실행 방식을 확인해야 합니다.`;
+  }
+
+  if (!isImplementationPlaceholder(candidate.profileRelevance[profile])) {
+    return `${scope} 상세 정리 대상입니다. ${candidate.profileRelevance[profile]}`;
+  }
+
+  return `${scope} 상세 정리 대상이지만 공개 공약 정보가 제한적이어서 ${profile} 관점의 직접 효과는 대상, 예산, 시행 일정을 추가로 확인해야 합니다.`;
+}
+
+function buildDetailedPersonaQuestions(
+  candidate: Candidate,
+  profile: VoterProfile,
+  profileQuestion: string,
+  leadPledges: PersonaReviewSourcePledge[],
+) {
+  const lead = leadPledges[0]?.title ?? "주요 공약";
+
+  return unique([
+    `${lead}의 실제 지원 대상, 적용 지역, 제외 조건은 어디까지인가?`,
+    profileQuestion,
+    `${candidate.office} 권한 안에서 바로 할 수 있는 일과 중앙정부·의회·교육청 협의가 필요한 일을 어떻게 나누나?`,
+    `${profile} 유권자가 임기 중 확인할 수 있는 연차별 일정과 예산 지표가 원문에 제시되어 있나?`,
+  ]);
+}
+
+function buildDetailedPersonaHighlights(
+  candidate: Candidate,
+  profile: VoterProfile,
+  focus: string,
+  city: string,
+  leadPledges: PersonaReviewSourcePledge[],
+  usefulPledgeCount: number,
+) {
+  const pledgeHighlights = leadPledges.map((pledge) => {
+    const snippet = getEvidenceSnippet(pledge);
+
+    return snippet
+      ? `'${pledge.title}' 항목에서 ${snippet}`
+      : `'${pledge.title}' 항목을 공개 공약에서 확인할 수 있습니다.`;
+  });
+  const recordHighlight = getCandidateRecordHighlight(candidate);
+
+  return unique([
+    ...pledgeHighlights,
+    recordHighlight,
+    `${city} ${candidate.race} 후보 중 ${profile} 관점의 ${focus}와 연결되는 항목을 우선 추렸습니다.`,
+    usefulPledgeCount > 0
+      ? `근거는 후보자 기본정보와 공개 공약 ${Math.min(usefulPledgeCount, 5)}개 항목입니다.`
+      : "공개 자료가 후보자 기본정보 중심이라 공약 세부 근거는 제한적입니다.",
+  ])
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
+function buildDetailedPersonaCautions(candidate: Candidate, profile: VoterProfile, matchedCount: number, usefulPledgeCount: number) {
+  const cautions = [
+    "상세 정리 대상이어도 공개 자료만으로 예산, 권한, 세부 일정의 실현 가능성을 단정하지 않습니다.",
+    matchedCount === 0
+      ? `${profile}을 직접 대상으로 한 공약인지 원문 세부 항목에서 추가 확인이 필요합니다.`
+      : "대상 규모, 신청 조건, 지역별 우선순위는 공약 제목보다 원문 세부 문구를 함께 봐야 합니다.",
+    `${candidate.race} 공약은 의회, 중앙정부, 교육청 등 다른 주체와의 협의 여부가 실행 가능성의 핵심 변수일 수 있습니다.`,
+  ];
+
+  if (usefulPledgeCount === 0) {
+    cautions.push("공약 본문이 부족한 후보는 후보자 정보와 원문 공개 여부 위주로만 볼 수 있습니다.");
+  }
+
+  return cautions;
+}
+
+function buildCandidateSourcePledges(candidate: Candidate): PersonaReviewSourcePledge[] {
+  const sourcePath = getCandidateSourcePath(candidate);
+
+  return candidate.fullPledges.map((pledge) => ({
+    title: pledge.title,
+    detail: pledge.detail,
+    sourcePath,
+  }));
+}
+
+function buildFallbackPersonaSummary(
+  candidate: Candidate,
+  profile: VoterProfile,
+  focus: string,
+  leadTitles: string[],
+  hasProfileMatch: boolean,
+) {
+  if (leadTitles.length > 0) {
+    const leadSubject = formatPersonaLeadSubject(leadTitles);
+
+    return hasProfileMatch
+      ? `${leadSubject}은 ${profile} 관점의 ${focus}와 직접 맞닿아 있습니다.`
+      : `${leadSubject}을 중심으로 ${profile} 관점에서 대상과 실행 방식을 확인할 필요가 있습니다.`;
+  }
+
+  if (!isImplementationPlaceholder(candidate.profileRelevance[profile])) {
+    return candidate.profileRelevance[profile];
+  }
+
+  return `공개 공약 정보가 제한적이어서 ${profile} 관점의 직접 효과는 대상, 예산, 시행 일정을 추가로 확인해야 합니다.`;
+}
+
+function buildFallbackPersonaQuestions(profileQuestion: string, leadTitles: string[]) {
+  const lead = leadTitles[0] ?? "주요 공약";
+
+  return [
+    `${lead}의 실제 지원 대상과 적용 지역은 어디까지인가?`,
+    profileQuestion,
+    "재원, 시행 일정, 담당 기관이 공개 원문에 구체적으로 제시되어 있나?",
+  ];
+}
+
+function buildFallbackPersonaHighlights(
+  candidate: Candidate,
+  profile: VoterProfile,
+  focus: string,
+  leadPledges: PersonaReviewSourcePledge[],
+  usefulPledgeCount: number,
+) {
+  const pledgeHighlights = leadPledges.map((pledge) => `공개 공약에서 '${pledge.title}' 항목을 확인할 수 있습니다.`);
+
+  return [
+    ...pledgeHighlights,
+    `${candidate.office} ${candidate.name} 후보의 공개 자료를 ${profile} 관점의 ${focus}에 맞춰 재정리했습니다.`,
+    usefulPledgeCount > 0
+      ? `근거는 후보자 기본정보와 공개 공약 ${Math.min(usefulPledgeCount, 5)}개 항목입니다.`
+      : "공개 자료가 후보자 기본정보 중심이라 공약 세부 근거는 제한적입니다.",
+  ].slice(0, 3);
+}
+
+function buildFallbackPersonaCautions(profile: VoterProfile, matchedCount: number, usefulPledgeCount: number) {
+  const cautions = [
+    "공개 자료만으로 예산, 권한, 세부 일정의 실현 가능성을 단정하지 않습니다.",
+    matchedCount === 0
+      ? `${profile}을 직접 대상으로 한 공약인지 원문 세부 항목에서 추가 확인이 필요합니다.`
+      : "대상 규모와 신청 조건은 공약 제목만으로 충분히 확인되지 않을 수 있습니다.",
+  ];
+
+  if (usefulPledgeCount === 0) {
+    cautions.push("공약 본문이 부족한 후보는 후보자 정보와 원문 공개 여부 위주로만 볼 수 있습니다.");
+  }
+
+  return cautions;
+}
+
+function buildFallbackPersonaEvidence(candidate: Candidate, pledges: PersonaReviewSourcePledge[]): PersonaReviewEvidence[] {
+  const regionSourcePath = `public/data/regions/${candidate.residenceId}.json`;
+  const pledgeEvidence = pledges.slice(0, 5).map((pledge) => ({
+    kind: "fivePledge" as const,
+    candidateId: candidate.id,
+    label: pledge.title,
+    sourcePath: pledge.sourcePath,
+    snippet: getEvidenceSnippet(pledge),
+  }));
+
+  return [
+    {
+      kind: "candidateMetadata",
+      candidateId: candidate.id,
+      label: `${candidate.office} ${candidate.name} 후보자 정보: name, party, occupation, publicRecord, criminalRecord`,
+      sourcePath: regionSourcePath,
+    },
+    ...pledgeEvidence,
+  ];
+}
+
+function buildCandidatePersonaPrompt(candidate: Candidate, profile: VoterProfile) {
+  return `${personaPrompts[profile]} Candidate id: ${candidate.id}. Candidate office: ${candidate.office}. Use the candidate object from ${getCandidateSourcePath(candidate)} as the local source boundary.`;
+}
+
+function buildDetailedCandidatePersonaPrompt(candidate: Candidate, profile: VoterProfile, city: string) {
+  return `${personaPrompts[profile]} Selected first-wave detailed scope: Seoul, Gyeonggi, Gangwon, Daejeon / governor-mayor, education superintendent, district head. Candidate city: ${city}. Candidate id: ${candidate.id}. Candidate office: ${candidate.office}. Use the candidate object from ${getCandidateSourcePath(candidate)} as the local source boundary.`;
+}
+
+function getDetailedPersonaReviewCity(candidate: Candidate) {
+  if (!detailedPersonaReviewRaceSet.has(candidate.race)) {
+    return undefined;
+  }
+
+  return (
+    getDetailedPersonaReviewCityFromResidenceId(candidate.residenceId) ??
+    detailedPersonaReviewCityNames.find((city) =>
+      [candidate.office, ...candidate.focusTags, ...candidate.publicRecord].some((item) => item.includes(city)),
+    )
+  );
+}
+
+function getDetailedPersonaReviewCityFromResidenceId(residenceId: string) {
+  return Object.entries(detailedPersonaReviewCityByResidencePrefix).find(([prefix]) => residenceId.startsWith(prefix))?.[1];
+}
+
+function getCandidateRecordHighlight(candidate: Candidate) {
+  const usefulRecords = candidate.publicRecord.filter((record) => !/5대공약 PDF 있음|공약 원문 PDF 링크 없음/.test(record));
+
+  if (usefulRecords.length === 0) {
+    return "";
+  }
+
+  return `후보자 정보공개에서 ${usefulRecords.slice(0, 2).join(", ")} 항목을 확인할 수 있습니다.`;
+}
+
+function formatPersonaLeadSubject(leadTitles: string[]) {
+  const leadText = leadTitles.slice(0, 2).join(", ");
+
+  if (!leadText) {
+    return "";
+  }
+
+  return /공약(?:\)|$)/.test(leadText) ? `${leadText} 항목` : `${leadText} 공약`;
+}
+
+function getCandidateSourcePath(candidate: Candidate) {
+  return candidate.cache.policyPdf || `public/data/regions/${candidate.residenceId}.json`;
+}
+
+function isUsefulPersonaPledge(pledge: PersonaReviewSourcePledge) {
+  return pledge.title.length > 0 && !isImplementationPlaceholder(pledge.title);
+}
+
+function getEvidenceSnippet(pledge: PersonaReviewSourcePledge) {
+  if (!pledge.detail || isImplementationPlaceholder(pledge.detail)) {
+    return undefined;
+  }
+
+  return shortenSourceSnippet(normalizePledgeLine(pledge.detail), 180);
+}
+
+function isImplementationPlaceholder(value: string) {
+  return /NEC CDN|원문 기반 요약|요약·비교 생성 대상|후보 사진|PDF 원문에서 추출한|본문 요약은 다음|텍스트 정제 후|5대공약 PDF가 제공|원문 PDF 확보|링크 없음|정제 단계/.test(value);
+}
+
+function splitFivePledgeText(rawText: string) {
+  const matches = Array.from(rawText.matchAll(/(^|\n)\s*공약순위/g));
+
+  if (matches.length === 0) {
+    return [rawText];
+  }
+
+  return matches.map((match, index) => {
+    const start = match.index ?? 0;
+    const end = matches[index + 1]?.index ?? rawText.length;
+
+    return rawText.slice(start, end);
+  });
+}
+
+function summarizePledgeBlock(block: string) {
+  const section =
+    block.match(/□\s*이행방법([\s\S]*?)(?:□\s*이행기간|□\s*재원조달방안|$)/)?.[1] ??
+    block.match(/□\s*목표([\s\S]*?)(?:□\s*이행방법|$)/)?.[1] ??
+    block;
+
+  const summary = section
+    .split("\n")
+    .map(normalizePledgeLine)
+    .filter(isUsefulPledgeLine)
+    .slice(0, 3)
+    .join(" ");
+
+  return shortenSourceSnippet(summary || normalizePledgeLine(block), 210);
+}
+
+function getSourcePledgeDetail(candidateId: string, pledgeIndex: number, block: string) {
+  // Some NEC PDF text extractions drop numeric glyphs. Keep source-verified display snippets here
+  // instead of mutating the archived raw extraction files.
+  return sourcePledgeDetailOverrides[candidateId]?.[pledgeIndex] ?? summarizePledgeBlock(block);
+}
+
+function normalizePledgeLine(line: string) {
+  return line
+    .replace(/[\t\r\f]+/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/^[○\-•□\s]+/, "")
+    .trim();
+}
+
+function isUsefulPledgeLine(line: string) {
+  return (
+    line.length > 8 &&
+    !/(선거명|선거구명|후보자명|소속정당명|공약순위|이행방법|이행기간|재원조달방안)/.test(line)
+  );
+}
+
+function shortenSourceSnippet(value: string, maxLength: number) {
+  if (value.length <= maxLength) {
+    return value;
+  }
+
+  return `${value.slice(0, maxLength - 1).trim()}…`;
+}
+
+function unique<T>(items: T[]) {
+  return Array.from(new Set(items));
 }

@@ -33,7 +33,8 @@ import {
 } from "./electionTypes";
 import { getCandidateFactCheck } from "./factChecks";
 import {
-  getCandidatePersonaReview,
+  getCandidatePersonaReviewForCandidate,
+  getCandidatePersonaSourcePledges,
   personaReviewScopeNotice,
 } from "./personaReviews";
 import {
@@ -758,17 +759,17 @@ function getVoterComparisonPreview(candidate: Candidate, ballotCandidates: Candi
   const primaryLead = policyLeads[0];
 
   if (topics.length > 0) {
-    return `정책 초점은 ${formatTopicList(topics)}입니다. 공약 제목만 보지 말고 실행 대상과 재원까지 비교하세요.`;
+    return `정책 초점은 ${formatTopicList(topics)}입니다.`;
   }
 
   if (primaryLead) {
-    return `정책 초점: ${primaryLead}. 같은 투표지 후보와 우선순위를 비교해 보세요.`;
+    return `대표 공약은 ${primaryLead}입니다.`;
   }
 
   const otherCandidateCount = Math.max(ballotCandidates.length - 1, 0);
 
   if (otherCandidateCount > 0) {
-    return `${candidate.office} 후보 ${otherCandidateCount}명과 정당, 전과, 경력, 공약 공개 수준을 비교해 보세요.`;
+    return `${candidate.office} 후보 ${otherCandidateCount}명과 같은 투표지에 있습니다.`;
   }
 
   return "공개된 후보 기본정보와 공약 원문 여부를 먼저 확인해 보세요.";
@@ -787,19 +788,22 @@ function getVoterComparisonCardDetails(candidate: Candidate, ballotCandidates: C
 
   if (topics.length > 0) {
     const leadText = formatPolicyLeadList(policyLeads);
+    const topicText = formatTopicList(topics, 3);
 
     return [
-      leadText ? `대표 공약: ${leadText}.` : `주요 분야: ${formatTopicList(topics, 3)}.`,
-      "비교 기준: 같은 투표지 후보와 대상·재원·일정을 확인하세요.",
+      leadText ? `앞세운 공약: ${leadText}.` : `정책 분야: ${topicText}.`,
+      otherCandidateCount > 0
+        ? `같은 투표지에서는 ${topicText} 공약을 중심으로 차이가 납니다.`
+        : `${topicText} 공약이 이 후보의 주요 차별점입니다.`,
     ];
   }
 
   if (policyLeads.length > 0) {
-    return [`대표 공약: ${formatPolicyLeadList(policyLeads)}.`, "비교 기준: 다른 후보의 실행 방식과 구체성을 확인하세요."];
+    return [`앞세운 공약: ${formatPolicyLeadList(policyLeads)}.`, "차이는 공약 대상과 실행 방식에서 확인됩니다."];
   }
 
   if (otherCandidateCount > 0) {
-    return [`비교 대상: 후보 ${otherCandidateCount}명.`, "비교 기준: 정당, 전과, 경력, 공약 공개 수준을 나란히 확인하세요."];
+    return [`같은 투표지 후보: ${otherCandidateCount}명.`, "차이가 보이는 항목: 정당, 전과, 경력, 공약 공개 수준."];
   }
 
   return ["요약: 공개된 후보 기본정보부터 확인하세요."];
@@ -827,7 +831,7 @@ function buildVoterComparisonDetails(candidate: Candidate, ballotCandidates: Can
     const topicText = formatTopicList(candidateTopics, 3);
     const otherTopicText =
       otherTopics.length > 0 ? ` 다른 후보의 ${formatTopicList(otherTopics, 3)} 공약과` : " 다른 후보 공약과";
-    details.push(`비교 포인트: 이 후보는 ${topicText}에 무게를 둡니다.${otherTopicText} 우선순위·대상을 비교해 보세요.`);
+    details.push(`다른 후보와 나눠볼 지점: 이 후보는 ${topicText}에 무게를 둡니다.${otherTopicText} 우선순위와 대상이 갈립니다.`);
   }
 
   if (policyLeads.length > 0) {
@@ -845,7 +849,13 @@ function buildVoterComparisonDetails(candidate: Candidate, ballotCandidates: Can
 }
 
 function getCandidatePolicyLeads(candidate: Candidate) {
-  return unique([...candidate.pledgeHighlights, ...candidate.fullPledges.map((pledge) => pledge.title)])
+  const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
+  const policyLeads =
+    sourcePledges.length > 0
+      ? sourcePledges.map((pledge) => pledge.title)
+      : [...candidate.pledgeHighlights, ...candidate.fullPledges.map((pledge) => pledge.title)];
+
+  return unique(policyLeads)
     .map((item) => item.trim())
     .filter(isVoterFacingPolicyLead);
 }
@@ -987,8 +997,12 @@ function CandidateCard({
   const comparisonPreview = getVoterComparisonPreview(candidate, ballotCandidates);
   const comparisonCardDetails = getVoterComparisonCardDetails(candidate, ballotCandidates);
   const factCheckReview = getCandidateFactCheck(candidate.id);
-  const personaReview = getCandidatePersonaReview(candidate.id, profile);
-  const primaryPledges = candidate.fullPledges.slice(0, 2);
+  const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
+  const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
+  const displayPledges = sourcePledges.length > 0 ? sourcePledges : candidate.fullPledges;
+  const primaryPledges = displayPledges.slice(0, 2);
+  const pledgeSummary =
+    sourcePledges.length === 0 && !containsImplementationLanguage(candidate.pledgeSummary) ? candidate.pledgeSummary : "";
 
   return (
     <article className="candidate-card" aria-label={`${candidate.name} 후보 카드`}>
@@ -1029,6 +1043,26 @@ function CandidateCard({
           <span key={tag}>{tag}</span>
         ))}
       </div>
+
+      <section className="card-section pledge-list" aria-label={`${candidate.name} 공약 요약`}>
+        <div className="card-section__title">
+          <FileText aria-hidden="true" size={16} />
+          <h4>공약 요약</h4>
+        </div>
+        {pledgeSummary ? <p className="summary-text">{pledgeSummary}</p> : null}
+        <div className="pledge-action-list">
+          {primaryPledges.map((pledge, index) => (
+            <article className="pledge-action" key={pledge.title}>
+              <span className="pledge-action__meta">공약 {index + 1}</span>
+              <strong>{pledge.title}</strong>
+              <p>
+                <span>{getPledgeDetailLabel(pledge)}</span>
+                <ExpandableText text={getVoterPledgeDetail(pledge)} label={`${candidate.name} 공약 ${index + 1}`} />
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <section className="card-section comparison-summary" aria-label={`${candidate.name} 비교 요약`}>
         <div className="card-section__title">
@@ -1072,26 +1106,6 @@ function CandidateCard({
           </ul>
         </section>
       ) : null}
-
-      <section className="card-section pledge-list" aria-label={`${candidate.name} 실행 요약`}>
-        <div className="card-section__title">
-          <FileText aria-hidden="true" size={16} />
-          <h4>실행 요약</h4>
-        </div>
-        <p className="summary-text">{candidate.pledgeSummary}</p>
-        <div className="pledge-action-list">
-          {primaryPledges.map((pledge, index) => (
-            <article className="pledge-action" key={pledge.title}>
-              <span className="pledge-action__meta">공약 {index + 1}</span>
-              <strong>{pledge.title}</strong>
-              <p>
-                <span>{getPledgeDetailLabel(pledge)}</span>
-                <ExpandableText text={getVoterPledgeDetail(pledge)} label={`${candidate.name} 공약 ${index + 1}`} />
-              </p>
-            </article>
-          ))}
-        </div>
-      </section>
 
       <div className={personaReview ? "profile-fit profile-fit--review" : "profile-fit"}>
         <strong>{profile} 관점</strong>
@@ -1157,7 +1171,9 @@ function CandidateDialog({
 }) {
   const comparisonDetails = getVoterComparisonDetails(candidate, ballotCandidates);
   const factCheckReview = getCandidateFactCheck(candidate.id);
-  const personaReview = getCandidatePersonaReview(candidate.id, profile);
+  const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
+  const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
+  const displayPledges = sourcePledges.length > 0 ? sourcePledges : candidate.fullPledges;
 
   return (
     <div className="dialog-backdrop">
@@ -1191,7 +1207,7 @@ function CandidateDialog({
           <section className="detail-section">
             <h3>5대 공약</h3>
             <ol className="full-pledges">
-              {candidate.fullPledges.map((pledge) => (
+              {displayPledges.map((pledge) => (
                 <li key={pledge.title}>
                   <strong>{pledge.title}</strong>
                   <span>
@@ -1265,6 +1281,19 @@ function CandidateDialog({
                   <ul className="difference-list">
                     {personaReview.cautions.map((item) => (
                       <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="persona-evidence">
+                  <h4>근거 출처</h4>
+                  <ul>
+                    {personaReview.evidence.map((source) => (
+                      <li key={`${source.kind}-${source.sourcePath}-${source.label}`}>
+                        <strong>{source.kind === "candidateMetadata" ? "후보자 정보" : "공약 원문"}</strong>
+                        <span>{source.label}</span>
+                        {source.snippet ? <em>{source.snippet}</em> : null}
+                        <small>{source.sourcePath}</small>
+                      </li>
                     ))}
                   </ul>
                 </div>
