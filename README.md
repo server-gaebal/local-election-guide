@@ -22,6 +22,10 @@ public/data/
   candidates/baek-seoyeon.json
 ```
 
+## GitHub Pages Note
+
+The repository can stay private, but GitHub Pages for private repositories requires a GitHub plan that supports private Pages. On GitHub Free, switch the repository to public or use another static host such as Cloudflare Pages/Netlify for a private-source workflow.
+
 ## Commands
 
 ```bash
