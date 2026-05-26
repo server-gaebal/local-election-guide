@@ -7,6 +7,7 @@ import {
   Landmark,
   MapPin,
   Scale,
+  Search,
   Share2,
   ShieldCheck,
   UserRound,
@@ -60,6 +61,42 @@ const raceOrder: Record<RaceType, number> = {
   기초의원: 50,
 };
 
+const preferredInitialResidenceId = "seoul-mapo-gongdeok";
+const preferredInitialResidenceLocation = {
+  city: "서울특별시",
+  district: "마포구",
+  neighborhood: "공덕동",
+};
+const citySortOrder = [
+  "서울특별시",
+  "부산광역시",
+  "대구광역시",
+  "인천광역시",
+  "광주광역시",
+  "대전광역시",
+  "울산광역시",
+  "세종특별자치시",
+  "경기도",
+  "강원특별자치도",
+  "강원도",
+  "충청북도",
+  "충청남도",
+  "전북특별자치도",
+  "전라북도",
+  "전라남도",
+  "경상북도",
+  "경상남도",
+  "제주특별자치도",
+];
+const citySortRank = new Map(citySortOrder.map((cityName, index) => [cityName, index]));
+const koCollator = new Intl.Collator("ko-KR", { numeric: true, sensitivity: "base" });
+
+type ResidenceOption = {
+  residence: Residence;
+  label: string;
+  normalizedLabel: string;
+};
+
 function unique<T>(items: T[]) {
   return Array.from(new Set(items));
 }
@@ -72,8 +109,81 @@ function getCandidateToneIcon(candidate: Candidate) {
   return <CircleAlert aria-hidden="true" size={16} />;
 }
 
+function compareKoreanText(a: string, b: string) {
+  return koCollator.compare(a, b);
+}
+
+function compareCityNames(a: string, b: string) {
+  const rankA = citySortRank.get(a) ?? Number.POSITIVE_INFINITY;
+  const rankB = citySortRank.get(b) ?? Number.POSITIVE_INFINITY;
+
+  return rankA - rankB || compareKoreanText(a, b);
+}
+
+function compareResidences(a: Residence, b: Residence) {
+  return (
+    compareCityNames(a.city, b.city) ||
+    compareKoreanText(a.district, b.district) ||
+    compareKoreanText(a.neighborhood, b.neighborhood) ||
+    compareKoreanText(a.id, b.id)
+  );
+}
+
+function sortResidences(residences: Residence[]) {
+  return [...residences].sort(compareResidences);
+}
+
+function sortKoreanValues(values: string[]) {
+  return [...values].sort(compareKoreanText);
+}
+
+function getSelectableResidences(regionIndex: RegionIndex, manifest: CacheManifest) {
+  const availableRegionIds = new Set(manifest.regions.map((region) => region.id));
+  const availableResidences = regionIndex.residences.filter((residence) => availableRegionIds.has(residence.id));
+
+  return sortResidences(availableResidences.length > 0 ? availableResidences : regionIndex.residences);
+}
+
+function formatResidenceLabel(residence: Residence) {
+  return `${residence.city} ${residence.district} ${residence.neighborhood}`;
+}
+
+function normalizeResidenceSearch(value: string) {
+  return value.replace(/\s+/g, " ").trim().toLocaleLowerCase("ko-KR");
+}
+
+function createResidenceOption(residence: Residence): ResidenceOption {
+  const label = formatResidenceLabel(residence);
+
+  return {
+    residence,
+    label,
+    normalizedLabel: normalizeResidenceSearch(label),
+  };
+}
+
+function getResidenceSearchMatches(options: ResidenceOption[], query: string) {
+  const tokens = normalizeResidenceSearch(query).split(" ").filter(Boolean);
+
+  if (tokens.length === 0) {
+    return [];
+  }
+
+  return options.filter((option) => tokens.every((token) => option.normalizedLabel.includes(token))).slice(0, 30);
+}
+
 function findInitialResidence(residences: Residence[]): Residence | null {
-  return residences[0] ?? null;
+  return (
+    residences.find((residence) => residence.id === preferredInitialResidenceId) ??
+    residences.find(
+      (residence) =>
+        residence.city === preferredInitialResidenceLocation.city &&
+        residence.district === preferredInitialResidenceLocation.district &&
+        residence.neighborhood === preferredInitialResidenceLocation.neighborhood,
+    ) ??
+    residences[0] ??
+    null
+  );
 }
 
 function findResidenceFromUrl(residences: Residence[]) {
@@ -145,6 +255,7 @@ export function App() {
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
   const [neighborhood, setNeighborhood] = useState("");
+  const [regionSearch, setRegionSearch] = useState("");
   const [profile, setProfile] = useState<VoterProfile>("청년");
   const [largeText, setLargeText] = useState(false);
   const [ballotFilter, setBallotFilter] = useState<BallotFilter>(allRaces);
@@ -161,7 +272,8 @@ export function App() {
           return;
         }
 
-        const nextResidence = findResidenceFromUrl(nextRegionIndex.residences) ?? findInitialResidence(nextRegionIndex.residences);
+        const nextResidences = getSelectableResidences(nextRegionIndex, nextManifest);
+        const nextResidence = findResidenceFromUrl(nextResidences) ?? findInitialResidence(nextResidences);
         setManifest(nextManifest);
         setRegionIndex(nextRegionIndex);
 
@@ -184,24 +296,38 @@ export function App() {
     };
   }, []);
 
-  const residences = regionIndex?.residences ?? [];
+  const residences = useMemo(
+    () => (regionIndex && manifest ? getSelectableResidences(regionIndex, manifest) : []),
+    [manifest, regionIndex],
+  );
   const voterProfiles = regionIndex?.voterProfiles ?? [];
   const initialResidence = findInitialResidence(residences);
 
   const cities = useMemo(() => unique(residences.map((residence) => residence.city)), [residences]);
   const districts = useMemo(
-    () => unique(residences.filter((residence) => residence.city === city).map((residence) => residence.district)),
-    [city],
+    () =>
+      sortKoreanValues(
+        unique(residences.filter((residence) => residence.city === city).map((residence) => residence.district)),
+      ),
+    [city, residences],
   );
   const neighborhoods = useMemo(
     () =>
-      unique(
-        residences
-          .filter((residence) => residence.city === city && residence.district === district)
-          .map((residence) => residence.neighborhood),
+      sortKoreanValues(
+        unique(
+          residences
+            .filter((residence) => residence.city === city && residence.district === district)
+            .map((residence) => residence.neighborhood),
+        ),
       ),
-    [city, district],
+    [city, district, residences],
   );
+  const residenceOptions = useMemo(() => residences.map(createResidenceOption), [residences]);
+  const regionSearchMatches = useMemo(
+    () => getResidenceSearchMatches(residenceOptions, regionSearch),
+    [residenceOptions, regionSearch],
+  );
+  const regionSearchOptions = regionSearch.trim() ? regionSearchMatches : residenceOptions.slice(0, 20);
 
   const selectedResidence =
     residences.find(
@@ -263,12 +389,7 @@ export function App() {
     [ballotGroups],
   );
 
-  const handleCityChange = (nextCity: string) => {
-    const nextResidence = residences.find((residence) => residence.city === nextCity) ?? initialResidence;
-    if (!nextResidence) {
-      return;
-    }
-
+  const selectResidence = (nextResidence: Residence, options?: { searchLabel?: string }) => {
     setCity(nextResidence.city);
     setDistrict(nextResidence.district);
     setNeighborhood(nextResidence.neighborhood);
@@ -277,6 +398,16 @@ export function App() {
     setSelectedCandidate(null);
     setCrimeCandidate(null);
     setShareStatus("idle");
+    setRegionSearch(options?.searchLabel ?? "");
+  };
+
+  const handleCityChange = (nextCity: string) => {
+    const nextResidence = residences.find((residence) => residence.city === nextCity) ?? initialResidence;
+    if (!nextResidence) {
+      return;
+    }
+
+    selectResidence(nextResidence);
   };
 
   const handleDistrictChange = (nextDistrict: string) => {
@@ -288,13 +419,7 @@ export function App() {
       return;
     }
 
-    setDistrict(nextResidence.district);
-    setNeighborhood(nextResidence.neighborhood);
-    replaceResidenceInUrl(nextResidence.id);
-    setBallotFilter(allRaces);
-    setSelectedCandidate(null);
-    setCrimeCandidate(null);
-    setShareStatus("idle");
+    selectResidence(nextResidence);
   };
 
   const handleNeighborhoodChange = (nextNeighborhood: string) => {
@@ -305,14 +430,30 @@ export function App() {
         residence.neighborhood === nextNeighborhood,
     );
 
-    setNeighborhood(nextNeighborhood);
     if (nextResidence) {
-      replaceResidenceInUrl(nextResidence.id);
+      selectResidence(nextResidence);
     }
-    setBallotFilter(allRaces);
-    setSelectedCandidate(null);
-    setCrimeCandidate(null);
-    setShareStatus("idle");
+  };
+
+  const commitRegionSearch = () => {
+    const normalizedQuery = normalizeResidenceSearch(regionSearch);
+    const exactMatch = residenceOptions.find((option) => option.normalizedLabel === normalizedQuery);
+    const match = exactMatch ?? regionSearchMatches[0];
+
+    if (match) {
+      selectResidence(match.residence, { searchLabel: match.label });
+    }
+  };
+
+  const handleRegionSearchChange = (nextSearch: string) => {
+    setRegionSearch(nextSearch);
+
+    const normalizedSearch = normalizeResidenceSearch(nextSearch);
+    const exactMatch = residenceOptions.find((option) => option.normalizedLabel === normalizedSearch);
+
+    if (exactMatch) {
+      selectResidence(exactMatch.residence, { searchLabel: exactMatch.label });
+    }
   };
 
   const handleProfileChange = (nextProfile: VoterProfile) => {
@@ -425,6 +566,35 @@ export function App() {
             </select>
           </label>
 
+          <label className="field region-search-field">
+            <span>지역 검색</span>
+            <div className="region-search-control">
+              <input
+                role="searchbox"
+                type="search"
+                value={regionSearch}
+                list="region-search-options"
+                placeholder="시군구·읍면동"
+                aria-label="지역 검색"
+                onChange={(event) => handleRegionSearchChange(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    commitRegionSearch();
+                  }
+                }}
+              />
+              <button type="button" aria-label="지역 검색 적용" onClick={commitRegionSearch}>
+                <Search aria-hidden="true" size={17} />
+              </button>
+            </div>
+            <datalist id="region-search-options">
+              {regionSearchOptions.map((option) => (
+                <option key={option.residence.id} value={option.label} />
+              ))}
+            </datalist>
+          </label>
+
           <div className="profile-switch" aria-label="유권자 프로필">
             <div className="profile-switch__label">
               <UserRound aria-hidden="true" size={16} />
@@ -535,6 +705,7 @@ export function App() {
                       <CandidateCard
                         key={candidate.id}
                         candidate={candidate}
+                        ballotCandidates={group.candidates}
                         profile={profile}
                         onOpen={() => setSelectedCandidate(candidate)}
                         onOpenCrime={() => setCrimeCandidate(candidate)}
@@ -555,7 +726,12 @@ export function App() {
       </section>
 
       {selectedCandidate ? (
-        <CandidateDialog candidate={selectedCandidate} profile={profile} onClose={() => setSelectedCandidate(null)} />
+        <CandidateDialog
+          candidate={selectedCandidate}
+          ballotCandidates={getBallotCandidates(regionDataset?.candidates ?? [], selectedCandidate)}
+          profile={profile}
+          onClose={() => setSelectedCandidate(null)}
+        />
       ) : null}
 
       {crimeCandidate ? <CrimeRecordDialog candidate={crimeCandidate} onClose={() => setCrimeCandidate(null)} /> : null}
@@ -569,56 +745,245 @@ function getCandidateTraits(candidate: Candidate) {
     : [`${candidate.party} 소속`, `직업: ${candidate.occupation}`, `공약 키워드: ${candidate.focusTags.slice(0, 3).join("·")}`];
 }
 
-function getVoterComparisonDetails(candidate: Candidate) {
-  const usefulDetails = candidate.comparisonDetails.filter(
-    (detail) =>
-      !detail.startsWith("공통 경쟁 분야:") &&
-      !detail.startsWith("비교 범위:") &&
-      detail !== "같은 선거구 안에서 겹치는 핵심 키워드는 적습니다.",
-  );
-
-  return usefulDetails.length > 0 ? usefulDetails : candidate.comparisonDetails;
-}
-
-function getFeasibilityReview(candidate: Candidate) {
-  return (
-    candidate.feasibilityReview ?? {
-      summary: "원문만으로 실현 가능성 판단 보류",
-      details: [
-        "이 후보 데이터에는 재원, 절차, 협의 주체를 자동 검증할 공식 원문 단서가 충분히 연결되지 않았습니다.",
-        "가능/불가능 판정은 별도 공식 자료 확인 전까지 제공하지 않습니다.",
-      ],
-      tone: "unknown" as const,
-    }
+function getBallotCandidates(candidates: Candidate[], selectedCandidate: Candidate) {
+  return candidates.filter(
+    (candidate) =>
+      candidate.residenceId === selectedCandidate.residenceId &&
+      candidate.race === selectedCandidate.race &&
+      candidate.office === selectedCandidate.office,
   );
 }
 
-function shortenUiText(value: string, maxLength: number) {
-  if (value.length <= maxLength) {
-    return value;
+function getVoterComparisonPreview(candidate: Candidate, ballotCandidates: Candidate[]) {
+  if (isVoterFacingComparisonText(candidate.comparison) && !isGenericComparisonSummary(candidate.comparison)) {
+    return candidate.comparison;
   }
 
-  return `${value.slice(0, maxLength - 1).trim()}…`;
+  const policyLeads = getCandidatePolicyLeads(candidate);
+  const topics = inferPolicyTopics(policyLeads);
+  const primaryLead = policyLeads[0];
+
+  if (topics.length > 0) {
+    return `정책 초점은 ${formatTopicList(topics)}입니다.`;
+  }
+
+  if (primaryLead) {
+    return `정책 초점: ${primaryLead}. 같은 투표지 후보와 우선순위를 비교해 보세요.`;
+  }
+
+  const otherCandidateCount = Math.max(ballotCandidates.length - 1, 0);
+
+  if (otherCandidateCount > 0) {
+    return `${candidate.office} 후보 ${otherCandidateCount}명과 정당, 전과, 경력, 공약 공개 수준을 비교해 보세요.`;
+  }
+
+  return "공개된 후보 기본정보와 공약 원문 여부를 먼저 확인해 보세요.";
+}
+
+function getVoterComparisonDetails(candidate: Candidate, ballotCandidates: Candidate[]) {
+  const usefulDetails = candidate.comparisonDetails.filter(isVoterFacingComparisonText);
+
+  return usefulDetails.length > 0 ? usefulDetails : buildVoterComparisonDetails(candidate, ballotCandidates);
+}
+
+function getVoterComparisonCardDetails(candidate: Candidate, ballotCandidates: Candidate[]) {
+  const policyLeads = getCandidatePolicyLeads(candidate);
+  const topics = inferPolicyTopics(policyLeads);
+  const otherCandidateCount = Math.max(ballotCandidates.length - 1, 0);
+
+  if (topics.length > 0) {
+    return ["요약: 같은 투표지 후보와 대상·재원·일정을 비교하세요."];
+  }
+
+  if (policyLeads.length > 0) {
+    return [`요약: 대표 공약 제목과 다른 후보의 실행 방식을 비교하세요.`];
+  }
+
+  if (otherCandidateCount > 0) {
+    return [`요약: 후보 ${otherCandidateCount}명과 기본 공개정보를 나란히 비교하세요.`];
+  }
+
+  return ["요약: 공개된 후보 기본정보부터 확인하세요."];
+}
+
+function buildVoterComparisonDetails(candidate: Candidate, ballotCandidates: Candidate[]) {
+  const policyLeads = getCandidatePolicyLeads(candidate);
+  const otherPolicyLeads = new Set(
+    ballotCandidates
+      .filter((item) => item.id !== candidate.id)
+      .flatMap((item) => getCandidatePolicyLeads(item)),
+  );
+  const distinctiveLeads = policyLeads.filter((lead) => !otherPolicyLeads.has(lead));
+  const candidateTopics = inferPolicyTopics(policyLeads);
+  const otherTopics = inferPolicyTopics(Array.from(otherPolicyLeads));
+  const details: string[] = [];
+
+  if (distinctiveLeads.length > 0) {
+    details.push(`눈에 띄는 고유 공약: ${distinctiveLeads.slice(0, 3).join(", ")}.`);
+  } else if (policyLeads.length > 0) {
+    details.push(`주요 공약 축: ${policyLeads.slice(0, 3).join(", ")}.`);
+  }
+
+  if (candidateTopics.length > 0) {
+    const topicText = formatTopicList(candidateTopics, 3);
+    const otherTopicText =
+      otherTopics.length > 0 ? ` 다른 후보의 ${formatTopicList(otherTopics, 3)} 공약과` : " 다른 후보 공약과";
+    details.push(`비교 포인트: 이 후보는 ${topicText}에 무게를 둡니다.${otherTopicText} 우선순위·대상을 비교해 보세요.`);
+  }
+
+  if (policyLeads.length > 0) {
+    details.push("확인할 부분: 제목만으로 판단하지 말고 재원, 일정, 협의 주체가 원문에 얼마나 구체적으로 적혔는지 봐야 합니다.");
+  }
+
+  if (details.length > 0) {
+    return details;
+  }
+
+  return [
+    "공약 차이를 판단할 원문 정보가 부족합니다. 정당, 전과, 재산·납세, 경력 같은 공개 기본정보부터 비교해 보세요.",
+    "상세 공약이 공개되면 같은 투표지 후보와 대상, 실행 방식, 재원 문구를 나란히 확인해야 합니다.",
+  ];
+}
+
+function getCandidatePolicyLeads(candidate: Candidate) {
+  return unique([...candidate.pledgeHighlights, ...candidate.fullPledges.map((pledge) => pledge.title)])
+    .map((item) => item.trim())
+    .filter(isVoterFacingPolicyLead);
+}
+
+function isVoterFacingComparisonText(value: string) {
+  const detail = value.trim();
+
+  return (
+    detail.length > 0 &&
+    !detail.startsWith("공통 경쟁 분야:") &&
+    !detail.startsWith("비교 범위:") &&
+    !detail.startsWith("선거구 기준:") &&
+    detail !== "같은 선거구 안에서 겹치는 핵심 키워드는 적습니다." &&
+    !containsImplementationLanguage(detail)
+  );
+}
+
+function isGenericComparisonSummary(value: string) {
+  return /후보\/정당과 (?:함께 )?비교 대상입니다/.test(value) || /투표지에서 \d+개 후보\/정당/.test(value);
+}
+
+function isVoterFacingPolicyLead(value: string) {
+  const lead = value.trim();
+
+  return lead.length >= 4 && !containsImplementationLanguage(lead);
+}
+
+function containsImplementationLanguage(value: string) {
+  return [
+    "5대공약 PDF가 제공",
+    "원문 기반 요약",
+    "요약·비교 생성 대상",
+    "후보 사진",
+    "NEC CDN",
+    "CDN 썸네일",
+    "URL 확보",
+    "AI 요약",
+    "생성 대기",
+    "메타데이터",
+    "PDF 확보",
+    "PDF 공개",
+    "PDF 링크",
+    "원문 PDF",
+    "원문 텍스트",
+    "정제 단계",
+    "링크 없음",
+  ].some((pattern) => value.includes(pattern));
+}
+
+function inferPolicyTopics(policyLeads: string[]) {
+  const topicMatchers = [
+    { label: "교통", pattern: /교통|통근|버스|지하철|철도|도로|환승|광역/ },
+    { label: "주거·도시", pattern: /주거|주택|공간|도시|도심|재개발|부동산|정비/ },
+    { label: "청년·일자리", pattern: /청년|창업|일자리|고용|노동|취업/ },
+    { label: "돌봄·교육", pattern: /돌봄|교육|학교|아이|아동|보육|학생/ },
+    { label: "복지·안전", pattern: /복지|안전|폭력|성착취|노년|어르신|건강|의료/ },
+    { label: "경제·규제", pattern: /경제|규제|소상공|시장|산업|기업|세금/ },
+    { label: "행정혁신", pattern: /행정|AI|혁신|효율|디지털|구조 개혁/ },
+    { label: "환경", pattern: /환경|기후|녹지|공원|탄소|에너지/ },
+  ];
+  const labels = policyLeads.flatMap((lead) =>
+    topicMatchers.filter(({ pattern }) => pattern.test(lead)).map(({ label }) => label),
+  );
+
+  return unique(labels);
+}
+
+function formatTopicList(topics: string[], limit = 2) {
+  return topics.slice(0, limit).join(", ");
+}
+
+function hasDetailedCriminalRecord(candidate: Candidate) {
+  return candidate.office === "서울특별시장" || candidate.office === "경기도지사";
+}
+
+function ExpandableText({
+  text,
+  label,
+  collapsedLength = 150,
+}: {
+  text: string;
+  label: string;
+  collapsedLength?: number;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const shouldCollapse = text.length > collapsedLength;
+  const visibleText = expanded || !shouldCollapse ? text : text.slice(0, collapsedLength).trim();
+
+  return (
+    <span className="expandable-copy">
+      <span>{visibleText}</span>
+      {shouldCollapse ? (
+        <button
+          type="button"
+          className="inline-more-button"
+          onClick={() => setExpanded((value) => !value)}
+          aria-label={expanded ? `${label} 접기` : `${label} 더보기`}
+        >
+          {expanded ? "접기" : "더보기"}
+        </button>
+      ) : null}
+    </span>
+  );
 }
 
 function getPledgeDetailLabel(pledge: Candidate["fullPledges"][number]) {
   return /링크 없음|원문 텍스트 확보|원문 PDF 확보|원문 확보/.test(pledge.title) ? "상태" : "어떻게";
 }
 
+function getVoterPledgeDetail(pledge: Candidate["fullPledges"][number]) {
+  if (/\/PDF\//.test(pledge.detail)) {
+    return "공약 원문 파일이 공개되어 있습니다. 세부 내용은 원문에서 확인해 주세요.";
+  }
+
+  if (pledge.detail.includes("PDF 원문에서 추출한 공약 제목입니다") || pledge.detail.includes("정제 단계")) {
+    return "공약 제목은 원문에서 확인되었습니다. 세부 실행 내용은 원문 확인이 필요합니다.";
+  }
+
+  return pledge.detail;
+}
+
 function CandidateCard({
   candidate,
+  ballotCandidates,
   profile,
   onOpen,
   onOpenCrime,
 }: {
   candidate: Candidate;
+  ballotCandidates: Candidate[];
   profile: VoterProfile;
   onOpen: () => void;
   onOpenCrime: () => void;
 }) {
   const candidateTraits = getCandidateTraits(candidate);
-  const feasibilityReview = getFeasibilityReview(candidate);
-  const comparisonDetails = getVoterComparisonDetails(candidate);
+  const comparisonPreview = getVoterComparisonPreview(candidate, ballotCandidates);
+  const comparisonCardDetails = getVoterComparisonCardDetails(candidate, ballotCandidates);
   const factCheckReview = getCandidateFactCheck(candidate.id);
   const personaReview = getCandidatePersonaReview(candidate.id, profile);
   const primaryPledges = candidate.fullPledges.slice(0, 2);
@@ -640,15 +1005,22 @@ function CandidateCard({
         <span>{candidate.occupation}</span>
       </div>
 
-      <button
-        type="button"
-        className={`record-pill record-pill--${candidate.criminalRecord.tone}`}
-        onClick={onOpenCrime}
-        aria-label={`${candidate.name} 전과 기록 보기`}
-      >
-        {getCandidateToneIcon(candidate)}
-        <span>{candidate.criminalRecord.summary}</span>
-      </button>
+      {hasDetailedCriminalRecord(candidate) ? (
+        <button
+          type="button"
+          className={`record-pill record-pill--${candidate.criminalRecord.tone}`}
+          onClick={onOpenCrime}
+          aria-label={`${candidate.name} 전과 기록 보기`}
+        >
+          {getCandidateToneIcon(candidate)}
+          <span>{candidate.criminalRecord.summary}</span>
+        </button>
+      ) : (
+        <span className={`record-pill record-pill--static record-pill--${candidate.criminalRecord.tone}`}>
+          {getCandidateToneIcon(candidate)}
+          <span>{candidate.criminalRecord.summary}</span>
+        </span>
+      )}
 
       <div className="tag-row">
         {candidate.focusTags.map((tag) => (
@@ -661,12 +1033,21 @@ function CandidateCard({
           <Scale aria-hidden="true" size={16} />
           <h4>차별점</h4>
         </div>
-        <p>{candidate.comparison}</p>
+        <p>{comparisonPreview}</p>
         <ul>
-          {comparisonDetails.slice(0, 2).map((detail) => (
+          {comparisonCardDetails.map((detail) => (
             <li key={detail}>{detail}</li>
           ))}
         </ul>
+        <button
+          type="button"
+          className="inline-more-button inline-more-button--standalone"
+          onClick={onOpen}
+          aria-label={`${candidate.name} 차별점 더보기`}
+        >
+          차별점 더보기
+          <ChevronRight aria-hidden="true" size={14} />
+        </button>
       </section>
 
       <section className="card-section trait-summary" aria-label={`${candidate.name} 후보 특징`}>
@@ -679,17 +1060,6 @@ function CandidateCard({
             <li key={trait}>{trait}</li>
           ))}
         </ul>
-      </section>
-
-      <section
-        className={`card-section feasibility-summary feasibility-summary--${feasibilityReview.tone}`}
-        aria-label={`${candidate.name} 공약 실현 가능성 검토`}
-      >
-        <div className="card-section__title">
-          <ShieldCheck aria-hidden="true" size={16} />
-          <h4>실현 가능성</h4>
-        </div>
-        <p>{feasibilityReview.summary}</p>
       </section>
 
       {factCheckReview ? (
@@ -726,7 +1096,7 @@ function CandidateCard({
               <strong>{pledge.title}</strong>
               <p>
                 <span>{getPledgeDetailLabel(pledge)}</span>
-                {shortenUiText(pledge.detail, 132)}
+                <ExpandableText text={getVoterPledgeDetail(pledge)} label={`${candidate.name} 공약 ${index + 1}`} />
               </p>
             </article>
           ))}
@@ -786,16 +1156,17 @@ function CandidatePhoto({ candidate }: { candidate: Candidate }) {
 
 function CandidateDialog({
   candidate,
+  ballotCandidates,
   profile,
   onClose,
 }: {
   candidate: Candidate;
+  ballotCandidates: Candidate[];
   profile: VoterProfile;
   onClose: () => void;
 }) {
   const candidateTraits = getCandidateTraits(candidate);
-  const feasibilityReview = getFeasibilityReview(candidate);
-  const comparisonDetails = getVoterComparisonDetails(candidate);
+  const comparisonDetails = getVoterComparisonDetails(candidate, ballotCandidates);
   const factCheckReview = getCandidateFactCheck(candidate.id);
   const personaReview = getCandidatePersonaReview(candidate.id, profile);
 
@@ -836,7 +1207,7 @@ function CandidateDialog({
                   <strong>{pledge.title}</strong>
                   <span>
                     <em>{getPledgeDetailLabel(pledge)}</em>
-                    {pledge.detail}
+                    {getVoterPledgeDetail(pledge)}
                   </span>
                 </li>
               ))}
@@ -857,16 +1228,6 @@ function CandidateDialog({
             <ul className="difference-list">
               {candidateTraits.map((trait) => (
                 <li key={trait}>{trait}</li>
-              ))}
-            </ul>
-          </section>
-
-          <section className={`detail-section feasibility-detail feasibility-detail--${feasibilityReview.tone}`}>
-            <h3>공약 실현 가능성 검토</h3>
-            <p>{feasibilityReview.summary}</p>
-            <ul className="difference-list">
-              {feasibilityReview.details.map((detail) => (
-                <li key={detail}>{detail}</li>
               ))}
             </ul>
           </section>

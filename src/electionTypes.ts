@@ -52,11 +52,6 @@ export type Candidate = {
   pledgeHighlights: string[];
   comparison: string;
   comparisonDetails: string[];
-  feasibilityReview?: {
-    summary: string;
-    details: string[];
-    tone: "evidence" | "caution" | "unknown";
-  };
   fullPledges: Pledge[];
   profileRelevance: Record<VoterProfile, string>;
   cache: {

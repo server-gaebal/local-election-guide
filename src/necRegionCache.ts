@@ -283,15 +283,10 @@ function toAppCandidate({
     ),
     pledgeHighlights:
       pledgeTitles.length > 0
-        ? pledgeTitles.map((title) => shortenText(title, 72))
+        ? pledgeTitles.map((title) => normalizeWhitespace(title))
         : fallbackHighlights(hasFivePledgePdf, hasCampaignBulletinPdf, isPartyVote, hasDownloadedSource),
     comparison: comparison.summary,
     comparisonDetails: comparison.details,
-    feasibilityReview: buildFeasibilityReview(fullPledges, {
-      hasPolicyText,
-      policySourceLabel,
-      office,
-    }),
     fullPledges,
     profileRelevance,
     cache: {
@@ -500,7 +495,7 @@ function buildPledgeSummary(
   if (pledgeTitles.length > 0) {
     const tagText = policyTags.length > 0 ? `${policyTags.join("·")} 중심으로 ` : "";
     const sourceText = policySourceLabel ? `${policySourceLabel} 원문에서 ` : "";
-    return `${candidateSubject(candidate)} ${sourceText}${tagText}${shortenText(pledgeTitles[0], 72)} 등 ${pledgeTitles.length}개 항목을 제시했습니다.`;
+    return `${candidateSubject(candidate)} ${sourceText}${tagText}${normalizeWhitespace(pledgeTitles[0])} 등 ${pledgeTitles.length}개 항목을 제시했습니다.`;
   }
 
   if (hasFivePledgePdf) {
@@ -545,67 +540,6 @@ function fallbackHighlights(
   }
 
   return ["후보 메타데이터 확보", "원문 PDF 링크 없음", "NEC 공개 여부 확인 필요"];
-}
-
-function buildFeasibilityReview(
-  pledges: Pledge[],
-  {
-    hasPolicyText,
-    policySourceLabel,
-    office,
-  }: {
-    hasPolicyText: boolean;
-    policySourceLabel?: string;
-    office: string;
-  },
-): Candidate["feasibilityReview"] {
-  if (!hasPolicyText || pledges.length === 0) {
-    return {
-      summary: "실현 가능성 판단 보류",
-      details: [
-        "공약 원문 텍스트가 없거나 세부 실행 문구가 충분하지 않아 가능/불가능을 판단하지 않습니다.",
-        `${office} 권한, 예산, 조례, 상위기관 협의 여부는 원문 추가 확인이 필요합니다.`,
-      ],
-      tone: "unknown",
-    };
-  }
-
-  const policyText = pledges.map((pledge) => `${pledge.title} ${pledge.detail}`).join(" ");
-  const evidence = [
-    buildEvidenceLine("재원 단서", policyText, ["예산", "재원", "국비", "도비", "시비", "구비", "민자", "기금", "특별교부", "공모"]),
-    buildEvidenceLine("절차 단서", policyText, ["조례", "법령", "법 개정", "계획", "용역", "공론화", "인허가", "심의"]),
-    buildEvidenceLine("협의 단서", policyText, ["협의", "건의", "유치", "중앙정부", "국회", "교육청", "경기도", "서울시"]),
-  ].filter(Boolean);
-
-  if (evidence.length === 0) {
-    return {
-      summary: "원문만으로 실현 가능성 판단 보류",
-      details: [
-        `${policySourceLabel ?? "공약"} 원문에 재원, 절차, 협의 주체가 명확히 드러나지 않았습니다.`,
-        "정책 방향은 요약할 수 있지만 실현 가능성은 별도 공식 자료 없이는 단정하지 않습니다.",
-      ],
-      tone: "unknown",
-    };
-  }
-
-  return {
-    summary: "원문 근거로 추가 검토 가능",
-    details: [
-      ...evidence,
-      "위 단서는 가능/불가능 판정이 아니라 검증해야 할 근거 항목입니다.",
-    ],
-    tone: evidence.some((line) => line.startsWith("협의 단서")) ? "caution" : "evidence",
-  };
-}
-
-function buildEvidenceLine(label: string, text: string, keywords: string[]) {
-  const matched = keywords.filter((keyword) => text.includes(keyword));
-
-  if (matched.length === 0) {
-    return "";
-  }
-
-  return `${label}: ${matched.slice(0, 5).join(", ")} 표현이 원문에 있습니다.`;
 }
 
 function buildFullPledges(
@@ -721,14 +655,11 @@ function extractActionPhrases(value: string) {
 }
 
 function cleanPolicyIssue(value: string) {
-  return shortenText(
-    normalizeWhitespace(value)
-      .replace(/^[○□■·\-–•]+/, "")
-      .replace(/^(?:주요내용|핵심추진과제|정책|공약)\s*/g, "")
-      .replace(/[.,;:]+$/g, "")
-      .trim(),
-    34,
-  );
+  return normalizeWhitespace(value)
+    .replace(/^[○□■·\-–•]+/, "")
+    .replace(/^(?:주요내용|핵심추진과제|정책|공약)\s*/g, "")
+    .replace(/[.,;:]+$/g, "")
+    .trim();
 }
 
 function isSpecificPolicyIssue(value: string) {
@@ -762,12 +693,16 @@ function buildComparison({
   sameComparisonCount: number;
   hasPolicyText: boolean;
 }) {
+  const partyText = candidate.partyName ? `${candidate.partyName} ` : "";
+  const subject = candidate.name ? `${partyText}${displayName} 후보는` : `${displayName}은`;
+  const officeText = officeContextText(office);
+
   if (!hasPolicyText || policyTags.length === 0) {
     return {
-      summary: `${officeContextText(office)} ${sameComparisonCount}개 후보/정당과 비교 대상입니다.`,
+      summary: `${officeText} ${subject} 공개 공약 정보가 부족해 기본 공개자료 중심으로 비교가 필요합니다.`,
       details: [
-        "공약 원문이 없어 같은 선거구 후보와의 차이를 확인하기 어렵습니다.",
-        "정당·전과·재산 등 공개 기본정보를 먼저 확인해 주세요.",
+        "공약 차이를 판단할 원문 정보가 부족합니다. 정당, 전과, 재산·납세, 경력 같은 공개 기본정보부터 비교해 주세요.",
+        "상세 공약이 공개되면 같은 투표지 후보와 대상, 실행 방식, 재원 문구를 나란히 확인해야 합니다.",
       ],
     };
   }
@@ -775,9 +710,6 @@ function buildComparison({
   const distinctiveIssues = policyIssues.filter((issue) => (comparisonPolicyCounts.issueCounts.get(issue) ?? 0) <= 1);
   const leadIssues = distinctiveIssues.length > 0 ? distinctiveIssues : policyIssues;
   const leadText = leadIssues.length > 0 ? leadIssues.slice(0, 2).join("·") : policyTags.slice(0, 2).join("·");
-  const partyText = candidate.partyName ? `${candidate.partyName} ` : "";
-  const subject = candidate.name ? `${partyText}${displayName} 후보는` : `${displayName}은`;
-  const officeText = officeContextText(office);
 
   if (sameComparisonCount <= 1) {
     return {
