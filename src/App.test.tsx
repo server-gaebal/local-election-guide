@@ -98,6 +98,19 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByText("상대 후보와의 차이")).toBeInTheDocument();
   });
 
+  it("opens criminal record details from the record badge", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const candidateCard = await screen.findByRole("article", { name: /정원오 후보 카드/ });
+    await user.click(within(candidateCard).getByRole("button", { name: "정원오 전과 기록 보기" }));
+
+    const dialog = screen.getByRole("dialog", { name: "정원오 전과 기록" });
+    expect(within(dialog).getByRole("heading", { name: "전과 2건" })).toBeInTheDocument();
+    expect(within(dialog).getByText(/선관위 후보자 정보공개에서 스캔 원문 1건/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/죄명과 형량까지 자동 표시하려면/)).toBeInTheDocument();
+  });
+
   it("keeps implementation cache metadata out of the voter UI and reuses region fetches", async () => {
     render(<App />);
 

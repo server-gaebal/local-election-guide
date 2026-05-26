@@ -280,6 +280,7 @@ function buildCriminalRecord(isPartyVote: boolean, disclosure?: NecCandidateInfo
         : "전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
     ].join(" "),
     tone: isCrimeRecordClean(disclosure.crimeRecord) ? "clean" : "risk",
+    disclosureFiles: disclosure.crimeDisclosureFiles,
   };
 }
 

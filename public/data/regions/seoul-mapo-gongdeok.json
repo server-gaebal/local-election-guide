@@ -23,7 +23,10 @@
       "criminalRecord": {
         "summary": "전과 2건",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 2건. 전과 증명서 스캔 파일 1건이 공개되어 있습니다.",
-        "tone": "risk"
+        "tone": "risk",
+        "disclosureFiles": [
+          "20260603/open/Gsg1100/Hb100157144/junkwa/20260305093819586_1.tif"
+        ]
       },
       "publicRecord": [
         "학력: 한양대학교 도시대학원 도시개발경영전공 박사 수료",
@@ -101,7 +104,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 고려대학교 대학원 법학과 졸업(법학박사)",
@@ -161,7 +165,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 고려대학교 대학원 졸업(법학박사)",
@@ -239,7 +244,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 원광디지털대학교 한국문화학부 한국복식과학학과 졸업",
@@ -302,7 +308,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 서울대학교 경영전문대학원 경영학과(SNU MBA) 졸업(석사)",
@@ -380,7 +387,10 @@
       "criminalRecord": {
         "summary": "전과 4건",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 4건. 전과 증명서 스캔 파일 1건이 공개되어 있습니다.",
-        "tone": "risk"
+        "tone": "risk",
+        "disclosureFiles": [
+          "20260603/open/Gsg1100/Hb100162720/junkwa/20260421175543630_1.tif"
+        ]
       },
       "publicRecord": [
         "학력: 서울대학교 공과대학 금속공과 졸업",
@@ -440,7 +450,10 @@
       "criminalRecord": {
         "summary": "전과 3건",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 3건. 전과 증명서 스캔 파일 1건이 공개되어 있습니다.",
-        "tone": "risk"
+        "tone": "risk",
+        "disclosureFiles": [
+          "20260603/open/Gsg1100/Hb100153800/junkwa/20260203181827511_1.tif"
+        ]
       },
       "publicRecord": [
         "학력: 동방문화대학원대학교 자연치유학과졸업(교육학박사)",
@@ -513,7 +526,10 @@
       "criminalRecord": {
         "summary": "전과 1건",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 1건. 전과 증명서 스캔 파일 1건이 공개되어 있습니다.",
-        "tone": "risk"
+        "tone": "risk",
+        "disclosureFiles": [
+          "20260603/open/Gsg1100/Hb100155563/junkwa/20260223142526670_1.tif"
+        ]
       },
       "publicRecord": [
         "학력: 서울대학교 사범대학 국어교육과 졸업",
@@ -576,7 +592,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 미국 위스콘신대학교 매디슨 캠퍼스 대학원 경제학 박사 (1989.12.~1991.12.)",
@@ -644,7 +661,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 뉴욕시립대학교대학원 철학박사(경영학전공)(2006.8~2012.8)",
@@ -704,7 +722,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 숭실대학교 대학원 평생교육학과 졸업(교육학 박사)",
@@ -777,7 +796,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 서울대학교 대학원(박사과정) 사회학과 문학박사",
@@ -855,7 +875,10 @@
       "criminalRecord": {
         "summary": "전과 2건",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 2건. 전과 증명서 스캔 파일 1건이 공개되어 있습니다.",
-        "tone": "risk"
+        "tone": "risk",
+        "disclosureFiles": [
+          "20260603/open/Gsg1100/Hb100153778/junkwa/20260203114502185_1.tif"
+        ]
       },
       "publicRecord": [
         "학력: 한국교원대학교 교육정책전문대학원 졸업 (교육학박사)",
@@ -915,7 +938,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 충남대학교 대학원 졸업(농학박사)",
@@ -993,7 +1017,10 @@
       "criminalRecord": {
         "summary": "전과 4건",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 4건. 전과 증명서 스캔 파일 1건이 공개되어 있습니다.",
-        "tone": "risk"
+        "tone": "risk",
+        "disclosureFiles": [
+          "20260603/open/Gsg1114/Hb100154576/junkwa/20260220182420766_1.tif"
+        ]
       },
       "publicRecord": [
         "학력: 연세대학교 행정대학원 정치행정리더십전공 졸업(정치학 석사)",
@@ -1071,7 +1098,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 건국대학교 행정대학원 행정학과 정책학전공 졸업(행정학 석사)",
@@ -1149,7 +1177,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 홍익대학교대학원 경영학과 수료(박사학위과정)",
@@ -1209,7 +1238,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 경희대학교 경영대학원 경영학과 졸업(경영학석사)",
@@ -1269,7 +1299,10 @@
       "criminalRecord": {
         "summary": "전과 2건",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 2건. 전과 증명서 스캔 파일 1건이 공개되어 있습니다.",
-        "tone": "risk"
+        "tone": "risk",
+        "disclosureFiles": [
+          "20260603/open/Gsg1114/Hb100159195/junkwa/20260320144904363_1.tif"
+        ]
       },
       "publicRecord": [
         "학력: 국립부경대학교 해양학전공 졸업",
@@ -1329,7 +1362,10 @@
       "criminalRecord": {
         "summary": "전과 1건",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 1건. 전과 증명서 스캔 파일 1건이 공개되어 있습니다.",
-        "tone": "risk"
+        "tone": "risk",
+        "disclosureFiles": [
+          "20260603/open/Gsg1114/Hb100157546/junkwa/20260309144254539_1.tif"
+        ]
       },
       "publicRecord": [
         "학력: 경희사이버대학교 노인복지전공 졸업(사회복지학사)",
@@ -1389,7 +1425,8 @@
       "criminalRecord": {
         "summary": "전과 없음",
         "details": "선거통계시스템 후보자 명부 기준 전과기록유무(건수): 없음. 전과 증명서 스캔 파일은 후보자 정보공개 원문에서 추가 확인해야 합니다.",
-        "tone": "clean"
+        "tone": "clean",
+        "disclosureFiles": []
       },
       "publicRecord": [
         "학력: 염광여자상업고등학교(현 염광메디텍고등학교) 졸업",

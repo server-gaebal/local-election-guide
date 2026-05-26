@@ -517,6 +517,7 @@ h1 {
   width: fit-content;
   gap: 6px;
   padding: 7px 10px;
+  border: 0;
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 900;
@@ -721,6 +722,20 @@ h1 {
   margin-left: auto;
   color: #33403d;
   white-space: nowrap;
+}
+
+.scan-file-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.scan-file-list li {
+  overflow-wrap: anywhere;
+  color: #3d4844;
+  font-size: 0.86rem;
+  line-height: 1.45;
 }
 
 @media (max-width: 1180px) {

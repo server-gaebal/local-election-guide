@@ -38,6 +38,7 @@ export type Candidate = {
     summary: string;
     details: string;
     tone: "clean" | "notice" | "risk";
+    disclosureFiles?: string[];
   };
   publicRecord: string[];
   focusTags: string[];
