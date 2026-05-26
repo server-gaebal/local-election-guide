@@ -131,7 +131,7 @@ describe("local election guide static experience", () => {
     await waitFor(() => {
       expect(share).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: "https://kimsunghyun1995.github.io/local-election-guide/share/seoul-mapo-gongdeok.html",
+          url: "https://server-gaebal.github.io/local-election-guide/share/seoul-mapo-gongdeok.html",
           title: "서울특별시 마포구 후보 가이드",
         }),
       );
