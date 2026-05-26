@@ -16,6 +16,8 @@ export type NecDownloadIndex = Map<
   {
     textPath: string;
     pledgeTitles: string[];
+    pledges?: Pledge[];
+    policyTags?: string[];
   }
 >;
 
@@ -62,30 +64,60 @@ const profileRelevance: Record<VoterProfile, string> = {
   고령층: "복지·의료·보행·대중교통 공약과 연결되는지 확인해야 합니다.",
 };
 
+const policyTagKeywords: Record<string, string[]> = {
+  교통: ["교통", "철도", "지하철", "버스", "GTX", "도로", "정류소", "통근", "이동", "환승"],
+  주거: ["주택", "주거", "공공임대", "재개발", "재건축", "월세", "전세", "역세권"],
+  복지: ["복지", "돌봄", "연금", "장애", "취약", "노후", "어르신", "고령", "의료"],
+  교육: ["교육", "학교", "학습", "돌봄", "통학", "청소년", "학생", "급식"],
+  청년: ["청년", "창업", "일자리", "취업", "신혼", "월세", "대학"],
+  경제: ["경제", "산업", "기업", "투자", "일자리", "창업", "상권", "관광"],
+  안전: ["안전", "방재", "재난", "범죄", "보행", "안심", "소방"],
+  환경: ["환경", "기후", "탄소", "녹지", "공원", "에너지", "재생"],
+  행정: ["행정", "민원", "공개", "투명", "소통", "예산", "공공"],
+  문화: ["문화", "관광", "체육", "예술", "콘텐츠", "축제"],
+  농업: ["농업", "농촌", "농민", "어업", "어촌", "축산"],
+};
+
 export function extractPledgeTitles(text: string, limit = 5) {
-  const titles: string[] = [];
+  return extractPledges(text, limit).map((pledge) => pledge.title);
+}
+
+export function extractPledges(text: string, limit = 5): Pledge[] {
+  const pledges: Pledge[] = [];
   const seen = new Set<string>();
-  const patterns = [
-    /공약순위\s*:?\s*\d*\s*제목\s*:?\s*(.+)/g,
-    /공약순위\s+제목\s+(.+)/g,
-  ];
+  const blocks = splitPledgeBlocks(text);
 
-  for (const pattern of patterns) {
-    for (const match of text.matchAll(pattern)) {
-      const title = cleanPledgeTitle(match[1]);
+  for (const block of blocks) {
+    const title = extractPledgeTitleFromBlock(block);
 
-      if (title && !seen.has(title)) {
-        seen.add(title);
-        titles.push(title);
-      }
+    if (!title || seen.has(title)) {
+      continue;
+    }
 
-      if (titles.length >= limit) {
-        return titles;
-      }
+    seen.add(title);
+    pledges.push({
+      title,
+      detail: extractPledgeDetailFromBlock(block, title),
+    });
+
+    if (pledges.length >= limit) {
+      return pledges;
     }
   }
 
-  return titles;
+  return pledges;
+}
+
+export function extractPolicyTags(value: string, limit = 4) {
+  const tagScores = Object.entries(policyTagKeywords)
+    .map(([tag, keywords]) => ({
+      tag,
+      score: keywords.reduce((sum, keyword) => sum + countOccurrences(value, keyword), 0),
+    }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || a.tag.localeCompare(b.tag));
+
+  return tagScores.slice(0, limit).map((item) => item.tag);
 }
 
 export function buildResidenceDatasetFromNec({
@@ -105,6 +137,7 @@ export function buildResidenceDatasetFromNec({
     .filter((candidate) => isInResidenceScope(candidate, residence, scope))
     .sort(sortNecRows);
   const officeCounts = countBy(selectedRows, (candidate) => officeFor(candidate, residence, scope));
+  const officeTagCounts = buildOfficeTagCounts(selectedRows, residence, scope, downloads);
 
   return {
     residence,
@@ -118,6 +151,7 @@ export function buildResidenceDatasetFromNec({
         download: downloads.get(candidate.id),
         disclosure: candidateInfo.get(candidate.candidateId ?? ""),
         sameOfficeCount: officeCounts.get(officeFor(candidate, residence, scope)) ?? 1,
+        officeTagCounts: officeTagCounts.get(officeFor(candidate, residence, scope)) ?? new Map(),
       }),
     ),
     source: {
@@ -161,22 +195,41 @@ function toAppCandidate({
   download,
   disclosure,
   sameOfficeCount,
+  officeTagCounts,
 }: {
   candidate: NecNormalizedCandidate;
   residence: Residence;
   scope: ResidenceElectionScope;
   fallbackOrder: number;
   generatedAt: string;
-  download?: { textPath: string; pledgeTitles: string[] };
+  download?: {
+    textPath: string;
+    pledgeTitles: string[];
+    pledges?: Pledge[];
+    policyTags?: string[];
+  };
   disclosure?: NecCandidateInfoRecord;
   sameOfficeCount: number;
+  officeTagCounts: Map<string, number>;
 }): Candidate {
   const isPartyVote = candidate.name.length === 0;
   const displayName = isPartyVote ? `${candidate.partyName} 비례대표` : candidate.name;
   const hasFivePledgePdf = Boolean(candidate.fivePledgePdf);
-  const pledgeTitles = download?.pledgeTitles ?? [];
+  const pledgeTitles = download?.pledges?.map((pledge) => pledge.title) ?? download?.pledgeTitles ?? [];
+  const fullPledges = download?.pledges ?? buildPledgesFromTitles(pledgeTitles, hasFivePledgePdf, candidate.fivePledgePdf?.requestedFullPath);
+  const policyTags =
+    download?.policyTags ?? extractPolicyTags((download?.pledges ?? []).map((pledge) => `${pledge.title} ${pledge.detail}`).join(" "));
   const office = officeFor(candidate, residence, scope);
   const number = Number.parseInt(candidate.candidateNumber, 10);
+  const comparison = buildComparison({
+    candidate,
+    displayName,
+    office,
+    policyTags,
+    officeTagCounts,
+    sameOfficeCount,
+    hasFivePledgePdf,
+  });
 
   return {
     id: candidate.id,
@@ -195,18 +248,12 @@ function toAppCandidate({
     photoUrl: candidate.thumbnailUrl ?? undefined,
     criminalRecord: buildCriminalRecord(isPartyVote, disclosure),
     publicRecord: buildPublicRecords(candidate, disclosure),
-    focusTags: buildFocusTags(candidate, hasFivePledgePdf),
-    pledgeSummary: buildPledgeSummary(candidate, pledgeTitles, hasFivePledgePdf),
-    pledgeHighlights: pledgeTitles.length > 0 ? pledgeTitles : fallbackHighlights(hasFivePledgePdf, isPartyVote),
-    comparison: `${office} 투표지에서 ${sameOfficeCount}개 후보/정당과 함께 비교 대상입니다.`,
-    comparisonDetails: [
-      hasFivePledgePdf
-        ? "5대공약 PDF가 제공되어 원문 기반 요약·비교 생성 대상입니다."
-        : "NEC 정책공약마당에서 5대공약 PDF는 제공되지 않았습니다.",
-      candidate.thumbnailUrl ? "후보 사진은 NEC CDN 썸네일을 사용합니다." : "후보 사진 썸네일은 제공되지 않았습니다.",
-      `선거구 기준: ${candidate.districtName || office}`,
-    ],
-    fullPledges: buildFullPledges(pledgeTitles, hasFivePledgePdf, candidate.fivePledgePdf?.requestedFullPath),
+    focusTags: buildFocusTags(candidate, hasFivePledgePdf, policyTags),
+    pledgeSummary: buildPledgeSummary(candidate, pledgeTitles, policyTags, hasFivePledgePdf),
+    pledgeHighlights: pledgeTitles.length > 0 ? pledgeTitles.map((title) => shortenText(title, 72)) : fallbackHighlights(hasFivePledgePdf, isPartyVote),
+    comparison: comparison.summary,
+    comparisonDetails: comparison.details,
+    fullPledges,
     profileRelevance,
     cache: {
       policyPdf: download?.textPath ?? candidate.fivePledgePdf?.requestedFullPath ?? "NEC row metadata only",
@@ -305,21 +352,24 @@ function buildPublicRecords(candidate: NecNormalizedCandidate, disclosure?: NecC
   return records;
 }
 
-function buildFocusTags(candidate: NecNormalizedCandidate, hasFivePledgePdf: boolean) {
+function buildFocusTags(candidate: NecNormalizedCandidate, hasFivePledgePdf: boolean, policyTags: string[]) {
   return [
     candidate.raceName.replace(/선거$/, ""),
     candidate.districtName || "비례",
+    ...policyTags.slice(0, 2),
     hasFivePledgePdf ? "5대공약" : "선거공보",
-  ];
+  ].filter(Boolean).slice(0, 5);
 }
 
 function buildPledgeSummary(
   candidate: NecNormalizedCandidate,
   pledgeTitles: string[],
+  policyTags: string[],
   hasFivePledgePdf: boolean,
 ) {
   if (pledgeTitles.length > 0) {
-    return `NEC 5대공약 원문에서 ${pledgeTitles.length}개 공약 제목을 추출했습니다. 세부 비교 요약은 원문 정제 후 생성합니다.`;
+    const tagText = policyTags.length > 0 ? `${policyTags.join("·")} 중심으로 ` : "";
+    return `${candidateSubject(candidate)} ${tagText}${shortenText(pledgeTitles[0], 72)} 등 ${pledgeTitles.length}개 공약을 제시했습니다.`;
   }
 
   if (hasFivePledgePdf) {
@@ -340,6 +390,10 @@ function fallbackHighlights(hasFivePledgePdf: boolean, isPartyVote: boolean) {
 }
 
 function buildFullPledges(pledgeTitles: string[], hasFivePledgePdf: boolean, requestedFullPath?: string): Pledge[] {
+  return buildPledgesFromTitles(pledgeTitles, hasFivePledgePdf, requestedFullPath);
+}
+
+function buildPledgesFromTitles(pledgeTitles: string[], hasFivePledgePdf: boolean, requestedFullPath?: string): Pledge[] {
   if (pledgeTitles.length > 0) {
     return pledgeTitles.map((title) => ({
       title,
@@ -362,6 +416,224 @@ function buildFullPledges(pledgeTitles: string[], hasFivePledgePdf: boolean, req
       detail: "NEC 정책공약마당 응답에 5대공약 PDF 항목이 없어 선거공보 또는 후보자 정보공개 자료를 추가 연동해야 합니다.",
     },
   ];
+}
+
+function buildOfficeTagCounts(
+  candidates: NecNormalizedCandidate[],
+  residence: Residence,
+  scope: ResidenceElectionScope,
+  downloads: NecDownloadIndex,
+) {
+  const officeTagCounts = new Map<string, Map<string, number>>();
+
+  for (const candidate of candidates) {
+    const office = officeFor(candidate, residence, scope);
+    const tags = candidateTags(downloads.get(candidate.id));
+    const tagCounts = officeTagCounts.get(office) ?? new Map<string, number>();
+
+    for (const tag of tags) {
+      tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+    }
+
+    officeTagCounts.set(office, tagCounts);
+  }
+
+  return officeTagCounts;
+}
+
+function candidateTags(download?: { pledgeTitles: string[]; pledges?: Pledge[]; policyTags?: string[] }) {
+  const tags = download?.policyTags ?? extractPolicyTags((download?.pledges ?? []).map((pledge) => `${pledge.title} ${pledge.detail}`).join(" "));
+
+  return tags.length > 0 ? tags : ["자료확인"];
+}
+
+function buildComparison({
+  candidate,
+  displayName,
+  office,
+  policyTags,
+  officeTagCounts,
+  sameOfficeCount,
+  hasFivePledgePdf,
+}: {
+  candidate: NecNormalizedCandidate;
+  displayName: string;
+  office: string;
+  policyTags: string[];
+  officeTagCounts: Map<string, number>;
+  sameOfficeCount: number;
+  hasFivePledgePdf: boolean;
+}) {
+  if (!hasFivePledgePdf || policyTags.length === 0) {
+    return {
+      summary: `${officeContextText(office)} ${sameOfficeCount}개 후보/정당과 비교 대상입니다.`,
+      details: [
+        "5대공약 PDF가 없거나 텍스트 추출이 부족해 정책 키워드 비교는 제한적입니다.",
+        candidate.thumbnailUrl ? "후보 사진은 NEC CDN 썸네일을 사용합니다." : "후보 사진 썸네일은 제공되지 않았습니다.",
+        `선거구 기준: ${candidate.districtName || office}`,
+      ],
+    };
+  }
+
+  const distinctiveTags = policyTags.filter((tag) => (officeTagCounts.get(tag) ?? 0) <= 1);
+  const sharedTags = policyTags.filter((tag) => (officeTagCounts.get(tag) ?? 0) > 1);
+  const leadTags = distinctiveTags.length > 0 ? distinctiveTags : policyTags;
+  const partyText = candidate.partyName ? `${candidate.partyName} ` : "";
+  const subject = candidate.name ? `${partyText}${displayName} 후보는` : `${displayName}은`;
+  const officeText = officeContextText(office);
+
+  if (sameOfficeCount <= 1) {
+    return {
+      summary: `${officeText} ${subject} ${leadTags.slice(0, 2).join("·")} 공약을 중심으로 단독 비교됩니다.`,
+      details: [
+        "같은 투표지의 다른 후보/정당 데이터가 없어 후보 내부 공약 키워드만 표시합니다.",
+        `주요 키워드: ${policyTags.join(", ")}.`,
+        `비교 기준: 5대공약 제목과 목표·이행방법 문장.`,
+      ],
+    };
+  }
+
+  return {
+    summary: `${officeText} ${subject} ${leadTags.slice(0, 2).join("·")} 쟁점을 앞세웁니다.`,
+    details: [
+      distinctiveTags.length > 0
+        ? `상대 후보 대비 두드러지는 키워드: ${distinctiveTags.join(", ")}.`
+        : `주요 키워드: ${policyTags.join(", ")}.`,
+      sharedTags.length > 0
+        ? `공통 경쟁 쟁점: ${sharedTags.join(", ")}.`
+        : "같은 투표지 안에서 겹치는 핵심 키워드는 적습니다.",
+      `비교 기준: ${sameOfficeCount}개 후보/정당의 5대공약 제목과 목표·이행방법 문장.`,
+    ],
+  };
+}
+
+function officeContextText(office: string) {
+  return office.endsWith("비례대표") ? `${office} 투표에서` : `${office} 선거에서`;
+}
+
+function shortenText(value: string, maxLength: number) {
+  const normalized = normalizeWhitespace(value);
+
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, maxLength - 1).trim()}…`;
+}
+
+function candidateSubject(candidate: NecNormalizedCandidate) {
+  if (!candidate.name) {
+    return `${candidate.partyName || "해당 정당"}은`;
+  }
+
+  return `${candidate.name} 후보${candidate.partyName ? `(${candidate.partyName})` : ""}는`;
+}
+
+function splitPledgeBlocks(text: string) {
+  return text
+    .replace(/\r/g, "")
+    .split(/(?=\n?\s*공약순위\s*:?\s*\d*)/g)
+    .map((block) => block.trim())
+    .filter((block) => block.includes("공약순위"));
+}
+
+function extractPledgeTitleFromBlock(block: string) {
+  const header = normalizeWhitespace(block.split("\n").slice(0, 6).join(" "));
+  const patterns = [
+    /공약순위\s*:?\s*\d+\s*제목\s*:?\s*(.+?)(?:\s*(?:□\s*)?목\s*표|\s*이행방법|$)/,
+    /공약순위\s*:?\s*\d+\s+(.+?)(?:\s*(?:□\s*)?목\s*표|\s*이행방법|$)/,
+    /공약순위\s+제목\s+(.+?)(?:\s*(?:□\s*)?목\s*표|\s*이행방법|$)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = header.match(pattern);
+    const title = match ? cleanPledgeTitle(match[1]) : "";
+
+    if (title) {
+      return title;
+    }
+  }
+
+  return "";
+}
+
+function extractPledgeDetailFromBlock(block: string, title: string) {
+  const lines = block
+    .split("\n")
+    .map(cleanPledgeLine)
+    .filter((line) => isMeaningfulPledgeLine(line, title));
+  const targetSectionLines = extractTargetSectionLines(lines);
+  const methodSectionLines = extractSectionLines(lines, /^(?:□\s*)?이행방법/, /^(?:□\s*)?(?:이행기간|재원조달)/);
+  const fallbackLines = lines.filter(isUsefulDetailLine);
+  const selectedLines = (targetSectionLines.length > 0 ? targetSectionLines : methodSectionLines.length > 0 ? methodSectionLines : fallbackLines).slice(0, 2);
+  const detail = normalizeWhitespace(selectedLines.join(" "));
+
+  return detail || "PDF 원문에서 제목을 추출했으나 목표·이행방법 문장은 추가 확인이 필요합니다.";
+}
+
+function extractTargetSectionLines(lines: string[]) {
+  return extractSectionLines(lines, /^(?:□\s*)?목\s*표|^목표/, /^(?:□\s*)?(?:이행방법|이행기간|재원조달)/);
+}
+
+function extractSectionLines(lines: string[], startPattern: RegExp, endPattern: RegExp) {
+  const startIndex = lines.findIndex((line) => startPattern.test(line));
+
+  if (startIndex < 0) {
+    return [];
+  }
+
+  const sectionLines: string[] = [];
+
+  for (const line of lines.slice(startIndex + 1)) {
+    if (endPattern.test(line)) {
+      break;
+    }
+
+    if (isUsefulDetailLine(line)) {
+      sectionLines.push(line);
+    }
+
+    if (sectionLines.length >= 2) {
+      break;
+    }
+  }
+
+  return sectionLines;
+}
+
+function cleanPledgeLine(value: string) {
+  return cleanPledgeTitle(value)
+    .replace(/^[·\-–•]+/, "")
+    .replace(/^[○□]+/, "")
+    .trim();
+}
+
+function isMeaningfulPledgeLine(line: string, title: string) {
+  if (!line || line === title) {
+    return false;
+  }
+
+  if (/^(선거명|선거구명|후보자명|기호|소속정당명|공약순위|제목)/.test(line)) {
+    return false;
+  }
+
+  if (line.length < 6 && !/목\s*표|이행방법/.test(line)) {
+    return false;
+  }
+
+  return true;
+}
+
+function isUsefulDetailLine(line: string) {
+  return line.length >= 8 && /[가-힣]{2}/.test(line) && !/^(목\s*표|목표|이행방법)$/.test(line);
+}
+
+function countOccurrences(value: string, keyword: string) {
+  if (!keyword) {
+    return 0;
+  }
+
+  return value.split(keyword).length - 1;
 }
 
 function sortNecRows(a: NecNormalizedCandidate, b: NecNormalizedCandidate) {
@@ -408,12 +680,15 @@ function numericOrder(value: string) {
 }
 
 function cleanPledgeTitle(value: string) {
-  return value
-    .replace(/\s+/g, " ")
+  return normalizeWhitespace(value)
     .replace(/[□○Ÿ■]+/g, "")
     .trim()
     .replace(/^[:\-–]+/, "")
     .trim();
+}
+
+function normalizeWhitespace(value: string) {
+  return value.replace(/\s+/g, " ").trim();
 }
 
 function countBy<T>(items: T[], getKey: (item: T) => string) {

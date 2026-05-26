@@ -3,6 +3,8 @@ import type { Residence } from "./electionTypes";
 import { createCandidateInfoIndex } from "./necCandidateInfo";
 import {
   buildResidenceDatasetFromNec,
+  extractPledges,
+  extractPolicyTags,
   extractPledgeTitles,
   type NecDownloadIndex,
 } from "./necRegionCache";
@@ -75,17 +77,28 @@ function necRow(overrides: Partial<NecNormalizedCandidate>): NecNormalizedCandid
 
 describe("NEC residence cache builder", () => {
   it("extracts pledge titles from pdftotext output", () => {
-    expect(
-      extractPledgeTitles(`
+    const text = `
 공약순위: 1 제목 : AI로 똑똑한 행정, 안전은 미리미리
+□ 목표
+교통 안전 데이터를 활용해 보행 사고를 줄입니다.
 공약순위: 2 제목 : 사는 동네가 달라집니다
+□ 목표
+공공주택과 역세권 주거 공급을 늘립니다.
 공약순위: 3 제목 : 돌봄은 제도가 아니라 일상
-`),
-    ).toEqual([
+□ 목표
+어르신과 아동 돌봄 서비스를 동네에서 연결합니다.
+`;
+
+    expect(extractPledgeTitles(text)).toEqual([
       "AI로 똑똑한 행정, 안전은 미리미리",
       "사는 동네가 달라집니다",
       "돌봄은 제도가 아니라 일상",
     ]);
+    expect(extractPledges(text)[0]).toEqual({
+      title: "AI로 똑똑한 행정, 안전은 미리미리",
+      detail: "교통 안전 데이터를 활용해 보행 사고를 줄입니다.",
+    });
+    expect(extractPolicyTags(text)).toEqual(expect.arrayContaining(["안전", "복지", "주거"]));
   });
 
   it("builds the selected residence ballot from matching NEC districts only", () => {
@@ -95,6 +108,11 @@ describe("NEC residence cache builder", () => {
         {
           textPath: "data/nec/full/pdfs/sample.txt",
           pledgeTitles: ["서울 공약 1", "서울 공약 2"],
+          pledges: [
+            { title: "서울 교통망 재편", detail: "버스와 지하철 환승 체계를 개편합니다." },
+            { title: "청년 주거 지원", detail: "역세권 공공주택과 월세 지원을 확대합니다." },
+          ],
+          policyTags: ["교통", "주거", "청년"],
         },
       ],
     ]);
@@ -199,7 +217,13 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates[0].age).toBe(57);
     expect(dataset.candidates[0].criminalRecord.summary).toBe("전과 2건");
     expect(dataset.candidates[0].criminalRecord.tone).toBe("risk");
-    expect(dataset.candidates[0].pledgeHighlights).toEqual(["서울 공약 1", "서울 공약 2"]);
+    expect(dataset.candidates[0].pledgeSummary).toContain("교통·주거·청년");
+    expect(dataset.candidates[0].comparison).toContain("교통·주거");
+    expect(dataset.candidates[0].pledgeHighlights).toEqual(["서울 교통망 재편", "청년 주거 지원"]);
+    expect(dataset.candidates[0].fullPledges[0].detail).toBe("버스와 지하철 환승 체계를 개편합니다.");
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeSummary).toContain(
+      "5대공약 PDF가 제공되지 않아",
+    );
     expect(dataset.source.mode).toBe("nec");
   });
 

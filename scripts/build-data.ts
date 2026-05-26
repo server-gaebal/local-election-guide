@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { access, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, readdir, rm, unlink, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { candidates, residences, voterProfiles } from "../src/mockData";
@@ -7,7 +7,12 @@ import { createCandidateInfoIndex, type NecCandidateInfoRecord } from "../src/ne
 import type { NecNormalizedCandidate } from "../src/necCrawler";
 import type { NecElectionAreaCache, NecElectionDistrictsCache } from "../src/necElectionInfo";
 import { buildNationalResidences } from "../src/necResidenceIndex";
-import { buildResidenceDatasetFromNec, extractPledgeTitles, type NecDownloadIndex } from "../src/necRegionCache";
+import {
+  buildResidenceDatasetFromNec,
+  extractPledges,
+  extractPolicyTags,
+  type NecDownloadIndex,
+} from "../src/necRegionCache";
 import { necEndpoints } from "../src/necPolicy";
 import { buildResidenceShareHtml } from "../src/sharePreview";
 
@@ -64,9 +69,14 @@ async function buildNecDownloadIndex(downloads: NecDownloadsCache) {
 
   for (const result of downloads.results) {
     const text = await readFile(join(repoRoot, result.textPath), "utf8");
+    const pledges = extractPledges(text);
+    const policyText = pledges.map((pledge) => `${pledge.title} ${pledge.detail}`).join(" ");
+
     index.set(result.candidateId, {
       textPath: result.textPath,
-      pledgeTitles: extractPledgeTitles(text),
+      pledgeTitles: pledges.map((pledge) => pledge.title),
+      pledges,
+      policyTags: extractPolicyTags(policyText),
     });
   }
 
@@ -175,6 +185,7 @@ const regions = normalizedResidences.map((residence) => {
   };
 });
 
+await cleanGeneratedRegionShards();
 await rm(join(repoRoot, "public/share"), { recursive: true, force: true });
 
 await writeJson("public/data/regions/index.json", {
@@ -218,5 +229,16 @@ console.log(`Wrote ${regions.length} region shards to public/data`);
 async function writeOptionalPublicJsonCopy(sourcePath: string, targetPath: string) {
   if (await pathExists(sourcePath)) {
     await writeJson(targetPath, await readJsonFile<unknown>(sourcePath));
+  }
+}
+
+async function cleanGeneratedRegionShards() {
+  const regionsDir = join(repoRoot, "public/data/regions");
+  await mkdir(regionsDir, { recursive: true });
+
+  for (const fileName of await readdir(regionsDir)) {
+    if (fileName.startsWith("nec-") && fileName.endsWith(".json")) {
+      await unlink(join(regionsDir, fileName));
+    }
   }
 }
