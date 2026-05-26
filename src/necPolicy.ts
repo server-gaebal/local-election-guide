@@ -2,6 +2,8 @@ const necOrigin = "https://policy.nec.go.kr";
 
 export const necEndpoints = {
   region: `${necOrigin}/plc/commiment/initUCACommimentRegion.do`,
+  gu: `${necOrigin}/plc/commiment/initUCACommimentGu.do`,
+  district: `${necOrigin}/plc/commiment/initUCACommimentSgg.do`,
   list: `${necOrigin}/plc/commiment/initUCACommimentList.do`,
   download: `${necOrigin}/plc/common/downloadFile.do`,
 };

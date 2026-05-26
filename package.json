@@ -6,6 +6,8 @@
   "scripts": {
     "data:build": "tsx scripts/build-data.ts",
     "data:nec:sample": "tsx scripts/nec/download-policy-pdfs.ts --region=1100 --race=3 --limit=2 --download",
+    "data:nec:all": "tsx scripts/nec/download-policy-pdfs.ts --all --metadata-only --out=data/nec/full",
+    "data:nec:all:download": "tsx scripts/nec/download-policy-pdfs.ts --all --download --out=data/nec/full",
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit -p tsconfig.json && vite build",
     "test": "vitest run",

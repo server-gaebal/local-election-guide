@@ -1,0 +1,17 @@
+{
+  "fetchedAt": "2026-05-26T04:02:01.449Z",
+  "electionId": "20260603",
+  "mode": "single-region-race",
+  "metadataOnly": false,
+  "downloadedPdfCount": 2,
+  "totalRows": 6,
+  "fivePledgePdfCount": 6,
+  "raceCount": 1,
+  "endpoints": {
+    "region": "https://policy.nec.go.kr/plc/commiment/initUCACommimentRegion.do",
+    "gu": "https://policy.nec.go.kr/plc/commiment/initUCACommimentGu.do",
+    "district": "https://policy.nec.go.kr/plc/commiment/initUCACommimentSgg.do",
+    "list": "https://policy.nec.go.kr/plc/commiment/initUCACommimentList.do",
+    "download": "https://policy.nec.go.kr/plc/common/downloadFile.do"
+  }
+}

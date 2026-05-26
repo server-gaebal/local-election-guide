@@ -1,0 +1,166 @@
+{
+  "fetchedAt": "2026-05-26T04:02:01.449Z",
+  "electionId": "20260603",
+  "source": {
+    "page": "https://policy.nec.go.kr/plc/commiment/initUCACommiment.do?menuId=CNDDT25",
+    "endpoints": {
+      "region": "https://policy.nec.go.kr/plc/commiment/initUCACommimentRegion.do",
+      "gu": "https://policy.nec.go.kr/plc/commiment/initUCACommimentGu.do",
+      "district": "https://policy.nec.go.kr/plc/commiment/initUCACommimentSgg.do",
+      "list": "https://policy.nec.go.kr/plc/commiment/initUCACommimentList.do",
+      "download": "https://policy.nec.go.kr/plc/common/downloadFile.do"
+    }
+  },
+  "totalRows": 6,
+  "fivePledgePdfCount": 6,
+  "races": [
+    {
+      "subElectionId": "320260603",
+      "raceTypeCode": "3",
+      "name": "시·도지사선거",
+      "scopeCount": 1,
+      "totalRows": 6,
+      "fivePledgePdfCount": 6
+    }
+  ],
+  "candidates": [
+    {
+      "id": "20260603-320260603-100157144",
+      "electionId": "20260603",
+      "subElectionId": "320260603",
+      "raceTypeCode": "3",
+      "raceName": "시·도지사선거",
+      "districtId": "3110000",
+      "districtName": "서울특별시",
+      "partyId": "100",
+      "partyName": "더불어민주당",
+      "candidateId": "100157144",
+      "candidateNumber": "1",
+      "name": "정원오",
+      "occupation": "정당인",
+      "education": "한양대학교 도시대학원 도시개발경영전공 박사 수료",
+      "thumbnailPath": "Gsg1100/Hb100157144/gicho/thumbnail.100157144.JPG",
+      "thumbnailUrl": "https://cdn.nec.go.kr/photo_20260603/Gsg1100/Hb100157144/gicho/thumbnail.100157144.JPG",
+      "fivePledgePdf": {
+        "requestedFileName": "20260603_서울특별시_정원오_5대공약.pdf",
+        "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100157144_20260516_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%A0%95%EC%9B%90%EC%98%A4_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100157144_20260516_1.pdf"
+      }
+    },
+    {
+      "id": "20260603-320260603-100162984",
+      "electionId": "20260603",
+      "subElectionId": "320260603",
+      "raceTypeCode": "3",
+      "raceName": "시·도지사선거",
+      "districtId": "3110000",
+      "districtName": "서울특별시",
+      "partyId": "200",
+      "partyName": "국민의힘",
+      "candidateId": "100162984",
+      "candidateNumber": "2",
+      "name": "오세훈",
+      "occupation": "서울특별시장",
+      "education": "고려대학교 대학원 법학과 졸업(법학박사)",
+      "thumbnailPath": "Gsg1100/Hb100162984/gicho/thumbnail.100162984.JPG",
+      "thumbnailUrl": "https://cdn.nec.go.kr/photo_20260603/Gsg1100/Hb100162984/gicho/thumbnail.100162984.JPG",
+      "fivePledgePdf": {
+        "requestedFileName": "20260603_서울특별시_오세훈_5대공약.pdf",
+        "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100162984_20260516_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%98%A4%EC%84%B8%ED%9B%88_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100162984_20260516_1.pdf"
+      }
+    },
+    {
+      "id": "20260603-320260603-100158541",
+      "electionId": "20260603",
+      "subElectionId": "320260603",
+      "raceTypeCode": "3",
+      "raceName": "시·도지사선거",
+      "districtId": "3110000",
+      "districtName": "서울특별시",
+      "partyId": "5070",
+      "partyName": "개혁신당",
+      "candidateId": "100158541",
+      "candidateNumber": "4",
+      "name": "김정철",
+      "occupation": "변호사",
+      "education": "고려대학교 대학원 졸업(법학박사)",
+      "thumbnailPath": "Gsg1100/Hb100158541/gicho/thumbnail.100158541.JPG",
+      "thumbnailUrl": "https://cdn.nec.go.kr/photo_20260603/Gsg1100/Hb100158541/gicho/thumbnail.100158541.JPG",
+      "fivePledgePdf": {
+        "requestedFileName": "20260603_서울특별시_김정철_5대공약.pdf",
+        "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100158541_20260516_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EA%B9%80%EC%A0%95%EC%B2%A0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100158541_20260516_1.pdf"
+      }
+    },
+    {
+      "id": "20260603-320260603-100162632",
+      "electionId": "20260603",
+      "subElectionId": "320260603",
+      "raceTypeCode": "3",
+      "raceName": "시·도지사선거",
+      "districtId": "3110000",
+      "districtName": "서울특별시",
+      "partyId": "5046",
+      "partyName": "여성의당",
+      "candidateId": "100162632",
+      "candidateNumber": "5",
+      "name": "유지혜",
+      "occupation": "정당인",
+      "education": "원광디지털대학교 한국문화학부 한국복식과학학과 졸업",
+      "thumbnailPath": "Gsg1100/Hb100162632/gicho/thumbnail.100162632.JPG",
+      "thumbnailUrl": "https://cdn.nec.go.kr/photo_20260603/Gsg1100/Hb100162632/gicho/thumbnail.100162632.JPG",
+      "fivePledgePdf": {
+        "requestedFileName": "20260603_서울특별시_유지혜_5대공약.pdf",
+        "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100162632_20260516_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9C%A0%EC%A7%80%ED%98%9C_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100162632_20260516_1.pdf"
+      }
+    },
+    {
+      "id": "20260603-320260603-100162642",
+      "electionId": "20260603",
+      "subElectionId": "320260603",
+      "raceTypeCode": "3",
+      "raceName": "시·도지사선거",
+      "districtId": "3110000",
+      "districtName": "서울특별시",
+      "partyId": "3040",
+      "partyName": "자유통일당",
+      "candidateId": "100162642",
+      "candidateNumber": "6",
+      "name": "이강산",
+      "occupation": "정당인",
+      "education": "서울대학교 경영전문대학원 경영학과(SNU MBA) 졸업(석사)",
+      "thumbnailPath": "Gsg1100/Hb100162642/gicho/thumbnail.100162642.JPG",
+      "thumbnailUrl": "https://cdn.nec.go.kr/photo_20260603/Gsg1100/Hb100162642/gicho/thumbnail.100162642.JPG",
+      "fivePledgePdf": {
+        "requestedFileName": "20260603_서울특별시_이강산_5대공약.pdf",
+        "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100162642_20260516_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EC%9D%B4%EA%B0%95%EC%82%B0_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100162642_20260516_1.pdf"
+      }
+    },
+    {
+      "id": "20260603-320260603-100162720",
+      "electionId": "20260603",
+      "subElectionId": "320260603",
+      "raceTypeCode": "3",
+      "raceName": "시·도지사선거",
+      "districtId": "3110000",
+      "districtName": "서울특별시",
+      "partyId": "730",
+      "partyName": "정의당",
+      "candidateId": "100162720",
+      "candidateNumber": "7",
+      "name": "권영국",
+      "occupation": "정당인",
+      "education": "서울대학교 공과대학 금속공과 졸업",
+      "thumbnailPath": "Gsg1100/Hb100162720/gicho/thumbnail.100162720.JPG",
+      "thumbnailUrl": "https://cdn.nec.go.kr/photo_20260603/Gsg1100/Hb100162720/gicho/thumbnail.100162720.JPG",
+      "fivePledgePdf": {
+        "requestedFileName": "20260603_서울특별시_권영국_5대공약.pdf",
+        "requestedFullPath": "20260603/PDF/P5_PRMS_PUB/1100/001_100162720_20260516_1.pdf",
+        "downloadUrl": "https://policy.nec.go.kr/plc/common/downloadFile.do?requestedFileName=20260603_%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C_%EA%B6%8C%EC%98%81%EA%B5%AD_5%EB%8C%80%EA%B3%B5%EC%95%BD.pdf&requestedFullPath=20260603%2FPDF%2FP5_PRMS_PUB%2F1100%2F001_100162720_20260516_1.pdf"
+      }
+    }
+  ]
+}

@@ -9,6 +9,8 @@
     "subElectionId": "320260603",
     "endpoints": {
       "region": "https://policy.nec.go.kr/plc/commiment/initUCACommimentRegion.do",
+      "gu": "https://policy.nec.go.kr/plc/commiment/initUCACommimentGu.do",
+      "district": "https://policy.nec.go.kr/plc/commiment/initUCACommimentSgg.do",
       "list": "https://policy.nec.go.kr/plc/commiment/initUCACommimentList.do",
       "download": "https://policy.nec.go.kr/plc/common/downloadFile.do"
     }

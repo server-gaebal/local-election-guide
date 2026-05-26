@@ -1,0 +1,27 @@
+{
+  "fetchedAt": "2026-05-26T04:02:01.449Z",
+  "requested": 2,
+  "completed": 2,
+  "results": [
+    {
+      "candidateId": "20260603-320260603-100157144",
+      "name": "정원오",
+      "partyName": "더불어민주당",
+      "raceName": "시·도지사선거",
+      "pdfPath": "data/nec/pdfs/1-정원오-100157144-5pledges.pdf",
+      "textPath": "data/nec/pdfs/1-정원오-100157144-5pledges.txt",
+      "downloadStatus": "skipped",
+      "extractStatus": "skipped"
+    },
+    {
+      "candidateId": "20260603-320260603-100162984",
+      "name": "오세훈",
+      "partyName": "국민의힘",
+      "raceName": "시·도지사선거",
+      "pdfPath": "data/nec/pdfs/2-오세훈-100162984-5pledges.pdf",
+      "textPath": "data/nec/pdfs/2-오세훈-100162984-5pledges.txt",
+      "downloadStatus": "skipped",
+      "extractStatus": "skipped"
+    }
+  ]
+}
