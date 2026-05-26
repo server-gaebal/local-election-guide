@@ -155,7 +155,6 @@ export function buildResidenceDatasetFromNec({
         comparisonDistrict: comparisonDistrictFor(candidate, residence, scope),
         sameComparisonCount: comparisonCounts.get(comparisonKeyFor(candidate, residence, scope)) ?? 1,
         comparisonPolicyCounts: comparisonPolicyCounts.get(comparisonKeyFor(candidate, residence, scope)) ?? {
-          tagCounts: new Map(),
           issueCounts: new Map(),
         },
       }),
@@ -221,7 +220,6 @@ function toAppCandidate({
   comparisonDistrict: string;
   sameComparisonCount: number;
   comparisonPolicyCounts: {
-    tagCounts: Map<string, number>;
     issueCounts: Map<string, number>;
   };
 }): Candidate {
@@ -667,20 +665,14 @@ function buildComparisonPolicyCounts(
   scope: ResidenceElectionScope,
   downloads: NecDownloadIndex,
 ) {
-  const comparisonPolicyCounts = new Map<string, { tagCounts: Map<string, number>; issueCounts: Map<string, number> }>();
+  const comparisonPolicyCounts = new Map<string, { issueCounts: Map<string, number> }>();
 
   for (const candidate of candidates) {
     const comparisonKey = comparisonKeyFor(candidate, residence, scope);
-    const tags = candidateTags(downloads.get(candidate.id));
     const issues = candidateIssues(downloads.get(candidate.id));
     const counts = comparisonPolicyCounts.get(comparisonKey) ?? {
-      tagCounts: new Map<string, number>(),
       issueCounts: new Map<string, number>(),
     };
-
-    for (const tag of tags) {
-      counts.tagCounts.set(tag, (counts.tagCounts.get(tag) ?? 0) + 1);
-    }
 
     for (const issue of issues) {
       counts.issueCounts.set(issue, (counts.issueCounts.get(issue) ?? 0) + 1);
@@ -690,12 +682,6 @@ function buildComparisonPolicyCounts(
   }
 
   return comparisonPolicyCounts;
-}
-
-function candidateTags(download?: { pledgeTitles: string[]; pledges?: Pledge[]; policyTags?: string[] }) {
-  const tags = download?.policyTags ?? extractPolicyTags((download?.pledges ?? []).map((pledge) => `${pledge.title} ${pledge.detail}`).join(" "));
-
-  return tags.length > 0 ? tags : ["자료확인"];
 }
 
 function candidateIssues(download?: { pledges?: Pledge[] }) {
@@ -771,7 +757,6 @@ function buildComparison({
   policyTags: string[];
   policyIssues: string[];
   comparisonPolicyCounts: {
-    tagCounts: Map<string, number>;
     issueCounts: Map<string, number>;
   };
   sameComparisonCount: number;
@@ -781,14 +766,13 @@ function buildComparison({
     return {
       summary: `${officeContextText(office)} ${sameComparisonCount}개 후보/정당과 비교 대상입니다.`,
       details: [
-        "차별점 근거 부족: 같은 선거구 후보끼리 비교할 공약 텍스트가 부족합니다.",
-        `비교 범위: ${office} · ${comparisonDistrict} 후보/정당 ${sameComparisonCount}개.`,
+        "공약 원문이 없어 같은 선거구 후보와의 차이를 확인하기 어렵습니다.",
+        "정당·전과·재산 등 공개 기본정보를 먼저 확인해 주세요.",
       ],
     };
   }
 
   const distinctiveIssues = policyIssues.filter((issue) => (comparisonPolicyCounts.issueCounts.get(issue) ?? 0) <= 1);
-  const sharedTags = policyTags.filter((tag) => (comparisonPolicyCounts.tagCounts.get(tag) ?? 0) > 1);
   const leadIssues = distinctiveIssues.length > 0 ? distinctiveIssues : policyIssues;
   const leadText = leadIssues.length > 0 ? leadIssues.slice(0, 2).join("·") : policyTags.slice(0, 2).join("·");
   const partyText = candidate.partyName ? `${candidate.partyName} ` : "";
@@ -799,9 +783,8 @@ function buildComparison({
     return {
       summary: `${officeText} ${subject} ${leadText} 공약을 중심으로 단독 비교됩니다.`,
       details: [
-        "차별점 비교 대상 없음: 같은 선거구의 다른 후보/정당 데이터가 없어 후보 내부 공약 문구만 표시합니다.",
-        `주요 실행 문구: ${(leadIssues.length > 0 ? leadIssues : policyTags).slice(0, 4).join(", ")}.`,
-        `비교 범위: ${office} · ${comparisonDistrict} 후보/정당 ${sameComparisonCount}개.`,
+        "같은 선거구의 비교 후보가 없어 이 후보의 공약 문구만 확인했습니다.",
+        `눈여겨볼 실행 문구: ${(leadIssues.length > 0 ? leadIssues : policyTags).slice(0, 4).join(", ")}.`,
       ],
     };
   }
@@ -810,12 +793,9 @@ function buildComparison({
     summary: `${officeText} ${subject} ${leadText} 쟁점을 앞세웁니다.`,
     details: [
       distinctiveIssues.length > 0
-        ? `차별점: 같은 선거구 후보 대비 ${distinctiveIssues.slice(0, 4).join(", ")}을 더 구체적으로 제시합니다.`
-        : `세부 차별점 근거 부족: 자동 추출된 실행 문구가 다른 후보와 크게 갈리지 않습니다.`,
-      sharedTags.length > 0
-        ? `공통 경쟁 분야: ${sharedTags.join(", ")}.`
-        : "같은 선거구 안에서 겹치는 핵심 키워드는 적습니다.",
-      `비교 범위: ${office} · ${comparisonDistrict} 후보/정당 ${sameComparisonCount}개.`,
+        ? `눈여겨볼 차이: ${distinctiveIssues.slice(0, 4).join(", ")}.`
+        : "세부 차이 보류: 다른 후보와 겹치는 주제가 많아 실행 방식까지 확인해야 합니다.",
+      `실행 방식 확인: ${(leadIssues.length > 0 ? leadIssues : policyTags).slice(0, 3).join(", ")}.`,
     ],
   };
 }

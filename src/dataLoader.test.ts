@@ -16,11 +16,14 @@ describe("static election data loader", () => {
   });
 
   it("builds GitHub Pages safe data URLs", () => {
-    expect(buildStaticDataUrl("data/cache-manifest.json")).toContain("data/cache-manifest.json");
+    const url = buildStaticDataUrl("data/cache-manifest.json");
+
+    expect(url).toContain("data/cache-manifest.json");
+    expect(new URL(url, "https://example.com").searchParams.get("v")).toBeTruthy();
   });
 
   it("caches JSON requests by static data URL", async () => {
-    const fetchMock = vi.fn(async () => {
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL) => {
       return new Response(JSON.stringify({ version: "sample-cache-v1" }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -36,7 +39,7 @@ describe("static election data loader", () => {
   });
 
   it("loads a selected region dataset from the region shard", async () => {
-    const fetchMock = vi.fn(async () => {
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL) => {
       return new Response(JSON.stringify({ candidates: [{ id: "han-jiwoo" }] }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -48,6 +51,10 @@ describe("static election data loader", () => {
     const region = await loadRegionDataset("seoul-mapo-gongdeok");
 
     expect(region.candidates).toEqual([{ id: "han-jiwoo" }]);
-    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining("data/regions/seoul-mapo-gongdeok.json"));
+    const requestedCall = fetchMock.mock.calls.at(0);
+    expect(requestedCall).toBeDefined();
+    const requestedUrl = new URL(String(requestedCall?.[0]), "https://example.com");
+    expect(requestedUrl.pathname).toContain("data/regions/seoul-mapo-gongdeok.json");
+    expect(requestedUrl.searchParams.get("v")).toBeTruthy();
   });
 });

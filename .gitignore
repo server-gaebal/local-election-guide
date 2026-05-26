@@ -4,6 +4,7 @@ public/data/nec/
 public/data/regions/nec-*.json
 public/share/
 .lazyweb/
+.playwright-mcp/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts

@@ -690,6 +690,39 @@ h1 {
   color: #0f766e;
 }
 
+.fact-check-summary {
+  background: #f4f7fb;
+  border-color: #cddcea;
+}
+
+.fact-check-summary p {
+  margin-bottom: 0;
+  color: #243544;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.fact-check-summary li strong {
+  display: inline-block;
+  margin-right: 6px;
+  color: #0f5f53;
+}
+
+.fact-check-summary--unknown .card-section__title svg,
+.fact-check-detail--unknown h3 {
+  color: #7c2d12;
+}
+
+.fact-check-summary--caution .card-section__title svg,
+.fact-check-detail--caution h3 {
+  color: #a16207;
+}
+
+.fact-check-summary--verified .card-section__title svg,
+.fact-check-detail--verified h3 {
+  color: #0f766e;
+}
+
 .profile-fit {
   display: flex;
   gap: 8px;
@@ -708,6 +741,16 @@ h1 {
 
 .profile-fit strong {
   color: #9f1239;
+}
+
+.profile-fit small {
+  color: #6d6256;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.profile-fit--review {
+  background: #fff7ed;
 }
 
 .open-button {
@@ -792,6 +835,104 @@ h1 {
   margin-bottom: 0;
   color: #33403d;
   line-height: 1.55;
+}
+
+.detail-section h4 {
+  margin: 0 0 6px;
+  color: #18211f;
+  font-size: 0.95rem;
+}
+
+.fact-check-list,
+.persona-detail {
+  display: grid;
+  gap: 12px;
+}
+
+.fact-check-item {
+  display: grid;
+  gap: 7px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #e3ded2;
+  border-radius: 8px;
+}
+
+.fact-check-item > span {
+  width: fit-content;
+  padding: 3px 7px;
+  color: #0f5f53;
+  background: #e6f4ef;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.fact-check-item strong {
+  color: #18211f;
+}
+
+.source-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.source-links a {
+  padding: 5px 7px;
+  color: #0f5f53;
+  background: #e6f4ef;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.persona-notice,
+.persona-scope {
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.persona-notice {
+  color: #0f5f53;
+  background: #e6f4ef;
+}
+
+.persona-scope {
+  color: #6b4a0d;
+  background: #fff1c2;
+}
+
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.prompt-disclosure {
+  padding: 10px;
+  background: #f2eee5;
+  border-radius: 8px;
+}
+
+.prompt-disclosure summary {
+  color: #18211f;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.prompt-disclosure pre {
+  overflow: auto;
+  margin: 10px 0 0;
+  padding: 10px;
+  color: #243544;
+  background: #ffffff;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
 }
 
 .full-pledges {
@@ -952,6 +1093,10 @@ h1 {
   }
 
   .race-list {
+    grid-template-columns: 1fr;
+  }
+
+  .persona-grid {
     grid-template-columns: 1fr;
   }
 

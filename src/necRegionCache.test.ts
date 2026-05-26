@@ -315,7 +315,9 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates[0].publicRecord).toContain("납세 납부액: 8,442만 3천원");
     expect(dataset.candidates[0].pledgeSummary).toContain("교통·주거·청년");
     expect(dataset.candidates[0].comparison).toContain("서울 교통망 재편");
-    expect(dataset.candidates[0].comparisonDetails[0]).toContain("차별점");
+    expect(dataset.candidates[0].comparisonDetails[0]).toContain("비교 후보");
+    expect(dataset.candidates[0].comparisonDetails.join(" ")).not.toContain("공통 경쟁 분야");
+    expect(dataset.candidates[0].comparisonDetails.join(" ")).not.toContain("비교 범위");
     expect(dataset.candidates.flatMap((candidate) => candidate.comparisonDetails).join(" ")).not.toContain("후보 사진");
     expect(dataset.candidates[0].candidateTraits).toEqual(
       expect.arrayContaining(["더불어민주당 소속", expect.stringContaining("주요 경력:")]),
@@ -505,10 +507,10 @@ describe("NEC residence cache builder", () => {
     const candidate = dataset.candidates.find((item) => item.name === "나후보");
 
     expect(dataset.candidates.map((item) => item.name)).not.toContain("다른선거구");
-    expect(candidate?.comparisonDetails[0]).toContain("같은 선거구 후보 대비");
+    expect(candidate?.comparisonDetails[0]).toContain("눈여겨볼 차이");
     expect(candidate?.comparisonDetails[0]).toContain("주거");
-    expect(candidate?.comparisonDetails[1]).toContain("교통");
-    expect(candidate?.comparisonDetails.join(" ")).toContain("수원시나선거구 후보/정당 2개");
+    expect(candidate?.comparisonDetails.join(" ")).not.toContain("공통 경쟁 분야");
+    expect(candidate?.comparisonDetails.join(" ")).not.toContain("비교 범위");
     expect(candidate?.comparisonDetails.join(" ")).not.toContain("수원시다선거구");
   });
 });

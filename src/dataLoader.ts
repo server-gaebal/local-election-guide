@@ -1,5 +1,7 @@
 import type { Candidate, Residence, VoterProfile } from "./electionTypes";
 
+declare const __APP_DATA_VERSION__: string;
+
 export type CacheManifest = {
   version: string;
   generatedAt: string;
@@ -52,7 +54,10 @@ export function clearElectionDataCache() {
 export function buildStaticDataUrl(path: string) {
   const baseUrl = import.meta.env.BASE_URL || "/";
   const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-  return `${normalizedBase}${path.replace(/^\/+/, "")}`;
+  const dataUrl = new URL(`${normalizedBase}${path.replace(/^\/+/, "")}`, "https://static.local");
+  dataUrl.searchParams.set("v", __APP_DATA_VERSION__);
+
+  return `${dataUrl.pathname.replace(/^\//, "")}${dataUrl.search}${dataUrl.hash}`;
 }
 
 async function loadJson<T>(path: string): Promise<T> {

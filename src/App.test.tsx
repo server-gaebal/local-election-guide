@@ -27,7 +27,8 @@ function installStaticDataFetch() {
     "fetch",
     vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
-      const fixture = Object.entries(jsonFixtures).find(([path]) => url.endsWith(path))?.[1];
+      const pathname = new URL(url, "https://example.com").pathname.replace(/^\/+/, "");
+      const fixture = Object.entries(jsonFixtures).find(([path]) => pathname.endsWith(path))?.[1];
 
       if (!fixture) {
         return new Response("Not found", { status: 404 });
@@ -121,6 +122,8 @@ describe("local election guide static experience", () => {
     expect(within(candidateCard).getByText("차별점")).toBeInTheDocument();
     expect(within(candidateCard).getByText("후보 특징")).toBeInTheDocument();
     expect(within(candidateCard).getByText("실현 가능성")).toBeInTheDocument();
+    expect(within(candidateCard).getByText("팩트체크")).toBeInTheDocument();
+    expect(within(candidateCard).getByText("선관위 제공 정보만 기반")).toBeInTheDocument();
     expect(within(candidateCard).getByText("실행 요약")).toBeInTheDocument();
     expect(within(candidateCard).getAllByText("어떻게").length).toBeGreaterThan(0);
     expect(within(candidateCard).getByText(/서울특별시장 투표지에서/)).toBeInTheDocument();
@@ -138,6 +141,9 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByText("5대 공약")).toBeInTheDocument();
     expect(within(dialog).getByText("상대 후보와의 차별점")).toBeInTheDocument();
     expect(within(dialog).getByText("공약 실현 가능성 검토")).toBeInTheDocument();
+    expect(within(dialog).getByText("공약 팩트체크")).toBeInTheDocument();
+    expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 5대 공약 텍스트만/)).toBeInTheDocument();
+    expect(within(dialog).getByText("프롬프트 보기")).toBeInTheDocument();
   });
 
   it("opens criminal record details from the record badge", async () => {
@@ -161,7 +167,9 @@ describe("local election guide static experience", () => {
     expect(screen.queryByText("정적 JSON 캐시")).not.toBeInTheDocument();
     await waitFor(() => {
       const fetchMock = vi.mocked(fetch);
-      const seoulRegionCalls = fetchMock.mock.calls.filter(([url]) => String(url).endsWith("data/regions/seoul-mapo-gongdeok.json"));
+      const seoulRegionCalls = fetchMock.mock.calls.filter(([url]) =>
+        new URL(String(url), "https://example.com").pathname.endsWith("data/regions/seoul-mapo-gongdeok.json"),
+      );
 
       expect(seoulRegionCalls).toHaveLength(1);
     });

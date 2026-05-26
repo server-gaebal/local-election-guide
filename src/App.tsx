@@ -30,6 +30,11 @@ import {
   type Residence,
   type VoterProfile,
 } from "./electionTypes";
+import { getCandidateFactCheck } from "./factChecks";
+import {
+  getCandidatePersonaReview,
+  personaReviewScopeNotice,
+} from "./personaReviews";
 import {
   createResidenceShareDescription,
   createResidenceShareTitle,
@@ -564,6 +569,17 @@ function getCandidateTraits(candidate: Candidate) {
     : [`${candidate.party} 소속`, `직업: ${candidate.occupation}`, `공약 키워드: ${candidate.focusTags.slice(0, 3).join("·")}`];
 }
 
+function getVoterComparisonDetails(candidate: Candidate) {
+  const usefulDetails = candidate.comparisonDetails.filter(
+    (detail) =>
+      !detail.startsWith("공통 경쟁 분야:") &&
+      !detail.startsWith("비교 범위:") &&
+      detail !== "같은 선거구 안에서 겹치는 핵심 키워드는 적습니다.",
+  );
+
+  return usefulDetails.length > 0 ? usefulDetails : candidate.comparisonDetails;
+}
+
 function getFeasibilityReview(candidate: Candidate) {
   return (
     candidate.feasibilityReview ?? {
@@ -602,6 +618,9 @@ function CandidateCard({
 }) {
   const candidateTraits = getCandidateTraits(candidate);
   const feasibilityReview = getFeasibilityReview(candidate);
+  const comparisonDetails = getVoterComparisonDetails(candidate);
+  const factCheckReview = getCandidateFactCheck(candidate.id);
+  const personaReview = getCandidatePersonaReview(candidate.id, profile);
   const primaryPledges = candidate.fullPledges.slice(0, 2);
 
   return (
@@ -644,7 +663,7 @@ function CandidateCard({
         </div>
         <p>{candidate.comparison}</p>
         <ul>
-          {candidate.comparisonDetails.slice(0, 2).map((detail) => (
+          {comparisonDetails.slice(0, 2).map((detail) => (
             <li key={detail}>{detail}</li>
           ))}
         </ul>
@@ -673,6 +692,27 @@ function CandidateCard({
         <p>{feasibilityReview.summary}</p>
       </section>
 
+      {factCheckReview ? (
+        <section
+          className={`card-section fact-check-summary fact-check-summary--${factCheckReview.tone}`}
+          aria-label={`${candidate.name} 공약 팩트체크`}
+        >
+          <div className="card-section__title">
+            <ShieldCheck aria-hidden="true" size={16} />
+            <h4>팩트체크</h4>
+          </div>
+          <p>{factCheckReview.summary}</p>
+          <ul>
+            {factCheckReview.items.slice(0, 2).map((item) => (
+              <li key={`${item.verdict}-${item.claim}`}>
+                <strong>{item.verdict}</strong>
+                {item.claim}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section className="card-section pledge-list" aria-label={`${candidate.name} 실행 요약`}>
         <div className="card-section__title">
           <FileText aria-hidden="true" size={16} />
@@ -693,9 +733,10 @@ function CandidateCard({
         </div>
       </section>
 
-      <div className="profile-fit">
-        <strong>{profile}</strong>
-        <span>{candidate.profileRelevance[profile]}</span>
+      <div className={personaReview ? "profile-fit profile-fit--review" : "profile-fit"}>
+        <strong>{profile} 관점</strong>
+        <span>{personaReview?.summary ?? candidate.profileRelevance[profile]}</span>
+        {personaReview ? <small>선관위 제공 정보만 기반</small> : null}
       </div>
 
       <button type="button" className="open-button" onClick={onOpen}>
@@ -754,6 +795,9 @@ function CandidateDialog({
 }) {
   const candidateTraits = getCandidateTraits(candidate);
   const feasibilityReview = getFeasibilityReview(candidate);
+  const comparisonDetails = getVoterComparisonDetails(candidate);
+  const factCheckReview = getCandidateFactCheck(candidate.id);
+  const personaReview = getCandidatePersonaReview(candidate.id, profile);
 
   return (
     <div className="dialog-backdrop">
@@ -802,7 +846,7 @@ function CandidateDialog({
           <section className="detail-section">
             <h3>상대 후보와의 차별점</h3>
             <ul className="difference-list">
-              {candidate.comparisonDetails.map((detail) => (
+              {comparisonDetails.map((detail) => (
                 <li key={detail}>{detail}</li>
               ))}
             </ul>
@@ -827,9 +871,70 @@ function CandidateDialog({
             </ul>
           </section>
 
+          {factCheckReview ? (
+            <section className={`detail-section fact-check-detail fact-check-detail--${factCheckReview.tone}`}>
+              <h3>공약 팩트체크</h3>
+              <p>{factCheckReview.summary}</p>
+              <div className="fact-check-list">
+                {factCheckReview.items.map((item) => (
+                  <article key={`${item.verdict}-${item.claim}`} className="fact-check-item">
+                    <span>{item.verdict}</span>
+                    <strong>{item.claim}</strong>
+                    <p>{item.check}</p>
+                    <div className="source-links">
+                      {item.sources.map((source) => (
+                        <a key={source.url} href={source.url} target="_blank" rel="noreferrer">
+                          {source.name}
+                        </a>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
           <section className="detail-section">
             <h3>{profile} 관점</h3>
-            <p>{candidate.profileRelevance[profile]}</p>
+            {personaReview ? (
+              <div className="persona-detail">
+                <p>{personaReview.summary}</p>
+                <p className="persona-notice">{personaReview.sourceNotice}</p>
+                <p className="persona-scope">{personaReviewScopeNotice}</p>
+                <div className="persona-grid">
+                  <div>
+                    <h4>눈여겨볼 점</h4>
+                    <ul className="difference-list">
+                      {personaReview.highlights.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4>물어볼 질문</h4>
+                    <ul className="difference-list">
+                      {personaReview.questions.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <div>
+                  <h4>보수적으로 볼 점</h4>
+                  <ul className="difference-list">
+                    {personaReview.cautions.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <details className="prompt-disclosure">
+                  <summary>프롬프트 보기</summary>
+                  <pre>{personaReview.prompt}</pre>
+                </details>
+              </div>
+            ) : (
+              <p>{candidate.profileRelevance[profile]}</p>
+            )}
           </section>
 
           <footer className="dialog-source">
