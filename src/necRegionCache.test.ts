@@ -329,21 +329,15 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates[0].pledgeHighlights).toEqual(["서울 교통망 재편", "청년 주거 지원"]);
     expect(dataset.candidates[0].fullPledges[0].detail).toBe("버스와 지하철 환승 체계를 시비로 개편합니다.");
     expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.publicRecord).toContain("선거공보 PDF 있음");
-    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeSummary).toContain("선거공보 PDF가 공개되어 있습니다");
-    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeHighlights).toContain("선거공보 PDF 공개");
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeSummary).toBe("");
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeHighlights).toEqual(["선거공보"]);
+    expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.fullPledges).toEqual([]);
     expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeHighlights.join(" ")).not.toContain("후보 사진");
     const noDocumentCandidate = dataset.candidates.find((candidate) => candidate.name === "장덕준");
-    expect(noDocumentCandidate?.publicRecord).toContain("공약 원문 PDF 링크 없음");
-    expect(noDocumentCandidate?.pledgeSummary).toBe(
-      "NEC 후보자 명부에는 등록되어 있지만 5대공약·선거공보 PDF 링크는 제공되지 않았습니다.",
-    );
-    expect(noDocumentCandidate?.pledgeHighlights).toEqual(["후보 메타데이터 확보", "원문 PDF 링크 없음", "NEC 공개 여부 확인 필요"]);
-    expect(noDocumentCandidate?.fullPledges).toEqual([
-      {
-        title: "공약 원문 PDF 링크 없음",
-        detail: "현재 확보한 NEC 후보자 명부·정책공약마당 응답에 5대공약 또는 선거공보 PDF 링크가 없습니다.",
-      },
-    ]);
+    expect(noDocumentCandidate?.publicRecord).not.toContain("공약 원문 PDF 링크 없음");
+    expect(noDocumentCandidate?.pledgeSummary).toBe("");
+    expect(noDocumentCandidate?.pledgeHighlights).toEqual([]);
+    expect(noDocumentCandidate?.fullPledges).toEqual([]);
     expect(dataset.source.mode).toBe("nec");
   });
 
@@ -430,17 +424,10 @@ describe("NEC residence cache builder", () => {
 
     const candidate = dataset.candidates[0];
 
-    expect(candidate.pledgeSummary).toContain("선거공보 원문 텍스트를 확보했습니다");
-    expect(candidate.pledgeHighlights).toContain("선거공보 텍스트 확보");
+    expect(candidate.pledgeSummary).toBe("");
+    expect(candidate.pledgeHighlights).toEqual(["선거공보"]);
     expect(candidate.pledgeHighlights.join(" ")).not.toContain("대기");
-    expect(candidate.fullPledges).toEqual([
-      {
-        title: "선거공보 원문 텍스트 확보",
-        detail:
-          "선거공보 원문 텍스트를 확보했지만 구조화된 공약 항목은 자동 추출하지 못했습니다. 세부 내용은 원문에서 확인해 주세요.",
-      },
-    ]);
-    expect(JSON.stringify(candidate.fullPledges)).not.toContain("data/nec/full");
+    expect(candidate.fullPledges).toEqual([]);
   });
 
   it("compares differentiators only within the same local electoral district", () => {

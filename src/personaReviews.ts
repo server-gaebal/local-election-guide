@@ -1207,7 +1207,7 @@ function buildDetailedPersonaSummary(
     return `${scope} 상세 정리 대상입니다. ${candidate.profileRelevance[profile]}`;
   }
 
-  return `${scope} 상세 정리 대상이지만 공개 공약 정보가 제한적이어서 ${profile} 관점의 직접 효과는 대상, 예산, 시행 일정을 추가로 확인해야 합니다.`;
+  return `${scope} 상세 정리 대상입니다. 후보자 기본정보와 관련 링크를 기준으로 ${profile} 관점에서 확인할 질문을 정리했습니다.`;
 }
 
 function buildDetailedPersonaQuestions(
@@ -1249,7 +1249,7 @@ function buildDetailedPersonaHighlights(
     `${city} ${candidate.race} 후보 중 ${profile} 관점의 ${focus}와 연결되는 항목을 우선 추렸습니다.`,
     usefulPledgeCount > 0
       ? `근거는 후보자 기본정보와 공개 공약 ${Math.min(usefulPledgeCount, 5)}개 항목입니다.`
-      : "공개 자료가 후보자 기본정보 중심이라 공약 세부 근거는 제한적입니다.",
+      : "후보자 기본정보와 관련 링크를 함께 확인할 수 있습니다.",
   ])
     .filter(Boolean)
     .slice(0, 4);
@@ -1259,13 +1259,13 @@ function buildDetailedPersonaCautions(candidate: Candidate, profile: VoterProfil
   const cautions = [
     "상세 정리 대상이어도 공개 자료만으로 예산, 권한, 세부 일정의 실현 가능성을 단정하지 않습니다.",
     matchedCount === 0
-      ? `${profile}을 직접 대상으로 한 공약인지 원문 세부 항목에서 추가 확인이 필요합니다.`
+      ? `${profile} 유권자에게 직접 닿는 항목은 관련 링크에서 추가 확인이 필요합니다.`
       : "대상 규모, 신청 조건, 지역별 우선순위는 공약 제목보다 원문 세부 문구를 함께 봐야 합니다.",
     `${candidate.race} 공약은 의회, 중앙정부, 교육청 등 다른 주체와의 협의 여부가 실행 가능성의 핵심 변수일 수 있습니다.`,
   ];
 
   if (usefulPledgeCount === 0) {
-    cautions.push("공약 본문이 부족한 후보는 후보자 정보와 원문 공개 여부 위주로만 볼 수 있습니다.");
+    cautions.push("관련 링크에서 후보자 정보와 공개 자료를 직접 확인하세요.");
   }
 
   return cautions;
@@ -1300,7 +1300,7 @@ function buildFallbackPersonaSummary(
     return candidate.profileRelevance[profile];
   }
 
-  return `공개 공약 정보가 제한적이어서 ${profile} 관점의 직접 효과는 대상, 예산, 시행 일정을 추가로 확인해야 합니다.`;
+  return `후보자 기본정보와 관련 링크를 기준으로 ${profile} 관점에서 확인할 질문을 정리했습니다.`;
 }
 
 function buildFallbackPersonaQuestions(profileQuestion: string, leadTitles: string[]) {
@@ -1327,7 +1327,7 @@ function buildFallbackPersonaHighlights(
     `${candidate.office} ${candidate.name} 후보의 공개 자료를 ${profile} 관점의 ${focus}에 맞춰 재정리했습니다.`,
     usefulPledgeCount > 0
       ? `근거는 후보자 기본정보와 공개 공약 ${Math.min(usefulPledgeCount, 5)}개 항목입니다.`
-      : "공개 자료가 후보자 기본정보 중심이라 공약 세부 근거는 제한적입니다.",
+      : "후보자 기본정보와 관련 링크를 함께 확인할 수 있습니다.",
   ].slice(0, 3);
 }
 
@@ -1335,12 +1335,12 @@ function buildFallbackPersonaCautions(profile: VoterProfile, matchedCount: numbe
   const cautions = [
     "공개 자료만으로 예산, 권한, 세부 일정의 실현 가능성을 단정하지 않습니다.",
     matchedCount === 0
-      ? `${profile}을 직접 대상으로 한 공약인지 원문 세부 항목에서 추가 확인이 필요합니다.`
+      ? `${profile} 유권자에게 직접 닿는 항목은 관련 링크에서 추가 확인이 필요합니다.`
       : "대상 규모와 신청 조건은 공약 제목만으로 충분히 확인되지 않을 수 있습니다.",
   ];
 
   if (usefulPledgeCount === 0) {
-    cautions.push("공약 본문이 부족한 후보는 후보자 정보와 원문 공개 여부 위주로만 볼 수 있습니다.");
+    cautions.push("관련 링크에서 후보자 정보와 공개 자료를 직접 확인하세요.");
   }
 
   return cautions;
@@ -1348,13 +1348,16 @@ function buildFallbackPersonaCautions(profile: VoterProfile, matchedCount: numbe
 
 function buildFallbackPersonaEvidence(candidate: Candidate, pledges: PersonaReviewSourcePledge[]): PersonaReviewEvidence[] {
   const regionSourcePath = `public/data/regions/${candidate.residenceId}.json`;
-  const pledgeEvidence = pledges.slice(0, 5).map((pledge) => ({
-    kind: "fivePledge" as const,
-    candidateId: candidate.id,
-    label: pledge.title,
-    sourcePath: pledge.sourcePath,
-    snippet: getEvidenceSnippet(pledge),
-  }));
+  const pledgeEvidence = pledges
+    .filter(isUsefulPersonaPledge)
+    .slice(0, 5)
+    .map((pledge) => ({
+      kind: "fivePledge" as const,
+      candidateId: candidate.id,
+      label: pledge.title,
+      sourcePath: pledge.sourcePath,
+      snippet: getEvidenceSnippet(pledge),
+    }));
 
   return [
     {
@@ -1393,7 +1396,7 @@ function getDetailedPersonaReviewCityFromResidenceId(residenceId: string) {
 }
 
 function getCandidateRecordHighlight(candidate: Candidate) {
-  const usefulRecords = candidate.publicRecord.filter((record) => !/5대공약 PDF 있음|공약 원문 PDF 링크 없음/.test(record));
+  const usefulRecords = candidate.publicRecord.filter((record) => !isImplementationPlaceholder(record));
 
   if (usefulRecords.length === 0) {
     return "";
@@ -1429,7 +1432,7 @@ function getEvidenceSnippet(pledge: PersonaReviewSourcePledge) {
 }
 
 function isImplementationPlaceholder(value: string) {
-  return /NEC CDN|원문 기반 요약|요약·비교 생성 대상|후보 사진|PDF 원문에서 추출한|본문 요약은 다음|텍스트 정제 후|5대공약 PDF가 제공|원문 PDF 확보|링크 없음|정제 단계/.test(value);
+  return /NEC CDN|NEC 공개 여부|후보 메타데이터|원문 기반 요약|요약·비교 생성 대상|후보 사진|PDF 원문에서 추출한|본문 요약은 다음|텍스트 정제 후|5대공약 PDF가 제공|5대공약 PDF 있음|5대공약 PDF 없음|5대공약 PDF 미제공|PDF 미제공|원문 PDF 확보|원문 PDF|PDF 링크|링크 없음|선거공보 연동|공보 상세 연동|정제 단계/.test(value);
 }
 
 function splitFivePledgeText(rawText: string) {

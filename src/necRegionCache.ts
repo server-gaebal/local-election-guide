@@ -411,8 +411,6 @@ function buildPublicRecords(candidate: NecNormalizedCandidate, disclosure?: NecC
     records.push("5대공약 PDF 있음");
   } else if (candidate.campaignBulletinPdf) {
     records.push("선거공보 PDF 있음");
-  } else {
-    records.push("공약 원문 PDF 링크 없음");
   }
 
   return records;
@@ -463,7 +461,7 @@ function buildFocusTags(
     candidate.raceName.replace(/선거$/, ""),
     candidate.districtName || "비례",
     ...policyTags.slice(0, 2),
-    hasFivePledgePdf ? "5대공약" : hasCampaignBulletinPdf ? "선거공보" : "원문 링크 없음",
+    hasFivePledgePdf ? "5대공약" : hasCampaignBulletinPdf ? "선거공보" : "",
   ].filter(Boolean).slice(0, 5);
 }
 
@@ -502,15 +500,7 @@ function buildPledgeSummary(
     return "NEC 정책공약마당에 5대공약 PDF가 공개되어 있습니다. 자동으로 읽을 수 있는 세부 문장이 부족해 원문 확인이 필요합니다.";
   }
 
-  if (hasCampaignBulletinPdf && hasDownloadedSource) {
-    return "NEC 정책공약마당의 선거공보 원문 텍스트를 확보했습니다. 자동 요약이 어려운 문서는 원문 확인 중심으로 표시합니다.";
-  }
-
-  if (hasCampaignBulletinPdf) {
-    return "NEC 정책공약마당에 선거공보 PDF가 공개되어 있습니다. 세부 공약은 원문 확인이 필요합니다.";
-  }
-
-  return "NEC 후보자 명부에는 등록되어 있지만 5대공약·선거공보 PDF 링크는 제공되지 않았습니다.";
+  return "";
 }
 
 function fallbackHighlights(
@@ -521,12 +511,10 @@ function fallbackHighlights(
 ) {
   if (isPartyVote) {
     if (hasCampaignBulletinPdf && hasDownloadedSource) {
-      return ["비례대표 정당 투표 항목", "정당별 선거공보 텍스트 확보", "원문 확인 필요"];
+      return ["비례대표 정당 투표 항목", "정당별 선거공보"];
     }
 
-    return hasCampaignBulletinPdf
-      ? ["비례대표 정당 투표 항목", "정당별 선거공보 공개", "원문 확인 필요"]
-      : ["비례대표 정당 투표 항목", "원문 PDF 링크 없음", "NEC 공개 여부 확인 필요"];
+    return hasCampaignBulletinPdf ? ["비례대표 정당 투표 항목", "정당별 선거공보"] : ["비례대표 정당 투표 항목"];
   }
 
   if (hasFivePledgePdf) {
@@ -534,12 +522,10 @@ function fallbackHighlights(
   }
 
   if (hasCampaignBulletinPdf) {
-    return hasDownloadedSource
-      ? ["선거공보 텍스트 확보", "원문 확인 가능", "세부 설명 원문 확인 필요"]
-      : ["선거공보 PDF 공개", "원문 확인 가능", "세부 설명 원문 확인 필요"];
+    return ["선거공보"];
   }
 
-  return ["후보 메타데이터 확보", "원문 PDF 링크 없음", "NEC 공개 여부 확인 필요"];
+  return [];
 }
 
 function buildFullPledges(
@@ -575,23 +561,10 @@ function buildPledgesFromTitles(
   }
 
   if (hasDownloadedSource && policySourceLabel) {
-    return [
-      {
-        title: `${policySourceLabel} 원문 텍스트 확보`,
-        detail: `${policySourceLabel} 원문 텍스트를 확보했지만 구조화된 공약 항목은 자동 추출하지 못했습니다. 세부 내용은 원문에서 확인해 주세요.`,
-      },
-    ];
+    return [];
   }
 
-  return [
-    {
-      title: policySourceLabel ? `${policySourceLabel} 원문 확보` : "공약 원문 PDF 링크 없음",
-      detail:
-        policySourceLabel
-          ? `${policySourceLabel} 원문이 공개되어 있습니다. 세부 내용은 원문에서 확인해 주세요.`
-          : "현재 확보한 NEC 후보자 명부·정책공약마당 응답에 5대공약 또는 선거공보 PDF 링크가 없습니다.",
-    },
-  ];
+  return [];
 }
 
 function buildComparisonPolicyCounts(
