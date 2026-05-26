@@ -29,6 +29,8 @@ type NecDownloadsCache = {
     candidateId: string;
     documentType?: "fivePledges" | "campaignBulletin";
     sourceLabel?: "5대공약" | "선거공보";
+    downloadStatus?: "downloaded" | "skipped" | "failed";
+    extractStatus?: "extracted" | "empty" | "skipped" | "failed";
     textPath: string;
   }>;
 };
@@ -72,6 +74,12 @@ async function buildNecDownloadIndex(downloads: NecDownloadsCache) {
   const index: NecDownloadIndex = new Map();
 
   for (const result of downloads.results) {
+    if (result.downloadStatus === "failed" || result.extractStatus === "failed") {
+      continue;
+    }
+    if (!(await pathExists(result.textPath))) {
+      continue;
+    }
     const text = await readFile(join(repoRoot, result.textPath), "utf8");
     const pledges = extractPledges(text);
     const policyText = pledges.map((pledge) => `${pledge.title} ${pledge.detail}`).join(" ");
@@ -85,12 +93,23 @@ async function buildNecDownloadIndex(downloads: NecDownloadsCache) {
       policyTags: extractPolicyTags(policyText),
     } satisfies NecDownloadEntry;
 
-    if (!existing || nextEntry.sourceType === "fivePledges") {
+    if (!existing || shouldUseDownloadEntry(existing, nextEntry)) {
       index.set(result.candidateId, nextEntry);
     }
   }
 
   return index;
+}
+
+function shouldUseDownloadEntry(existing: NecDownloadEntry, nextEntry: NecDownloadEntry) {
+  const existingPledgeCount = existing.pledges?.length ?? 0;
+  const nextPledgeCount = nextEntry.pledges?.length ?? 0;
+
+  if (existingPledgeCount !== nextPledgeCount) {
+    return nextPledgeCount > existingPledgeCount;
+  }
+
+  return nextEntry.sourceType === "fivePledges" && existing.sourceType !== "fivePledges";
 }
 
 async function buildNecRegionDatasets(nextResidences: typeof residences) {
