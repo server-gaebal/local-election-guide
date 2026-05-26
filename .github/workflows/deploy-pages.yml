@@ -2,6 +2,9 @@ name: Deploy Pages
 
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types:
+      - pages-deploy
   push:
     branches:
       - main
