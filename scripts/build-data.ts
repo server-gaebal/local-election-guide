@@ -6,7 +6,7 @@ import { candidates, residences, voterProfiles } from "../src/mockData";
 import { createCandidateInfoIndex, type NecCandidateInfoRecord } from "../src/necCandidateInfo";
 import type { NecNormalizedCandidate } from "../src/necCrawler";
 import type { NecElectionAreaCache, NecElectionDistrictsCache } from "../src/necElectionInfo";
-import { buildNationalResidences } from "../src/necResidenceIndex";
+import { buildNationalResidences, preserveStableResidenceIds } from "../src/necResidenceIndex";
 import {
   buildResidenceDatasetFromNec,
   extractPledges,
@@ -128,7 +128,7 @@ async function buildNecRegionDatasets(nextResidences: typeof residences) {
 }
 
 async function buildResidences() {
-  const nationalResidences = await buildNationalResidencesFromCache();
+  const nationalResidences = preserveStableResidenceIds(await buildNationalResidencesFromCache(), residences);
   const nationalResidenceKeys = new Set(nationalResidences.map(residenceLocationKey));
   const fallbackResidences = residences.filter((residence) => !nationalResidenceKeys.has(residenceLocationKey(residence)));
   const residenceMap = new Map([...fallbackResidences, ...nationalResidences].map((residence) => [residence.id, residence]));

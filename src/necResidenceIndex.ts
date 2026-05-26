@@ -42,6 +42,18 @@ export function buildNationalResidences(cache: NecElectionDistrictsCache, areaCa
   });
 }
 
+export function preserveStableResidenceIds(generatedResidences: Residence[], stableResidences: Residence[]) {
+  const stableResidenceIdsByLocation = new Map(
+    stableResidences.map((residence) => [residenceLocationKey(residence), residence.id]),
+  );
+
+  return generatedResidences.map((residence) => {
+    const stableId = stableResidenceIdsByLocation.get(residenceLocationKey(residence));
+
+    return stableId ? { ...residence, id: stableId } : residence;
+  });
+}
+
 type NeighborhoodScope = {
   city: NecSelectboxItem;
   town: NecSelectboxItem;
@@ -196,6 +208,10 @@ function buildNeighborhoodResidence(scope: NeighborhoodScope): Residence {
       localCouncilDistrict: scope.localCouncilDistrict?.name,
     },
   };
+}
+
+function residenceLocationKey(residence: { city: string; district: string; neighborhood: string }) {
+  return [residence.city, residence.district, residence.neighborhood].join("\u0000");
 }
 
 function buildDisplayDistrictName(townName: string, districtHeadName?: string) {
