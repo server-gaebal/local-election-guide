@@ -1,0 +1,910 @@
+export type VoterProfile = "청년" | "학부모" | "소상공인" | "고령층";
+
+export type RaceType =
+  | "광역단체장"
+  | "교육감"
+  | "기초단체장"
+  | "광역의원"
+  | "기초의원";
+
+export type Residence = {
+  id: string;
+  city: string;
+  district: string;
+  neighborhood: string;
+  cacheKey: string;
+  cachedAt: string;
+};
+
+export type Pledge = {
+  title: string;
+  detail: string;
+};
+
+export type Candidate = {
+  id: string;
+  residenceId: string;
+  name: string;
+  number: number;
+  party: string;
+  race: RaceType;
+  office: string;
+  age: number;
+  occupation: string;
+  color: string;
+  photoUrl?: string;
+  criminalRecord: {
+    summary: string;
+    details: string;
+    tone: "clean" | "notice" | "risk";
+  };
+  publicRecord: string[];
+  focusTags: string[];
+  pledgeSummary: string;
+  pledgeHighlights: string[];
+  comparison: string;
+  comparisonDetails: string[];
+  fullPledges: Pledge[];
+  profileRelevance: Record<VoterProfile, string>;
+  cache: {
+    policyPdf: string;
+    normalizedAt: string;
+  };
+};
+
+export const voterProfiles: VoterProfile[] = ["청년", "학부모", "소상공인", "고령층"];
+
+export const residences: Residence[] = [
+  {
+    id: "seoul-mapo-gongdeok",
+    city: "서울특별시",
+    district: "마포구",
+    neighborhood: "공덕동",
+    cacheKey: "residence:seoul:mapo:gongdeok:v0",
+    cachedAt: "2026-05-26 11:30 KST",
+  },
+  {
+    id: "gyeonggi-seongnam-jeongja",
+    city: "경기도",
+    district: "성남시 분당구",
+    neighborhood: "정자동",
+    cacheKey: "residence:gyeonggi:seongnam:jeongja:v0",
+    cachedAt: "2026-05-26 11:30 KST",
+  },
+  {
+    id: "busan-haeundae-woojedong",
+    city: "부산광역시",
+    district: "해운대구",
+    neighborhood: "우제1동",
+    cacheKey: "residence:busan:haeundae:wooje1:v0",
+    cachedAt: "2026-05-26 11:30 KST",
+  },
+];
+
+export const candidates: Candidate[] = [
+  {
+    id: "kang-minho",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "강민호",
+    number: 1,
+    party: "서울미래당",
+    race: "광역단체장",
+    office: "서울시장",
+    age: 58,
+    occupation: "전 서울시 부시장",
+    color: "#1d4ed8",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 완료", "재산 22.4억"],
+    focusTags: ["교통", "주거", "기후"],
+    pledgeSummary: "대중교통 환승과 공공임대 공급을 서울 전역 생활권 단위로 묶는 광역 행정 공약입니다.",
+    pledgeHighlights: [
+      "서울 순환 BRT 3개 축 신설",
+      "청년·신혼 공공임대 5만 호",
+      "침수 취약지 지하공간 안전 기준 강화",
+    ],
+    comparison: "교통망과 주택 공급 숫자가 뚜렷하지만, 구별 배분 기준은 더 설명이 필요합니다.",
+    comparisonDetails: [
+      "이서현 후보보다 교통 인프라 투자 규모를 더 크게 제시했습니다.",
+      "주거 공급은 수치가 명확하지만 입지 선정 기준은 아직 넓습니다.",
+      "기후 안전은 시설 투자 중심입니다.",
+    ],
+    fullPledges: [
+      {
+        title: "서울 순환 BRT",
+        detail: "도심 진입 전 환승 거점을 강화하고 권역 간 이동 시간을 줄이는 간선급 버스망을 신설합니다.",
+      },
+      {
+        title: "공공임대 5만 호",
+        detail: "역세권과 공공부지를 활용해 청년·신혼부부 대상 장기 거주형 주택을 공급합니다.",
+      },
+      {
+        title: "침수 안전 기준",
+        detail: "지하주차장, 반지하, 지하상가의 차수판과 대피 안내 기준을 시 조례로 강화합니다.",
+      },
+      {
+        title: "마을의료 협력망",
+        detail: "야간·휴일 진료 공백 지역에 시립병원과 민간병원 협력 예산을 배정합니다.",
+      },
+      {
+        title: "공약 집행 공개",
+        detail: "대형 공약별 예산, 공정률, 지연 사유를 분기별 대시보드로 공개합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "공공임대와 광역 교통 공약이 직접 관련됩니다.",
+      학부모: "통학보다 광역 이동과 주거 안정에 초점이 있습니다.",
+      소상공인: "환승 거점 상권 유입은 관련되지만 직접 지원은 제한적입니다.",
+      고령층: "마을의료 협력망과 교통 접근성이 관련됩니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/kang-minho-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "lee-seohyun",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "이서현",
+    number: 2,
+    party: "시민복지연합",
+    race: "광역단체장",
+    office: "서울시장",
+    age: 54,
+    occupation: "복지정책 교수",
+    color: "#be123c",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 해당 없음", "재산 11.7억"],
+    focusTags: ["복지", "돌봄", "상권"],
+    pledgeSummary: "서울시 예산을 돌봄·의료·상권 회복에 우선 배정하는 생활 복지형 공약입니다.",
+    pledgeHighlights: [
+      "동네 돌봄센터 야간 운영",
+      "소상공인 임대료 분쟁 조정 예산",
+      "공공병원 소아·응급 진료 확충",
+    ],
+    comparison: "복지·돌봄 공약은 촘촘하지만, 대규모 교통 인프라 계획은 강민호 후보보다 작습니다.",
+    comparisonDetails: [
+      "강민호 후보보다 돌봄과 의료 접근성의 세부 실행안이 많습니다.",
+      "교통 공약은 기존망 운영 개선에 가깝습니다.",
+      "상권 정책은 직접 지원 비중이 큽니다.",
+    ],
+    fullPledges: [
+      {
+        title: "동네 돌봄센터 야간 운영",
+        detail: "권역별 공공시설을 활용해 돌봄센터 운영 시간을 저녁까지 확대합니다.",
+      },
+      {
+        title: "임대료 분쟁 조정",
+        detail: "상가 임대료 조정과 계약 분쟁을 지원하는 시 단위 조정 예산을 편성합니다.",
+      },
+      {
+        title: "소아·응급 진료 확충",
+        detail: "시립병원과 권역 병원의 야간 소아 진료와 응급 대응 인력을 지원합니다.",
+      },
+      {
+        title: "보행 약자 이동권",
+        detail: "경사로, 엘리베이터, 저상버스 접근성을 동별로 점검해 우선순위를 공개합니다.",
+      },
+      {
+        title: "생활 예산 주민투표",
+        detail: "동네 안전, 돌봄, 상권 예산 일부를 주민투표로 배분합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "주거보다 돌봄·의료 안전망 중심이라 직접성은 중간입니다.",
+      학부모: "야간 돌봄과 소아 진료가 직접 관련됩니다.",
+      소상공인: "임대료 분쟁 조정과 상권 지원이 직접 관련됩니다.",
+      고령층: "보행 약자 이동권과 의료 접근성이 관련됩니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/lee-seohyun-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "han-jiwoo",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "한지우",
+    number: 1,
+    party: "새길시민연합",
+    race: "기초단체장",
+    office: "마포구청장",
+    age: 47,
+    occupation: "도시정책 연구원",
+    color: "#0f766e",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 해당 없음", "재산 13.8억"],
+    focusTags: ["주거", "교통", "생활안전"],
+    pledgeSummary: "역세권 주거 안정과 골목상권 회복을 묶어 생활권 단위로 예산을 편성하는 노선입니다.",
+    pledgeHighlights: [
+      "공덕·아현 역세권 청년 안심주택 1,200호 공급",
+      "마을버스 배차 간격 8분 이내 관리제",
+      "반지하·노후주택 침수 위험 전수조사",
+    ],
+    comparison:
+      "교통·주거 공약은 수치가 구체적이고, 재원 조달은 민간 참여 비중이 커 검증이 필요합니다.",
+    comparisonDetails: [
+      "문태성 후보보다 주거 공급 숫자를 더 명확히 제시했습니다.",
+      "골목상권 공약은 지원 대상이 넓지만 우선순위 기준은 아직 약합니다.",
+      "생활안전 공약은 시설 개선 중심이라 돌봄 인력 계획은 부족합니다.",
+    ],
+    fullPledges: [
+      {
+        title: "역세권 주거 안정",
+        detail: "공덕·애오개·대흥역 반경 700m 안의 공공부지와 민간 참여지를 묶어 청년 안심주택을 단계 공급합니다.",
+      },
+      {
+        title: "10분 생활 교통",
+        detail: "마을버스 배차 데이터를 공개하고 혼잡 시간대 증차 비용을 구비와 시비 매칭으로 편성합니다.",
+      },
+      {
+        title: "침수 제로 골목",
+        detail: "반지하 주택, 노후 맨홀, 저지대 골목을 한 번에 점검하는 생활안전 지도를 구축합니다.",
+      },
+      {
+        title: "상권 회복 바우처",
+        detail: "공덕시장과 경의선숲길 주변 소상공인에게 카드 수수료, 간판 정비, 야간 조명 개선을 패키지로 지원합니다.",
+      },
+      {
+        title: "구민 예산 공개",
+        detail: "주요 공약의 월별 집행률과 지연 사유를 구청 홈페이지에 공개합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "주거와 야간 교통 공약이 직접 맞닿아 있습니다.",
+      학부모: "통학로 안전은 강하지만 보육 확대는 상대적으로 적습니다.",
+      소상공인: "상권 회복 바우처와 야간 조명 개선이 관련됩니다.",
+      고령층: "저지대 안전과 마을버스 배차 관리가 생활 이동에 연결됩니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/han-jiwoo-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "moon-taesung",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "문태성",
+    number: 2,
+    party: "생활개혁당",
+    race: "기초단체장",
+    office: "마포구청장",
+    age: 52,
+    occupation: "전 구의원",
+    color: "#be123c",
+    criminalRecord: {
+      summary: "벌금 1건",
+      details: "모의 데이터 기준 도로교통 관련 벌금형 1건",
+      tone: "notice",
+    },
+    publicRecord: ["체납 없음", "병역 완료", "재산 8.1억"],
+    focusTags: ["상권", "복지", "행정개혁"],
+    pledgeSummary: "구청 민원 처리 속도와 상권 지원을 앞세운 행정 효율 중심 공약입니다.",
+    pledgeHighlights: [
+      "민원 처리 48시간 책임제",
+      "공덕시장 임대료 조정 협의체",
+      "구립 경로당 냉난방비 자동 지원",
+    ],
+    comparison:
+      "상권·민원 공약은 실행 조직이 분명하지만, 주거·교통 문제의 해법은 상대적으로 좁습니다.",
+    comparisonDetails: [
+      "한지우 후보보다 구청 내부 행정 개선안이 촘촘합니다.",
+      "신규 주택 공급보다 기존 주민 지원에 무게를 둡니다.",
+      "범죄 기록은 경미 사안으로 표기되지만 유권자 확인이 필요합니다.",
+    ],
+    fullPledges: [
+      {
+        title: "48시간 민원 책임제",
+        detail: "구청 접수 민원의 1차 답변 기한을 48시간으로 고정하고 지연 사유를 공개합니다.",
+      },
+      {
+        title: "상권 임대료 협의체",
+        detail: "상인회, 건물주, 구청이 참여하는 분쟁 조정 회의를 분기별로 운영합니다.",
+      },
+      {
+        title: "생활복지 자동 신청",
+        detail: "경로당과 취약계층 지원 사업은 대상자가 신청하지 않아도 안내되는 방식으로 전환합니다.",
+      },
+      {
+        title: "예산 낭비 신고 포상",
+        detail: "소규모 공사, 용역, 행사 예산의 낭비 신고를 접수하고 검증된 건에 포상합니다.",
+      },
+      {
+        title: "야간 청소 기동반",
+        detail: "상권 밀집 지역의 야간 쓰레기 민원을 전담하는 기동반을 신설합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "야간 생활 민원은 관련되지만 청년 주거 대책은 약합니다.",
+      학부모: "학교 주변 환경 정비는 있으나 교육 공약은 제한적입니다.",
+      소상공인: "임대료 협의체와 야간 청소가 직접 연결됩니다.",
+      고령층: "경로당 냉난방비와 자동 신청 복지가 관련됩니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/moon-taesung-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "oh-dayeon",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "오다연",
+    number: 3,
+    party: "미래교육연대",
+    race: "교육감",
+    office: "서울특별시교육감",
+    age: 55,
+    occupation: "전 고등학교 교장",
+    color: "#7c3aed",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 해당 없음", "재산 6.4억"],
+    focusTags: ["기초학력", "디지털교육", "학교안전"],
+    pledgeSummary: "학력 회복과 학교 안전을 결합한 교육 행정형 공약입니다.",
+    pledgeHighlights: [
+      "초3·중1 기초학력 진단 후 맞춤 보충",
+      "학교폭력 초기 조사 전담팀",
+      "AI 교구 구매 내역 공개",
+    ],
+    comparison:
+      "학력 지표와 안전 프로세스가 강점이고, 돌봄 시간 확대는 상대적으로 보수적입니다.",
+    comparisonDetails: [
+      "보충학습은 진단과 추적 지표가 명확합니다.",
+      "디지털교육 예산 공개는 투명성 측면의 차별점입니다.",
+      "맞벌이 가정의 돌봄 시간 공백에는 제한적인 답을 냅니다.",
+    ],
+    fullPledges: [
+      {
+        title: "기초학력 회복",
+        detail: "초3과 중1을 핵심 전환 학년으로 지정하고 보충학습 예산을 학교별로 배분합니다.",
+      },
+      {
+        title: "학교폭력 전담팀",
+        detail: "초기 조사와 피해 학생 보호를 분리해 담임교사의 업무 부담을 줄입니다.",
+      },
+      {
+        title: "디지털 교구 공개",
+        detail: "AI 교구와 태블릿 구매 내역, 활용률, 만족도를 반기별로 공개합니다.",
+      },
+      {
+        title: "노후 학교 안전",
+        detail: "화장실, 급식실, 체육관의 노후도를 점수화해 보수 순위를 공개합니다.",
+      },
+      {
+        title: "진로 전환 학기",
+        detail: "중3과 고1 학생에게 지역 대학, 기업, 공공기관 연계 진로 주간을 제공합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "직접 효과는 낮지만 진로 전환 학기와 연결됩니다.",
+      학부모: "기초학력, 학교폭력, 시설 안전이 직접 관련됩니다.",
+      소상공인: "지역 기업 연계 진로 프로그램 외에는 직접 관련이 낮습니다.",
+      고령층: "세대 통합 교육이나 평생교육 공약은 약합니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/oh-dayeon-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "jang-minseok",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "장민석",
+    number: 4,
+    party: "서울교육포럼",
+    race: "교육감",
+    office: "서울특별시교육감",
+    age: 49,
+    occupation: "교육복지 활동가",
+    color: "#0891b2",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 완료", "재산 5.6억"],
+    focusTags: ["돌봄", "특수교육", "학교급식"],
+    pledgeSummary: "학교 돌봄과 교육복지 격차 해소를 앞세운 현장 지원형 교육 공약입니다.",
+    pledgeHighlights: [
+      "초등 돌봄 대기 0명 시범구",
+      "특수교육 보조인력 충원",
+      "친환경 급식 단가 현실화",
+    ],
+    comparison: "오다연 후보보다 돌봄과 특수교육은 강하지만, 학력 진단 체계는 덜 구체적입니다.",
+    comparisonDetails: [
+      "돌봄 공약은 맞벌이 가정 체감도가 높습니다.",
+      "특수교육 인력 충원 계획이 구체적입니다.",
+      "기초학력 지표와 평가 방식은 추가 설명이 필요합니다.",
+    ],
+    fullPledges: [
+      {
+        title: "돌봄 대기 0명",
+        detail: "초등 돌봄 수요가 높은 자치구부터 공공시설 연계 돌봄을 시범 운영합니다.",
+      },
+      {
+        title: "특수교육 인력 충원",
+        detail: "특수학급 보조인력과 치료 지원 시간을 학교별 수요에 맞춰 늘립니다.",
+      },
+      {
+        title: "급식 단가 현실화",
+        detail: "친환경 식재료 단가 상승분을 반영해 급식 질 저하를 막습니다.",
+      },
+      {
+        title: "학교 상담실 확충",
+        detail: "학생 정신건강 상담 인력을 권역별로 배치하고 대기 시간을 공개합니다.",
+      },
+      {
+        title: "마을교육 연계",
+        detail: "도서관, 체육시설, 문화기관을 방과후 교육 자원으로 연결합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "직접 관련은 낮지만 교육복지 일자리와 일부 연결됩니다.",
+      학부모: "돌봄, 급식, 상담 공약이 직접 관련됩니다.",
+      소상공인: "지역 기관 연계 외 직접 관련은 낮습니다.",
+      고령층: "직접 관련은 낮습니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/jang-minseok-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "lim-sera",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "임세라",
+    number: 1,
+    party: "새길시민연합",
+    race: "광역의원",
+    office: "서울시의원 마포3",
+    age: 41,
+    occupation: "교통정책 기획자",
+    color: "#2563eb",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 해당 없음", "재산 7.8억"],
+    focusTags: ["버스", "통학", "골목안전"],
+    pledgeSummary: "공덕·아현 생활권의 버스 배차와 통학로 안전을 서울시 예산으로 연결하는 공약입니다.",
+    pledgeHighlights: [
+      "마을버스 혼잡 시간 증차",
+      "초등 통학로 횡단보도 조명",
+      "경의선숲길 야간 안전 순찰",
+    ],
+    comparison: "강도윤 후보보다 교통·통학 안전에 집중하고, 상권 직접 지원은 적습니다.",
+    comparisonDetails: [
+      "마을버스와 통학로처럼 생활 이동 공약이 구체적입니다.",
+      "상권 매출 회복 공약은 상대적으로 약합니다.",
+      "서울시 예산 반영 경로를 제시한 점이 강점입니다.",
+    ],
+    fullPledges: [
+      {
+        title: "마을버스 증차",
+        detail: "출퇴근과 등하교 시간대 마을버스 혼잡 데이터를 기반으로 증차 예산을 요구합니다.",
+      },
+      {
+        title: "통학로 조명",
+        detail: "학교 주변 횡단보도와 골목 진입부의 야간 조명, 바닥 신호등을 보강합니다.",
+      },
+      {
+        title: "숲길 안전 순찰",
+        detail: "경의선숲길 야간 순찰과 비상벨 위치를 재정비합니다.",
+      },
+      {
+        title: "청년 임대 연결",
+        detail: "서울시 청년주택 신청 정보를 동 주민센터와 온라인에서 한 번에 안내합니다.",
+      },
+      {
+        title: "예산 모니터링",
+        detail: "마포3 생활권 관련 서울시 예산 반영 여부를 분기별로 공개합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "마을버스와 청년 임대 안내가 관련됩니다.",
+      학부모: "통학로 안전과 버스 증차가 직접 관련됩니다.",
+      소상공인: "상권 직접 지원은 약하지만 숲길 안전은 유동 인구에 연결됩니다.",
+      고령층: "보행 안전과 버스 배차가 관련됩니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/lim-sera-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "kang-doyun",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "강도윤",
+    number: 2,
+    party: "생활개혁당",
+    race: "광역의원",
+    office: "서울시의원 마포3",
+    age: 46,
+    occupation: "소상공인 컨설턴트",
+    color: "#b45309",
+    criminalRecord: {
+      summary: "벌금 1건",
+      details: "모의 데이터 기준 도로교통 관련 벌금형 1건",
+      tone: "notice",
+    },
+    publicRecord: ["체납 없음", "병역 완료", "재산 9.4억"],
+    focusTags: ["상권", "주차", "관광"],
+    pledgeSummary: "공덕시장과 경의선숲길 상권 회복, 단기 주차 문제 해결을 전면에 둔 공약입니다.",
+    pledgeHighlights: [
+      "공덕시장 공동 배송 거점",
+      "상권 주변 단기 주차 회전율 공개",
+      "경의선숲길 축제 예산 확대",
+    ],
+    comparison: "임세라 후보보다 상권 공약은 직접적이지만, 통학 안전 계획은 좁습니다.",
+    comparisonDetails: [
+      "소상공인 지원 항목이 가장 직접적입니다.",
+      "주차 회전율 공개는 체감도가 높습니다.",
+      "교육·통학 공약은 보조 수준입니다.",
+    ],
+    fullPledges: [
+      {
+        title: "공동 배송 거점",
+        detail: "공덕시장과 주변 상점의 물류비를 낮추는 공동 배송 거점을 마련합니다.",
+      },
+      {
+        title: "단기 주차 관리",
+        detail: "상권 주변 공영주차장의 회전율과 혼잡 시간대를 공개합니다.",
+      },
+      {
+        title: "숲길 축제",
+        detail: "경의선숲길 문화행사와 지역 상점 쿠폰을 연계합니다.",
+      },
+      {
+        title: "상가 에너지 절감",
+        detail: "노후 냉난방기 교체와 LED 전환을 지원합니다.",
+      },
+      {
+        title: "상권 민원 핫라인",
+        detail: "소음, 쓰레기, 불법 주정차 민원을 현장 처리팀과 연결합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "축제와 지역 일자리 일부가 관련됩니다.",
+      학부모: "통학 안전보다 상권·주차 중심입니다.",
+      소상공인: "배송, 주차, 에너지 절감이 직접 관련됩니다.",
+      고령층: "시장 이용 편의와 주차 관리가 일부 관련됩니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/kang-doyun-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "yoon-jihun",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "윤지훈",
+    number: 1,
+    party: "동네실천당",
+    race: "기초의원",
+    office: "마포구의원 공덕",
+    age: 36,
+    occupation: "공동체 활동가",
+    color: "#047857",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 완료", "재산 3.1억"],
+    focusTags: ["골목", "청소", "주민참여"],
+    pledgeSummary: "공덕동 골목 민원과 주민참여 예산을 빠르게 처리하는 생활 밀착형 공약입니다.",
+    pledgeHighlights: [
+      "골목 쓰레기 배출 시간 재조정",
+      "주민참여예산 모바일 제안",
+      "노후 보안등 우선 교체",
+    ],
+    comparison: "서혜민 후보보다 주민참여와 골목 민원 처리에 집중합니다.",
+    comparisonDetails: [
+      "생활 민원 처리 속도 개선안이 구체적입니다.",
+      "복지 시설 공약은 상대적으로 적습니다.",
+      "주민참여예산 접근성을 높이는 점이 차별점입니다.",
+    ],
+    fullPledges: [
+      {
+        title: "쓰레기 배출 시간 조정",
+        detail: "상권과 주거지별 배출 시간을 분리해 악취와 무단투기 민원을 줄입니다.",
+      },
+      {
+        title: "모바일 주민예산",
+        detail: "주민참여예산 제안을 모바일로 받고 처리 상태를 공개합니다.",
+      },
+      {
+        title: "보안등 교체",
+        detail: "범죄 취약 골목의 보안등과 CCTV 사각지대를 우선 개선합니다.",
+      },
+      {
+        title: "골목회의 정례화",
+        detail: "분기별 골목회의를 열고 민원 처리 결과를 공개합니다.",
+      },
+      {
+        title: "공덕시장 보행 정비",
+        detail: "시장 주변 보행 동선과 적치물 정리를 상인회와 협의합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "야간 보행 안전과 모바일 참여가 관련됩니다.",
+      학부모: "골목 안전과 보안등 교체가 관련됩니다.",
+      소상공인: "시장 보행 정비와 쓰레기 배출 조정이 관련됩니다.",
+      고령층: "골목 조명과 보행 정비가 관련됩니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/yoon-jihun-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "seo-hyemin",
+    residenceId: "seoul-mapo-gongdeok",
+    name: "서혜민",
+    number: 2,
+    party: "마포복지연대",
+    race: "기초의원",
+    office: "마포구의원 공덕",
+    age: 44,
+    occupation: "사회복지사",
+    color: "#7c3aed",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 해당 없음", "재산 4.2억"],
+    focusTags: ["복지", "돌봄", "고령친화"],
+    pledgeSummary: "고령층·1인가구·돌봄 공백을 동 단위로 찾고 지원하는 복지 중심 공약입니다.",
+    pledgeHighlights: [
+      "1인가구 안부 확인 네트워크",
+      "경로당 식사 지원 확대",
+      "돌봄 공백 가구 방문 상담",
+    ],
+    comparison: "윤지훈 후보보다 복지·돌봄은 강하지만, 골목 민원 처리 공약은 덜 촘촘합니다.",
+    comparisonDetails: [
+      "복지 사각지대 발굴 방식이 구체적입니다.",
+      "고령층 체감 공약이 많습니다.",
+      "청소·주차 같은 생활 민원 공약은 보조적입니다.",
+    ],
+    fullPledges: [
+      {
+        title: "1인가구 안부 확인",
+        detail: "동 주민센터, 복지관, 약국을 연결해 고위험 1인가구 안부 확인망을 구축합니다.",
+      },
+      {
+        title: "경로당 식사 지원",
+        detail: "경로당 식사 운영일과 냉난방비 지원을 확대합니다.",
+      },
+      {
+        title: "방문 상담",
+        detail: "돌봄 공백 가구를 찾아가는 상담 인력과 연계 서비스를 늘립니다.",
+      },
+      {
+        title: "무장애 골목",
+        detail: "휠체어와 보행 보조기 이용이 어려운 골목을 조사하고 개선합니다.",
+      },
+      {
+        title: "복지 신청 간소화",
+        detail: "반복 서류 제출을 줄이고 대상자에게 먼저 안내하는 방식을 추진합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "1인가구 안부 확인은 일부 관련됩니다.",
+      학부모: "돌봄 상담은 관련되지만 교육 공약은 적습니다.",
+      소상공인: "직접 관련은 낮습니다.",
+      고령층: "식사 지원, 방문 상담, 무장애 골목이 직접 관련됩니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/seo-hyemin-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "baek-seoyeon",
+    residenceId: "gyeonggi-seongnam-jeongja",
+    name: "백서연",
+    number: 1,
+    party: "경기돌봄연합",
+    race: "광역의원",
+    office: "경기도의원 성남 분당3",
+    age: 43,
+    occupation: "아동정책 변호사",
+    color: "#2563eb",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 해당 없음", "재산 10.2억"],
+    focusTags: ["교육·돌봄", "교통", "공공의료"],
+    pledgeSummary: "학원·돌봄·통학 이동을 하나의 생활권 문제로 보고 도 예산을 끌어오는 공약입니다.",
+    pledgeHighlights: [
+      "정자동 초등 돌봄 저녁 8시까지 확대",
+      "판교·정자 통학 셔틀 안전 인증제",
+      "소아 야간 진료 협력 병원 지원",
+    ],
+    comparison:
+      "돌봄 공약은 가장 촘촘하지만, 산업·상권 공약은 박준모 후보보다 범위가 좁습니다.",
+    comparisonDetails: [
+      "돌봄 시간과 통학 안전의 실행 단위가 구체적입니다.",
+      "교통은 어린이 이동에 집중되어 일반 출퇴근 대책은 제한적입니다.",
+      "예산은 도비 매칭 전제를 두고 있어 중앙·시 협의가 관건입니다.",
+    ],
+    fullPledges: [
+      {
+        title: "저녁 돌봄 확대",
+        detail: "정자동 초등학교와 공공시설을 묶어 저녁 8시까지 돌봄 공백을 줄입니다.",
+      },
+      {
+        title: "통학 셔틀 인증",
+        detail: "민간 셔틀 차량의 안전 교육, 보험, 운행 기록을 인증하는 제도를 도 조례로 추진합니다.",
+      },
+      {
+        title: "소아 야간 진료",
+        detail: "소아 야간 진료를 맡는 협력 병원에 인건비와 장비비를 지원합니다.",
+      },
+      {
+        title: "분당형 방과후 바우처",
+        detail: "저소득·맞벌이 가정의 방과후 수업 부담을 줄이는 바우처를 시범 운영합니다.",
+      },
+      {
+        title: "학교 앞 30km/h 실측",
+        detail: "학교 주변 차량 속도 데이터를 공개하고 과속 구간에 우선 시설 개선을 시행합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "직접 관련은 낮지만 야간 의료 접근성과 교통 안전은 일부 연결됩니다.",
+      학부모: "돌봄, 통학, 소아 진료가 모두 직접 관련됩니다.",
+      소상공인: "상권 지원은 상대적으로 약합니다.",
+      고령층: "공공의료 접근성은 관련되지만 노인 돌봄 공약은 제한적입니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/baek-seoyeon-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "park-junmo",
+    residenceId: "gyeonggi-seongnam-jeongja",
+    name: "박준모",
+    number: 2,
+    party: "도시실용당",
+    race: "기초단체장",
+    office: "성남시장",
+    age: 50,
+    occupation: "전 공공데이터 센터장",
+    color: "#b45309",
+    criminalRecord: {
+      summary: "전과 0건",
+      details: "모의 데이터 기준 범죄 경력 신고 없음",
+      tone: "clean",
+    },
+    publicRecord: ["체납 없음", "병역 완료", "재산 18.6억"],
+    focusTags: ["교통", "일자리", "데이터행정"],
+    pledgeSummary: "판교·분당 출퇴근 병목과 공공데이터 기반 행정을 핵심으로 내세웁니다.",
+    pledgeHighlights: [
+      "정자역 환승 동선 재설계",
+      "판교 스타트업 공공구매 500억",
+      "민원 데이터 공개 대시보드",
+    ],
+    comparison:
+      "교통·일자리 공약은 넓지만, 돌봄과 학교 안전은 백서연 후보보다 덜 구체적입니다.",
+    comparisonDetails: [
+      "출퇴근 동선과 산업 정책의 연결이 강합니다.",
+      "공공구매 규모는 제시됐지만 기업 선정 기준은 더 필요합니다.",
+      "학부모 관련 공약은 교통 일부에 머뭅니다.",
+    ],
+    fullPledges: [
+      {
+        title: "정자역 환승 개선",
+        detail: "버스 정류장 재배치, 보행 동선 분리, 출퇴근 시간 신호 조정을 통합 추진합니다.",
+      },
+      {
+        title: "공공구매 500억",
+        detail: "판교 스타트업 제품의 실증과 공공구매를 연계하는 예산을 단계적으로 확대합니다.",
+      },
+      {
+        title: "민원 공개 대시보드",
+        detail: "동별 민원 유형, 처리 기간, 반복 민원을 공개해 행정 우선순위를 조정합니다.",
+      },
+      {
+        title: "탄천 보행 연결",
+        detail: "탄천 산책로와 상권을 잇는 야간 조명, 공중화장실, 안내 표지 개선을 추진합니다.",
+      },
+      {
+        title: "청년 기술 인턴",
+        detail: "지역 기업과 청년을 연결하는 6개월 기술 인턴십을 운영합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "기술 인턴십과 판교 일자리 공약이 직접 관련됩니다.",
+      학부모: "정자역 환승 개선 외에는 학교·돌봄 직접 공약이 적습니다.",
+      소상공인: "탄천 연결과 공공구매 일부가 지역 상권에 연결됩니다.",
+      고령층: "보행 환경 개선은 관련되지만 의료·복지 공약은 약합니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/park-junmo-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+  {
+    id: "choi-minjae",
+    residenceId: "busan-haeundae-woojedong",
+    name: "최민재",
+    number: 1,
+    party: "부산생활당",
+    race: "기초의원",
+    office: "해운대구의원 우제1",
+    age: 39,
+    occupation: "지역 상인회 정책실장",
+    color: "#047857",
+    criminalRecord: {
+      summary: "벌금 1건",
+      details: "모의 데이터 기준 집회 관련 벌금형 1건",
+      tone: "notice",
+    },
+    publicRecord: ["체납 없음", "병역 완료", "재산 4.9억"],
+    focusTags: ["상권", "관광", "주차"],
+    pledgeSummary: "관광객 동선과 주민 생활 불편을 분리하는 동네 운영형 공약입니다.",
+    pledgeHighlights: [
+      "해운대역 주변 단기 주차 회전율 공개",
+      "주민 우선 쓰레기 수거 시간 조정",
+      "골목상권 공동 배송 거점",
+    ],
+    comparison:
+      "주민 민원 해결은 빠르게 설계됐지만, 장기 도시계획은 아직 세부성이 낮습니다.",
+    comparisonDetails: [
+      "주차와 쓰레기 문제의 체감도는 높습니다.",
+      "관광 수입 배분 구조는 더 설명이 필요합니다.",
+      "전과 기록은 성격과 시점 확인이 필요합니다.",
+    ],
+    fullPledges: [
+      {
+        title: "주차 회전율 공개",
+        detail: "해운대역 인근 공영주차장의 시간대별 회전율을 공개하고 요금을 조정합니다.",
+      },
+      {
+        title: "수거 시간 조정",
+        detail: "관광객 밀집 시간과 주민 생활 시간을 분리해 쓰레기 수거 시간을 조정합니다.",
+      },
+      {
+        title: "공동 배송 거점",
+        detail: "골목상권 공동 배송 거점을 마련해 물류비와 불법 주정차를 함께 줄입니다.",
+      },
+      {
+        title: "관광 민원 핫라인",
+        detail: "소음, 무단투기, 주차 민원을 현장 단속과 바로 연결합니다.",
+      },
+      {
+        title: "주민 우선 보행로",
+        detail: "통학·출근 동선의 보행 폭과 안전 시설을 우선 개선합니다.",
+      },
+    ],
+    profileRelevance: {
+      청년: "상권 일자리와 야간 민원 공약이 일부 관련됩니다.",
+      학부모: "통학 보행로 개선이 관련됩니다.",
+      소상공인: "공동 배송과 관광 동선 조정이 직접 연결됩니다.",
+      고령층: "보행로 개선은 관련되지만 복지 공약은 적습니다.",
+    },
+    cache: {
+      policyPdf: "mock-cache/policy/choi-minjae-5pledges.pdf",
+      normalizedAt: "2026-05-26 11:31 KST",
+    },
+  },
+];
