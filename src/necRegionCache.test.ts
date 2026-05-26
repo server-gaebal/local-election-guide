@@ -462,6 +462,28 @@ o 이행 방법
     expect(extractPledgeTitles(text)).toEqual(["분 통근도시 실현으로 시민에게 쉼표를"]);
   });
 
+  it("keeps OCR pledge titles on the title line instead of absorbing details", () => {
+    const text = `
+가 1 제목 : 어르신, 청년, 장애인 일자리 및 권익 창출
+목표
+O 세대별 맞춤 일자리 패키지로 모두가 자긍심 갖고 일할 수 있는 도시를 만들겠습니다.
+
+공약순위: 2 AS: 재개발, 재건축 조속 실행 및 소상공인 지원
+1} =
+O 원스톱 추진단으로 인허가 절반 단축, 소상공인 상권 보호도 함께 챙기겠습니다.
+
+공약순위: 3 제목 : 신평 예비군 훈련장 부지 복합체육문화시설
+Oz 7 0
+O 장기간 표류된 부지를 부산시, 국방부와 직접 협상해 복합 시설로 만들겠습니다.
+`;
+
+    expect(extractPledgeTitles(text)).toEqual([
+      "어르신, 청년, 장애인 일자리 및 권익 창출",
+      "재개발, 재건축 조속 실행 및 소상공인 지원",
+      "신평 예비군 훈련장 부지 복합체육문화시설",
+    ]);
+  });
+
   it("prefers implementation method details so voters can see how a pledge would be done", () => {
     const text = `
 공약순위: 1 제목 : 수도권 30분 출근 대전환
