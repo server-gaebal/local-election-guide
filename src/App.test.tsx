@@ -85,7 +85,7 @@ describe("local election guide static experience", () => {
 
     expect(await screen.findByRole("heading", { name: "경기도 성남시 분당구 정자동에서 공약을 비교할 후보" })).toBeInTheDocument();
     expect(await screen.findByRole("heading", { name: "백서연" })).toBeInTheDocument();
-    expect(screen.getByText("교육·돌봄")).toBeInTheDocument();
+    expect(screen.getAllByText("학부모 관점").length).toBeGreaterThan(0);
     expect(screen.queryByText("한지우")).not.toBeInTheDocument();
   });
 
@@ -159,8 +159,12 @@ describe("local election guide static experience", () => {
     render(<App />);
 
     const candidateCard = await screen.findByRole("article", { name: /정원오 후보 카드/ });
+    expect(candidateCard).toHaveStyle("--candidate-color: #2563eb");
     expect(within(candidateCard).getByRole("img", { name: "정원오 후보 사진" })).toBeInTheDocument();
     expect(within(candidateCard).getByText("더불어민주당").tagName).toBe("STRONG");
+    expect(within(candidateCard).queryByText("시·도지사")).not.toBeInTheDocument();
+    expect(within(candidateCard).queryByText("서울특별시")).not.toBeInTheDocument();
+    expect(within(candidateCard).queryByText("5대공약")).not.toBeInTheDocument();
     expect(within(candidateCard).getByText("전과 2건")).toBeInTheDocument();
     expect(within(candidateCard).getByText("57세")).toBeInTheDocument();
     expect(within(candidateCard).getByText("차별점")).toBeInTheDocument();
