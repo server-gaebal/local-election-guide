@@ -227,7 +227,7 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByText(/죄명과 형량까지 자동 표시하려면/)).toBeInTheDocument();
   });
 
-  it("shows source-bounded persona details for candidates outside the curated set", async () => {
+  it("shows first-wave detailed persona details for selected city and race candidates", async () => {
     const user = userEvent.setup();
     render(<App />);
 
@@ -239,6 +239,8 @@ describe("local election guide static experience", () => {
     const dialog = screen.getByRole("dialog", { name: "김영배 전체 공약" });
     expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 공개 공약·공보 텍스트만/)).toBeInTheDocument();
     expect(within(dialog).getByText(/모든 후보 카드에 적용/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/서울·경기·강원·대전의 광역단체장·교육감·기초단체장/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/서울특별시 교육감 상세 정리 대상/)).toBeInTheDocument();
     expect(within(dialog).getByText("근거 출처")).toBeInTheDocument();
     expect(within(dialog).getByText("프롬프트 보기")).toBeInTheDocument();
     expect(within(dialog).getByText(/서울특별시교육감 김영배 후보자 정보/)).toBeInTheDocument();

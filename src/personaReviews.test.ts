@@ -122,7 +122,7 @@ describe("candidate persona reviews", () => {
     expect(getCandidatePersonaReview("local-council-candidate", "청년")).toBeUndefined();
   });
 
-  it("builds source-bounded fallback persona reviews for candidates outside the curated set", () => {
+  it("builds detailed first-wave persona reviews for selected city and race candidates", () => {
     const candidate = {
       id: "education-candidate",
       residenceId: "seoul-mapo-gongdeok",
@@ -135,7 +135,7 @@ describe("candidate persona reviews", () => {
       occupation: "교육자",
       color: "#0f766e",
       criminalRecord: { summary: "전과 없음", details: "없음", tone: "clean" },
-      publicRecord: ["후보자 정보공개"],
+      publicRecord: ["학력: 교육대학원 졸업", "선거구: 서울특별시"],
       focusTags: ["교육감", "서울특별시"],
       pledgeSummary: "교육과 돌봄 공약을 중심으로 제시했습니다.",
       pledgeHighlights: ["학교 돌봄 확대", "통학 안전 강화"],
@@ -156,13 +156,56 @@ describe("candidate persona reviews", () => {
 
     const review = getCandidatePersonaReviewForCandidate(candidate, "학부모");
 
+    expect(review.summary).toContain("서울특별시 교육감 상세 정리 대상");
     expect(review.summary).toContain("학부모");
-    expect(review.questions.length).toBeGreaterThanOrEqual(2);
+    expect(review.questions.length).toBeGreaterThanOrEqual(4);
     expect(review.highlights.some((item) => item.includes("학교 돌봄 확대"))).toBe(true);
+    expect(review.highlights.some((item) => item.includes("후보자 정보공개"))).toBe(true);
     expect(review.cautions.length).toBeGreaterThanOrEqual(1);
     expect(review.evidence.some((source) => source.kind === "candidateMetadata")).toBe(true);
     expect(review.evidence.some((source) => source.label === "학교 돌봄 확대")).toBe(true);
     expect(review.sourceNotice).toContain("공개 공약·공보 텍스트");
+    expect(review.prompt).toContain("Selected first-wave detailed scope");
     expect(review.prompt).toContain("Candidate id: education-candidate");
+  });
+
+  it("keeps non-selected city candidates on the lighter fallback path", () => {
+    const candidate = {
+      id: "busan-district-head",
+      residenceId: "busan-haeundae-woojedong",
+      name: "박해운",
+      number: 1,
+      party: "지역정당",
+      race: "기초단체장",
+      office: "해운대구청장",
+      age: 55,
+      occupation: "정당인",
+      color: "#0f766e",
+      criminalRecord: { summary: "전과 없음", details: "없음", tone: "clean" },
+      publicRecord: ["학력: 대학교 졸업", "선거구: 해운대구"],
+      focusTags: ["기초단체장", "부산광역시"],
+      pledgeSummary: "상권과 교통 공약을 중심으로 제시했습니다.",
+      pledgeHighlights: ["골목상권 회복", "해안 교통 개선"],
+      comparison: "해운대구청장 후보와 비교 대상입니다.",
+      comparisonDetails: [],
+      fullPledges: [
+        { title: "골목상권 회복", detail: "전통시장과 골목상권 지원을 확대합니다." },
+        { title: "해안 교통 개선", detail: "대중교통과 주차 접근성을 개선합니다." },
+      ],
+      profileRelevance: {
+        청년: "청년 관점에서는 교통과 창업 지원을 확인해야 합니다.",
+        학부모: "학부모 관점에서는 통학 안전을 확인해야 합니다.",
+        소상공인: "소상공인 관점에서는 상권 지원을 확인해야 합니다.",
+        고령층: "고령층 관점에서는 이동 편의를 확인해야 합니다.",
+      },
+      cache: { policyPdf: "public/data/regions/busan-haeundae-woojedong.json", normalizedAt: "2026-05-26T00:00:00.000Z" },
+    } satisfies Candidate;
+
+    const review = getCandidatePersonaReviewForCandidate(candidate, "소상공인");
+
+    expect(review.summary).not.toContain("상세 정리 대상");
+    expect(review.prompt).not.toContain("Selected first-wave detailed scope");
+    expect(review.prompt).toContain("Candidate id: busan-district-head");
+    expect(review.highlights.some((item) => item.includes("골목상권 회복"))).toBe(true);
   });
 });
