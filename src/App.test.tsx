@@ -40,6 +40,7 @@ describe("local election guide static experience", () => {
   beforeEach(() => {
     clearElectionDataCache();
     installStaticDataFetch();
+    window.history.replaceState({}, "", "/");
   });
 
   afterEach(() => {
@@ -60,6 +61,35 @@ describe("local election guide static experience", () => {
     expect(await screen.findByRole("heading", { name: "백서연" })).toBeInTheDocument();
     expect(screen.getByText("교육·돌봄")).toBeInTheDocument();
     expect(screen.queryByText("한지우")).not.toBeInTheDocument();
+  });
+
+  it("opens a shared region from the URL query", async () => {
+    window.history.replaceState({}, "", "/?region=busan-haeundae-woojedong");
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "부산광역시 해운대구 우제1동에서 투표할 후보" })).toBeInTheDocument();
+  });
+
+  it("shares the selected region through a crawlable preview page", async () => {
+    const user = userEvent.setup();
+    const share = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(window.navigator, "share", {
+      configurable: true,
+      value: share,
+    });
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "서울특별시 마포구 공덕동에서 투표할 후보" });
+    await user.click(screen.getByRole("button", { name: "선택 지역 공유" }));
+
+    await waitFor(() => {
+      expect(share).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: "https://kimsunghyun1995.github.io/local-election-guide/share/seoul-mapo-gongdeok.html",
+          title: "서울특별시 마포구 후보 가이드",
+        }),
+      );
+    });
   });
 
   it("groups all candidates by the ballots the voter receives", async () => {

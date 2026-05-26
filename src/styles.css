@@ -147,6 +147,7 @@ h1 {
 .profile-switch button,
 .text-mode__button,
 .race-list button,
+.share-button,
 .open-button,
 .icon-button {
   border: 0;
@@ -188,6 +189,23 @@ h1 {
   color: #ffffff;
   background: #0f766e;
   border-color: #0f766e;
+}
+
+.share-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  gap: 7px;
+  padding: 0 14px;
+  color: #ffffff;
+  background: #18211f;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.share-button svg {
+  flex: 0 0 auto;
 }
 
 .status-band {

@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { candidates, residences, voterProfiles } from "../src/mockData";
@@ -9,6 +9,7 @@ import type { NecElectionDistrictsCache } from "../src/necElectionInfo";
 import { buildNationalResidences } from "../src/necResidenceIndex";
 import { buildResidenceDatasetFromNec, extractPledgeTitles, type NecDownloadIndex } from "../src/necRegionCache";
 import { necEndpoints } from "../src/necPolicy";
+import { buildResidenceShareHtml } from "../src/sharePreview";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const generatedAt = process.env.DATA_GENERATED_AT ?? "2026-05-26T13:50:00+09:00";
@@ -37,6 +38,12 @@ async function writeJson(relativePath: string, value: unknown) {
   const target = join(repoRoot, relativePath);
   await mkdir(dirname(target), { recursive: true });
   await writeFile(target, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+async function writeText(relativePath: string, value: string) {
+  const target = join(repoRoot, relativePath);
+  await mkdir(dirname(target), { recursive: true });
+  await writeFile(target, value);
 }
 
 async function readJsonFile<T>(relativePath: string) {
@@ -151,6 +158,8 @@ const regions = normalizedResidences.map((residence) => {
   };
 });
 
+await rm(join(repoRoot, "public/share"), { recursive: true, force: true });
+
 await writeJson("public/data/regions/index.json", {
   voterProfiles,
   residences: normalizedResidences,
@@ -158,6 +167,15 @@ await writeJson("public/data/regions/index.json", {
 
 for (const region of regions) {
   await writeJson(`public/data/regions/${region.residence.id}.json`, region.dataset);
+  await writeText(
+    `public/share/${region.residence.id}.html`,
+    buildResidenceShareHtml({
+      residence: region.residence,
+      ballotCount: new Set(region.dataset.candidates.map((candidate) => candidate.office)).size,
+      candidateCount: region.dataset.candidates.length,
+      generatedAt,
+    }),
+  );
 }
 
 await writeJson("public/data/cache-manifest.json", {

@@ -2,6 +2,7 @@ node_modules/
 dist/
 public/data/nec/
 public/data/regions/nec-*.json
+public/share/
 .lazyweb/
 *.tsbuildinfo
 vite.config.js

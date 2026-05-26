@@ -1,11 +1,13 @@
 import {
   ChevronRight,
   CircleAlert,
+  Check,
   FileText,
   Filter,
   Landmark,
   MapPin,
   Scale,
+  Share2,
   ShieldCheck,
   UserRound,
   Vote,
@@ -28,6 +30,11 @@ import {
   type Residence,
   type VoterProfile,
 } from "./electionTypes";
+import {
+  createResidenceShareDescription,
+  createResidenceShareTitle,
+  createResidenceShareUrl,
+} from "./sharePreview";
 
 const allRaces = "전체";
 type BallotFilter = typeof allRaces | string;
@@ -62,6 +69,30 @@ function getCandidateToneIcon(candidate: Candidate) {
 
 function findInitialResidence(residences: Residence[]): Residence | null {
   return residences[0] ?? null;
+}
+
+function findResidenceFromUrl(residences: Residence[]) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const residenceId = new URLSearchParams(window.location.search).get("region");
+
+  if (!residenceId) {
+    return null;
+  }
+
+  return residences.find((residence) => residence.id === residenceId) ?? null;
+}
+
+function replaceResidenceInUrl(residenceId: string) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("region", residenceId);
+  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
 function getBallotId(candidate: Candidate) {
@@ -114,6 +145,7 @@ export function App() {
   const [ballotFilter, setBallotFilter] = useState<BallotFilter>(allRaces);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [crimeCandidate, setCrimeCandidate] = useState<Candidate | null>(null);
+  const [shareStatus, setShareStatus] = useState<"idle" | "done">("idle");
 
   useEffect(() => {
     let isActive = true;
@@ -124,7 +156,7 @@ export function App() {
           return;
         }
 
-        const nextResidence = findInitialResidence(nextRegionIndex.residences);
+        const nextResidence = findResidenceFromUrl(nextRegionIndex.residences) ?? findInitialResidence(nextRegionIndex.residences);
         setManifest(nextManifest);
         setRegionIndex(nextRegionIndex);
 
@@ -235,9 +267,11 @@ export function App() {
     setCity(nextResidence.city);
     setDistrict(nextResidence.district);
     setNeighborhood(nextResidence.neighborhood);
+    replaceResidenceInUrl(nextResidence.id);
     setBallotFilter(allRaces);
     setSelectedCandidate(null);
     setCrimeCandidate(null);
+    setShareStatus("idle");
   };
 
   const handleDistrictChange = (nextDistrict: string) => {
@@ -251,16 +285,29 @@ export function App() {
 
     setDistrict(nextResidence.district);
     setNeighborhood(nextResidence.neighborhood);
+    replaceResidenceInUrl(nextResidence.id);
     setBallotFilter(allRaces);
     setSelectedCandidate(null);
     setCrimeCandidate(null);
+    setShareStatus("idle");
   };
 
   const handleNeighborhoodChange = (nextNeighborhood: string) => {
+    const nextResidence = residences.find(
+      (residence) =>
+        residence.city === city &&
+        residence.district === district &&
+        residence.neighborhood === nextNeighborhood,
+    );
+
     setNeighborhood(nextNeighborhood);
+    if (nextResidence) {
+      replaceResidenceInUrl(nextResidence.id);
+    }
     setBallotFilter(allRaces);
     setSelectedCandidate(null);
     setCrimeCandidate(null);
+    setShareStatus("idle");
   };
 
   const handleProfileChange = (nextProfile: VoterProfile) => {
@@ -268,6 +315,33 @@ export function App() {
 
     if (nextProfile === "고령층") {
       setLargeText(true);
+    }
+  };
+
+  const handleShareResidence = async () => {
+    if (!selectedResidence) {
+      return;
+    }
+
+    const title = createResidenceShareTitle(selectedResidence);
+    const text = createResidenceShareDescription(selectedResidence, ballotGroups.length, totalCandidateCount);
+    const url = createResidenceShareUrl(selectedResidence.id);
+
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share({ title, text, url });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+      }
+
+      setShareStatus("done");
+      window.setTimeout(() => setShareStatus("idle"), 1800);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+
+      setLoadError("공유 링크를 준비하지 못했습니다. 브라우저 권한을 확인해 주세요.");
     }
   };
 
@@ -305,6 +379,10 @@ export function App() {
             <h1>지방선거 가이드</h1>
           </div>
         </div>
+        <button type="button" className="share-button" aria-label="선택 지역 공유" onClick={handleShareResidence}>
+          {shareStatus === "done" ? <Check aria-hidden="true" size={17} /> : <Share2 aria-hidden="true" size={17} />}
+          <span>{shareStatus === "done" ? "링크 준비됨" : "공유"}</span>
+        </button>
       </header>
 
       <section className="selector-band" aria-label="유권자 조건">
