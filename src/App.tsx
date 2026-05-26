@@ -970,6 +970,10 @@ function getPledgeDetailLabel(pledge: Candidate["fullPledges"][number]) {
 }
 
 function getVoterPledgeDetail(pledge: Candidate["fullPledges"][number]) {
+  if (isInternalSourcePath(pledge.detail)) {
+    return "공약 원문 텍스트가 확보되어 있습니다. 세부 내용은 원문 확인이 필요합니다.";
+  }
+
   if (/\/PDF\//.test(pledge.detail)) {
     return "공약 원문 파일이 공개되어 있습니다. 세부 내용은 원문에서 확인해 주세요.";
   }
@@ -979,6 +983,10 @@ function getVoterPledgeDetail(pledge: Candidate["fullPledges"][number]) {
   }
 
   return pledge.detail;
+}
+
+function isInternalSourcePath(value: string) {
+  return /^(?:data|public|dist)\//.test(value) || /(?:bulletin-texts|pdfs)\//.test(value);
 }
 
 function CandidateCard({

@@ -569,7 +569,7 @@ function buildPledgesFromTitles(
     return [
       {
         title: "5대공약 원문 PDF 확보",
-        detail: requestedFullPath ?? "NEC 정책공약마당 PDF 경로를 확보했습니다.",
+        detail: "NEC 정책공약마당에 5대공약 원문 PDF가 공개되어 있습니다. 세부 내용은 원문에서 확인해 주세요.",
       },
     ];
   }
@@ -578,7 +578,7 @@ function buildPledgesFromTitles(
     return [
       {
         title: `${policySourceLabel} 원문 텍스트 확보`,
-        detail: requestedFullPath ?? "원문 텍스트를 확보했지만 구조화된 공약 항목은 자동 추출하지 못했습니다.",
+        detail: `${policySourceLabel} 원문 텍스트를 확보했지만 구조화된 공약 항목은 자동 추출하지 못했습니다. 세부 내용은 원문에서 확인해 주세요.`,
       },
     ];
   }
@@ -587,8 +587,9 @@ function buildPledgesFromTitles(
     {
       title: policySourceLabel ? `${policySourceLabel} 원문 확보` : "공약 원문 PDF 링크 없음",
       detail:
-        requestedFullPath ??
-        "현재 확보한 NEC 후보자 명부·정책공약마당 응답에 5대공약 또는 선거공보 PDF 링크가 없습니다.",
+        policySourceLabel
+          ? `${policySourceLabel} 원문이 공개되어 있습니다. 세부 내용은 원문에서 확인해 주세요.`
+          : "현재 확보한 NEC 후보자 명부·정책공약마당 응답에 5대공약 또는 선거공보 PDF 링크가 없습니다.",
     },
   ];
 }

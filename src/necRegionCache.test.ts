@@ -436,9 +436,11 @@ describe("NEC residence cache builder", () => {
     expect(candidate.fullPledges).toEqual([
       {
         title: "선거공보 원문 텍스트 확보",
-        detail: "data/nec/full/bulletin-texts/sample.txt",
+        detail:
+          "선거공보 원문 텍스트를 확보했지만 구조화된 공약 항목은 자동 추출하지 못했습니다. 세부 내용은 원문에서 확인해 주세요.",
       },
     ]);
+    expect(JSON.stringify(candidate.fullPledges)).not.toContain("data/nec/full");
   });
 
   it("compares differentiators only within the same local electoral district", () => {
