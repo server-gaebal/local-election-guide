@@ -15048,20 +15048,6 @@
       "extractStatus": "skipped"
     },
     {
-      "candidateId": "20260603-620260603-100165691",
-      "documentType": "campaignBulletin",
-      "sourceLabel": "선거공보",
-      "name": "서용택",
-      "partyName": "자유와혁신",
-      "raceName": "구·시·군의회의원선거",
-      "requestedFileName": "20260603_서초구라선거구_서용택_선거공보.pdf",
-      "requestedFullPath": "20260603/PDF/PBINFO/1122/003_100165691_20260524_1.pdf",
-      "pdfPath": null,
-      "textPath": "data/nec/full/bulletin-texts/6-구-시-군의회의원선거/5-서초구라선거구-서용택-100165691-campaign-bulletin.txt",
-      "downloadStatus": "skipped",
-      "extractStatus": "skipped"
-    },
-    {
       "candidateId": "20260603-620260603-100155337",
       "documentType": "campaignBulletin",
       "sourceLabel": "선거공보",

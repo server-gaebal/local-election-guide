@@ -43,6 +43,7 @@ describe("NEC candidate info parser", () => {
         taxPaid: "84,423",
         crimeRecord: "2건",
         electionCount: "3회",
+        crimeDisclosureFiles: [],
       }),
     ]);
   });
