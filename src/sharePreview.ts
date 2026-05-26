@@ -1,7 +1,7 @@
 import type { Residence } from "./electionTypes";
 
-export const PUBLIC_SITE_URL = "https://kimsunghyun1995.github.io/local-election-guide/";
-export const PUBLIC_SITE_DOMAIN = "kimsunghyun1995.github.io";
+export const PUBLIC_SITE_URL = "https://server-gaebal.github.io/local-election-guide/";
+export const PUBLIC_SITE_DOMAIN = "server-gaebal.github.io";
 export const PUBLIC_OG_IMAGE_URL = `${PUBLIC_SITE_URL}og-image.png`;
 export const SHARE_IMAGE_ALT = "지방선거 가이드 미리보기";
 
