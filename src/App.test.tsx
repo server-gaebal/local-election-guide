@@ -161,14 +161,15 @@ describe("local election guide static experience", () => {
     expect(within(candidateCard).getByText("57세")).toBeInTheDocument();
     expect(within(candidateCard).getByText("차별점")).toBeInTheDocument();
     expect(within(candidateCard).getByRole("button", { name: "정원오 차별점 더보기" })).toBeInTheDocument();
-    expect(within(candidateCard).getByText("후보 특징")).toBeInTheDocument();
+    expect(within(candidateCard).queryByText("후보 특징")).not.toBeInTheDocument();
     expect(within(candidateCard).queryByText("실현 가능성")).not.toBeInTheDocument();
     expect(within(candidateCard).getByText("팩트체크")).toBeInTheDocument();
     expect(within(candidateCard).getByText("선관위 제공 정보만 기반")).toBeInTheDocument();
     expect(within(candidateCard).getByText("실행 요약")).toBeInTheDocument();
     expect(within(candidateCard).getAllByText("어떻게").length).toBeGreaterThan(0);
     expect(within(candidateCard).getByText(/정책 초점은/)).toBeInTheDocument();
-    expect(candidateCard).toHaveTextContent(/요약: 같은 투표지 후보와 대상·재원·일정/);
+    expect(candidateCard).toHaveTextContent(/대표 공약:/);
+    expect(candidateCard).toHaveTextContent(/비교 기준: 같은 투표지 후보와 대상·재원·일정/);
     expect(within(candidateCard).queryByText(/눈에 띄는 고유 공약:/)).not.toBeInTheDocument();
     expect(within(candidateCard).queryByText(/NEC CDN|원문 기반 요약·비교 생성 대상|후보 사진은/)).not.toBeInTheDocument();
   });
@@ -184,6 +185,7 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByText("범죄 기록")).toBeInTheDocument();
     expect(within(dialog).getByText("5대 공약")).toBeInTheDocument();
     expect(within(dialog).getByText("상대 후보와의 차별점")).toBeInTheDocument();
+    expect(within(dialog).queryByText("후보 특징")).not.toBeInTheDocument();
     expect(within(dialog).queryByText("공약 실현 가능성 검토")).not.toBeInTheDocument();
     expect(within(dialog).getByText(/눈에 띄는 고유 공약:/)).toBeInTheDocument();
     expect(within(dialog).getByText(/비교 포인트:/)).toBeInTheDocument();

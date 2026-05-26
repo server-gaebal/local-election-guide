@@ -739,12 +739,6 @@ export function App() {
   );
 }
 
-function getCandidateTraits(candidate: Candidate) {
-  return candidate.candidateTraits?.length
-    ? candidate.candidateTraits
-    : [`${candidate.party} 소속`, `직업: ${candidate.occupation}`, `공약 키워드: ${candidate.focusTags.slice(0, 3).join("·")}`];
-}
-
 function getBallotCandidates(candidates: Candidate[], selectedCandidate: Candidate) {
   return candidates.filter(
     (candidate) =>
@@ -764,7 +758,7 @@ function getVoterComparisonPreview(candidate: Candidate, ballotCandidates: Candi
   const primaryLead = policyLeads[0];
 
   if (topics.length > 0) {
-    return `정책 초점은 ${formatTopicList(topics)}입니다.`;
+    return `정책 초점은 ${formatTopicList(topics)}입니다. 공약 제목만 보지 말고 실행 대상과 재원까지 비교하세요.`;
   }
 
   if (primaryLead) {
@@ -792,15 +786,20 @@ function getVoterComparisonCardDetails(candidate: Candidate, ballotCandidates: C
   const otherCandidateCount = Math.max(ballotCandidates.length - 1, 0);
 
   if (topics.length > 0) {
-    return ["요약: 같은 투표지 후보와 대상·재원·일정을 비교하세요."];
+    const leadText = formatPolicyLeadList(policyLeads);
+
+    return [
+      leadText ? `대표 공약: ${leadText}.` : `주요 분야: ${formatTopicList(topics, 3)}.`,
+      "비교 기준: 같은 투표지 후보와 대상·재원·일정을 확인하세요.",
+    ];
   }
 
   if (policyLeads.length > 0) {
-    return [`요약: 대표 공약 제목과 다른 후보의 실행 방식을 비교하세요.`];
+    return [`대표 공약: ${formatPolicyLeadList(policyLeads)}.`, "비교 기준: 다른 후보의 실행 방식과 구체성을 확인하세요."];
   }
 
   if (otherCandidateCount > 0) {
-    return [`요약: 후보 ${otherCandidateCount}명과 기본 공개정보를 나란히 비교하세요.`];
+    return [`비교 대상: 후보 ${otherCandidateCount}명.`, "비교 기준: 정당, 전과, 경력, 공약 공개 수준을 나란히 확인하세요."];
   }
 
   return ["요약: 공개된 후보 기본정보부터 확인하세요."];
@@ -918,6 +917,10 @@ function formatTopicList(topics: string[], limit = 2) {
   return topics.slice(0, limit).join(", ");
 }
 
+function formatPolicyLeadList(policyLeads: string[], limit = 2) {
+  return policyLeads.slice(0, limit).join(", ");
+}
+
 function hasDetailedCriminalRecord(candidate: Candidate) {
   return candidate.office === "서울특별시장" || candidate.office === "경기도지사";
 }
@@ -981,7 +984,6 @@ function CandidateCard({
   onOpen: () => void;
   onOpenCrime: () => void;
 }) {
-  const candidateTraits = getCandidateTraits(candidate);
   const comparisonPreview = getVoterComparisonPreview(candidate, ballotCandidates);
   const comparisonCardDetails = getVoterComparisonCardDetails(candidate, ballotCandidates);
   const factCheckReview = getCandidateFactCheck(candidate.id);
@@ -1048,18 +1050,6 @@ function CandidateCard({
           차별점 더보기
           <ChevronRight aria-hidden="true" size={14} />
         </button>
-      </section>
-
-      <section className="card-section trait-summary" aria-label={`${candidate.name} 후보 특징`}>
-        <div className="card-section__title">
-          <UserRound aria-hidden="true" size={16} />
-          <h4>후보 특징</h4>
-        </div>
-        <ul>
-          {candidateTraits.slice(0, 3).map((trait) => (
-            <li key={trait}>{trait}</li>
-          ))}
-        </ul>
       </section>
 
       {factCheckReview ? (
@@ -1165,7 +1155,6 @@ function CandidateDialog({
   profile: VoterProfile;
   onClose: () => void;
 }) {
-  const candidateTraits = getCandidateTraits(candidate);
   const comparisonDetails = getVoterComparisonDetails(candidate, ballotCandidates);
   const factCheckReview = getCandidateFactCheck(candidate.id);
   const personaReview = getCandidatePersonaReview(candidate.id, profile);
@@ -1219,15 +1208,6 @@ function CandidateDialog({
             <ul className="difference-list">
               {comparisonDetails.map((detail) => (
                 <li key={detail}>{detail}</li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="detail-section">
-            <h3>후보 특징</h3>
-            <ul className="difference-list">
-              {candidateTraits.map((trait) => (
-                <li key={trait}>{trait}</li>
               ))}
             </ul>
           </section>
