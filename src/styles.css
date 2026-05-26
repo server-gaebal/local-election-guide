@@ -611,6 +611,38 @@ h1 {
   line-height: 1.45;
 }
 
+.trait-summary {
+  background: #f8fafc;
+  border-color: #d8e1e8;
+}
+
+.feasibility-summary {
+  background: #fffaf0;
+  border-color: #ead6a8;
+}
+
+.feasibility-summary p {
+  margin-bottom: 0;
+  color: #3b3323;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.feasibility-summary--unknown .card-section__title svg,
+.feasibility-detail--unknown h3 {
+  color: #7c2d12;
+}
+
+.feasibility-summary--caution .card-section__title svg,
+.feasibility-detail--caution h3 {
+  color: #a16207;
+}
+
+.feasibility-summary--evidence .card-section__title svg,
+.feasibility-detail--evidence h3 {
+  color: #0f766e;
+}
+
 .profile-fit {
   display: flex;
   gap: 8px;

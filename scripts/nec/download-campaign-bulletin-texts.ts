@@ -100,7 +100,18 @@ async function downloadFile(url: string, target: string) {
 async function extractText(pdfPath: string, textPath: string) {
   await mkdir(dirname(textPath), { recursive: true });
   await execFileAsync("pdftotext", ["-layout", pdfPath, textPath]);
+  await writeFile(textPath, normalizeExtractedText(await readFile(textPath, "utf8")));
   return "extracted";
+}
+
+function normalizeExtractedText(value: string) {
+  return `${value
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .split("\n")
+    .map((line) => line.replace(/\t/g, " ").trimEnd())
+    .join("\n")
+    .trimEnd()}\n`;
 }
 
 async function runLimited<T, R>(items: T[], concurrency: number, worker: (item: T, index: number) => Promise<R>) {
@@ -136,6 +147,7 @@ function matchesFilters(candidate: NecNormalizedCandidate) {
   const candidateRowId = readOptionalArg("candidate-row-id");
   const race = readOptionalArg("race");
   const district = readOptionalArg("district");
+  const areaCodePrefix = readOptionalArg("area-code-prefix");
 
   if (candidateId && candidate.candidateId !== candidateId) {
     return false;
@@ -153,7 +165,15 @@ function matchesFilters(candidate: NecNormalizedCandidate) {
     return false;
   }
 
+  if (areaCodePrefix && !candidateDocumentAreaCode(candidate)?.startsWith(areaCodePrefix)) {
+    return false;
+  }
+
   return true;
+}
+
+function candidateDocumentAreaCode(candidate: NecNormalizedCandidate) {
+  return candidate.campaignBulletinPdf?.requestedFullPath.match(/\/PDF\/[^/]+\/(\d+)\//)?.[1] ?? "";
 }
 
 function buildTargets(candidates: NecNormalizedCandidate[], outDir: string) {

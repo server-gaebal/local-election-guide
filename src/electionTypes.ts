@@ -47,10 +47,16 @@ export type Candidate = {
   };
   publicRecord: string[];
   focusTags: string[];
+  candidateTraits?: string[];
   pledgeSummary: string;
   pledgeHighlights: string[];
   comparison: string;
   comparisonDetails: string[];
+  feasibilityReview?: {
+    summary: string;
+    details: string[];
+    tone: "evidence" | "caution" | "unknown";
+  };
   fullPledges: Pledge[];
   profileRelevance: Record<VoterProfile, string>;
   cache: {

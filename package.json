@@ -9,6 +9,7 @@
     "data:nec:all": "tsx scripts/nec/download-policy-pdfs.ts --all --metadata-only --out=data/nec/full",
     "data:nec:all:download": "tsx scripts/nec/download-policy-pdfs.ts --all --download --out=data/nec/full",
     "data:nec:bulletin-texts": "tsx scripts/nec/download-campaign-bulletin-texts.ts --out=data/nec/full",
+    "data:nec:bulletin-texts:seoul": "tsx scripts/nec/download-campaign-bulletin-texts.ts --out=data/nec/full --area-code-prefix=11",
     "data:nec:districts": "tsx scripts/nec/download-election-districts.ts",
     "data:nec:areas": "tsx scripts/nec/download-election-areas.ts",
     "data:nec:info": "tsx scripts/nec/download-candidate-info.ts",

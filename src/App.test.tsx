@@ -113,7 +113,9 @@ describe("local election guide static experience", () => {
     expect(within(candidateCard).getByText("더불어민주당").tagName).toBe("STRONG");
     expect(within(candidateCard).getByText("전과 2건")).toBeInTheDocument();
     expect(within(candidateCard).getByText("57세")).toBeInTheDocument();
-    expect(within(candidateCard).getByText("비교 요약")).toBeInTheDocument();
+    expect(within(candidateCard).getByText("차별점")).toBeInTheDocument();
+    expect(within(candidateCard).getByText("후보 특징")).toBeInTheDocument();
+    expect(within(candidateCard).getByText("실현 가능성")).toBeInTheDocument();
     expect(within(candidateCard).getByText(/서울특별시장 투표지에서/)).toBeInTheDocument();
   });
 
@@ -127,7 +129,8 @@ describe("local election guide static experience", () => {
     const dialog = screen.getByRole("dialog", { name: "정원오 전체 공약" });
     expect(within(dialog).getByText("범죄 기록")).toBeInTheDocument();
     expect(within(dialog).getByText("5대 공약")).toBeInTheDocument();
-    expect(within(dialog).getByText("상대 후보와의 차이")).toBeInTheDocument();
+    expect(within(dialog).getByText("상대 후보와의 차별점")).toBeInTheDocument();
+    expect(within(dialog).getByText("공약 실현 가능성 검토")).toBeInTheDocument();
   });
 
   it("opens criminal record details from the record badge", async () => {

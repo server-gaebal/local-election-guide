@@ -558,6 +558,25 @@ export function App() {
   );
 }
 
+function getCandidateTraits(candidate: Candidate) {
+  return candidate.candidateTraits?.length
+    ? candidate.candidateTraits
+    : [`${candidate.party} 소속`, `직업: ${candidate.occupation}`, `공약 키워드: ${candidate.focusTags.slice(0, 3).join("·")}`];
+}
+
+function getFeasibilityReview(candidate: Candidate) {
+  return (
+    candidate.feasibilityReview ?? {
+      summary: "원문만으로 실현 가능성 판단 보류",
+      details: [
+        "이 후보 데이터에는 재원, 절차, 협의 주체를 자동 검증할 공식 원문 단서가 충분히 연결되지 않았습니다.",
+        "가능/불가능 판정은 별도 공식 자료 확인 전까지 제공하지 않습니다.",
+      ],
+      tone: "unknown" as const,
+    }
+  );
+}
+
 function CandidateCard({
   candidate,
   profile,
@@ -569,6 +588,9 @@ function CandidateCard({
   onOpen: () => void;
   onOpenCrime: () => void;
 }) {
+  const candidateTraits = getCandidateTraits(candidate);
+  const feasibilityReview = getFeasibilityReview(candidate);
+
   return (
     <article className="candidate-card" aria-label={`${candidate.name} 후보 카드`}>
       <header className="candidate-card__header">
@@ -605,7 +627,7 @@ function CandidateCard({
       <section className="card-section comparison-summary" aria-label={`${candidate.name} 비교 요약`}>
         <div className="card-section__title">
           <Scale aria-hidden="true" size={16} />
-          <h4>비교 요약</h4>
+          <h4>차별점</h4>
         </div>
         <p>{candidate.comparison}</p>
         <ul>
@@ -613,6 +635,29 @@ function CandidateCard({
             <li key={detail}>{detail}</li>
           ))}
         </ul>
+      </section>
+
+      <section className="card-section trait-summary" aria-label={`${candidate.name} 후보 특징`}>
+        <div className="card-section__title">
+          <UserRound aria-hidden="true" size={16} />
+          <h4>후보 특징</h4>
+        </div>
+        <ul>
+          {candidateTraits.slice(0, 3).map((trait) => (
+            <li key={trait}>{trait}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section
+        className={`card-section feasibility-summary feasibility-summary--${feasibilityReview.tone}`}
+        aria-label={`${candidate.name} 공약 실현 가능성 검토`}
+      >
+        <div className="card-section__title">
+          <ShieldCheck aria-hidden="true" size={16} />
+          <h4>실현 가능성</h4>
+        </div>
+        <p>{feasibilityReview.summary}</p>
       </section>
 
       <section className="card-section pledge-list" aria-label={`${candidate.name} 공약 요약`}>
@@ -687,6 +732,9 @@ function CandidateDialog({
   profile: VoterProfile;
   onClose: () => void;
 }) {
+  const candidateTraits = getCandidateTraits(candidate);
+  const feasibilityReview = getFeasibilityReview(candidate);
+
   return (
     <div className="dialog-backdrop">
       <section
@@ -729,9 +777,28 @@ function CandidateDialog({
           </section>
 
           <section className="detail-section">
-            <h3>상대 후보와의 차이</h3>
+            <h3>상대 후보와의 차별점</h3>
             <ul className="difference-list">
               {candidate.comparisonDetails.map((detail) => (
+                <li key={detail}>{detail}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="detail-section">
+            <h3>후보 특징</h3>
+            <ul className="difference-list">
+              {candidateTraits.map((trait) => (
+                <li key={trait}>{trait}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section className={`detail-section feasibility-detail feasibility-detail--${feasibilityReview.tone}`}>
+            <h3>공약 실현 가능성 검토</h3>
+            <p>{feasibilityReview.summary}</p>
+            <ul className="difference-list">
+              {feasibilityReview.details.map((detail) => (
                 <li key={detail}>{detail}</li>
               ))}
             </ul>

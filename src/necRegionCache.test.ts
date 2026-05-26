@@ -153,7 +153,7 @@ describe("NEC residence cache builder", () => {
           textPath: "data/nec/full/pdfs/sample.txt",
           pledgeTitles: ["서울 공약 1", "서울 공약 2"],
           pledges: [
-            { title: "서울 교통망 재편", detail: "버스와 지하철 환승 체계를 개편합니다." },
+            { title: "서울 교통망 재편", detail: "버스와 지하철 환승 체계를 시비로 개편합니다." },
             { title: "청년 주거 지원", detail: "역세권 공공주택과 월세 지원을 확대합니다." },
           ],
           policyTags: ["교통", "주거", "청년"],
@@ -268,8 +268,14 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates[0].criminalRecord.tone).toBe("risk");
     expect(dataset.candidates[0].pledgeSummary).toContain("교통·주거·청년");
     expect(dataset.candidates[0].comparison).toContain("교통·주거");
+    expect(dataset.candidates[0].comparisonDetails[0]).toContain("차별점");
+    expect(dataset.candidates[0].candidateTraits).toEqual(
+      expect.arrayContaining(["더불어민주당 소속", expect.stringContaining("주요 경력:")]),
+    );
+    expect(dataset.candidates[0].feasibilityReview?.summary).toBe("원문 근거로 추가 검토 가능");
+    expect(dataset.candidates[0].feasibilityReview?.details.join(" ")).toContain("재원 단서");
     expect(dataset.candidates[0].pledgeHighlights).toEqual(["서울 교통망 재편", "청년 주거 지원"]);
-    expect(dataset.candidates[0].fullPledges[0].detail).toBe("버스와 지하철 환승 체계를 개편합니다.");
+    expect(dataset.candidates[0].fullPledges[0].detail).toBe("버스와 지하철 환승 체계를 시비로 개편합니다.");
     expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.publicRecord).toContain("선거공보 PDF 있음");
     expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeSummary).toContain("선거공보 PDF가 제공됩니다");
     expect(dataset.candidates.find((candidate) => candidate.name === "고병준")?.pledgeHighlights).toContain("선거공보 PDF 제공");
@@ -320,5 +326,80 @@ describe("NEC residence cache builder", () => {
       "수원시장",
       "수원시의원 수원시나선거구",
     ]);
+  });
+
+  it("compares differentiators only within the same local electoral district", () => {
+    const downloads: NecDownloadIndex = new Map([
+      [
+        "local-a",
+        {
+          textPath: "data/nec/full/pdfs/local-a.txt",
+          pledgeTitles: ["교통 개선", "청년 주거"],
+          pledges: [
+            { title: "교통 개선", detail: "마을버스 노선을 조정합니다." },
+            { title: "청년 주거", detail: "청년 주거 상담을 확대합니다." },
+          ],
+          policyTags: ["교통", "주거"],
+        },
+      ],
+      [
+        "local-b",
+        {
+          textPath: "data/nec/full/pdfs/local-b.txt",
+          pledgeTitles: ["교통 안전"],
+          pledges: [{ title: "교통 안전", detail: "보행 안전 시설을 늘립니다." }],
+          policyTags: ["교통"],
+        },
+      ],
+      [
+        "other-local",
+        {
+          textPath: "data/nec/full/pdfs/other-local.txt",
+          pledgeTitles: ["주거 지원"],
+          pledges: [{ title: "주거 지원", detail: "다른 선거구 주거 공약입니다." }],
+          policyTags: ["주거"],
+        },
+      ],
+    ]);
+    const dataset = buildResidenceDatasetFromNec({
+      residence: suwonResidence,
+      generatedAt: "2026-05-26T13:30:00+09:00",
+      downloads,
+      candidates: [
+        necRow({
+          id: "local-a",
+          raceTypeCode: "6",
+          raceName: "구·시·군의회의원선거",
+          districtName: "수원시나선거구",
+          name: "나후보",
+          candidateNumber: "1",
+        }),
+        necRow({
+          id: "local-b",
+          raceTypeCode: "6",
+          raceName: "구·시·군의회의원선거",
+          districtName: "수원시나선거구",
+          name: "다후보",
+          candidateNumber: "2",
+        }),
+        necRow({
+          id: "other-local",
+          raceTypeCode: "6",
+          raceName: "구·시·군의회의원선거",
+          districtName: "수원시다선거구",
+          name: "다른선거구",
+          candidateNumber: "3",
+        }),
+      ],
+    });
+
+    const candidate = dataset.candidates.find((item) => item.name === "나후보");
+
+    expect(dataset.candidates.map((item) => item.name)).not.toContain("다른선거구");
+    expect(candidate?.comparisonDetails[0]).toContain("같은 선거구 후보 대비");
+    expect(candidate?.comparisonDetails[0]).toContain("주거");
+    expect(candidate?.comparisonDetails[1]).toContain("교통");
+    expect(candidate?.comparisonDetails.join(" ")).toContain("수원시나선거구 후보/정당 2개");
+    expect(candidate?.comparisonDetails.join(" ")).not.toContain("수원시다선거구");
   });
 });
