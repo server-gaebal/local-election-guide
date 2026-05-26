@@ -2,6 +2,7 @@ import {
   ChevronRight,
   CircleAlert,
   Check,
+  ExternalLink,
   FileText,
   Filter,
   Landmark,
@@ -44,6 +45,7 @@ import {
 } from "./sharePreview";
 
 const allRaces = "전체";
+const priorityBallotGroupCount = 4;
 type BallotFilter = typeof allRaces | string;
 
 type BallotGroup = {
@@ -63,6 +65,16 @@ const raceOrder: Record<RaceType, number> = {
 };
 
 const preferredInitialResidenceId = "seoul-mapo-gongdeok";
+const necRelatedLinks = [
+  {
+    name: "정책공약마당",
+    url: "https://policy.nec.go.kr/plc/commiment/initUCACommiment.do?menuId=CNDDT25",
+  },
+  {
+    name: "후보자 정보공개",
+    url: "https://info.nec.go.kr/main/showDocument.xhtml?electionId=0020260603&topMenuId=CP&secondMenuId=CPRI03",
+  },
+] as const;
 const preferredInitialResidenceLocation = {
   city: "서울특별시",
   district: "마포구",
@@ -219,6 +231,12 @@ function getBallotTitle(candidate: Candidate) {
   return `${candidate.office} 후보`;
 }
 
+function getBallotSortOrder(candidate: Candidate) {
+  const proportionalOffset = candidate.office.includes("비례대표") ? 1 : 0;
+
+  return raceOrder[candidate.race] * 10 + proportionalOffset;
+}
+
 function createBallotGroups(candidateList: Candidate[]): BallotGroup[] {
   const groups = new Map<string, BallotGroup>();
 
@@ -235,7 +253,7 @@ function createBallotGroups(candidateList: Candidate[]): BallotGroup[] {
       id,
       title: getBallotTitle(candidate),
       race: candidate.race,
-      order: raceOrder[candidate.race],
+      order: getBallotSortOrder(candidate),
       candidates: [candidate],
     });
   }
@@ -246,6 +264,21 @@ function createBallotGroups(candidateList: Candidate[]): BallotGroup[] {
       candidates: group.candidates.sort((a, b) => a.number - b.number || a.name.localeCompare(b.name)),
     }))
     .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+}
+
+function hasReadyPledgeGroup(group: BallotGroup, index: number) {
+  return (
+    isPriorityBallotGroup(group, index) ||
+    (group.candidates.length > 0 && group.candidates.every(hasReadyStructuredPledges))
+  );
+}
+
+function isPriorityBallotGroup(group: BallotGroup, index: number) {
+  return index < priorityBallotGroupCount || group.title.startsWith("서울특별시교육감");
+}
+
+function hasReadyStructuredPledges(candidate: Candidate) {
+  return !hasUnavailablePledgeSource(candidate) && getDisplayPledges(candidate).length > 0;
 }
 
 export function App() {
@@ -373,7 +406,11 @@ export function App() {
     [regionDataset, selectedResidence?.id],
   );
 
-  const ballotGroups = useMemo(() => createBallotGroups(regionalCandidates), [regionalCandidates]);
+  const allBallotGroups = useMemo(() => createBallotGroups(regionalCandidates), [regionalCandidates]);
+  const ballotGroups = useMemo(
+    () => allBallotGroups.filter((group, index) => hasReadyPledgeGroup(group, index)),
+    [allBallotGroups],
+  );
 
   const ballotOptions = useMemo(
     () => [allRaces, ...ballotGroups.map((group) => group.id)],
@@ -384,6 +421,12 @@ export function App() {
     () => ballotGroups.filter((group) => ballotFilter === allRaces || group.id === ballotFilter),
     [ballotFilter, ballotGroups],
   );
+
+  useEffect(() => {
+    if (ballotFilter !== allRaces && !ballotGroups.some((group) => group.id === ballotFilter)) {
+      setBallotFilter(allRaces);
+    }
+  }, [ballotFilter, ballotGroups]);
 
   const totalCandidateCount = useMemo(
     () => ballotGroups.reduce((sum, group) => sum + group.candidates.length, 0),
@@ -638,12 +681,12 @@ export function App() {
         </div>
         <div className="status-tile">
           <Vote aria-hidden="true" size={18} />
-          <span>받는 투표지</span>
+          <span>표시 투표지</span>
           <strong>{ballotGroups.length}종</strong>
         </div>
         <div className="status-tile">
           <UserRound aria-hidden="true" size={18} />
-          <span>후보자</span>
+          <span>표시 후보</span>
           <strong>{totalCandidateCount}명</strong>
         </div>
       </section>
@@ -682,7 +725,7 @@ export function App() {
           <div className="section-head">
             <div>
               <p className="eyebrow">{profile} 관점</p>
-              <h2>{`${selectedResidence.city} ${selectedResidence.district} ${selectedResidence.neighborhood}에서 투표할 후보`}</h2>
+              <h2>{`${selectedResidence.city} ${selectedResidence.district} ${selectedResidence.neighborhood}에서 공약을 비교할 후보`}</h2>
             </div>
             <div className="result-count">
               <strong>{totalCandidateCount}</strong>
@@ -690,7 +733,7 @@ export function App() {
             </div>
           </div>
 
-          {regionDataset ? (
+          {regionDataset && visibleBallotGroups.length > 0 ? (
             <div className="candidate-sections">
               {visibleBallotGroups.map((group) => (
                 <section className="ballot-section" key={group.id} aria-labelledby={`${group.id}-title`}>
@@ -715,6 +758,12 @@ export function App() {
                   </div>
                 </section>
               ))}
+            </div>
+          ) : regionDataset ? (
+            <div className="region-empty-state" aria-live="polite">
+              <FileText aria-hidden="true" size={18} />
+              <strong>공약 비교 준비중</strong>
+              <span>이 지역은 현재 표시할 공약 비교 항목을 정리하고 있습니다.</span>
             </div>
           ) : (
             <div className="region-loading" aria-live="polite">
@@ -803,7 +852,7 @@ function getVoterComparisonCardDetails(candidate: Candidate, ballotCandidates: C
   }
 
   if (otherCandidateCount > 0) {
-    return [`같은 투표지 후보: ${otherCandidateCount}명.`, "차이가 보이는 항목: 정당, 전과, 경력, 공약 공개 수준."];
+    return [`같은 투표지 후보: ${otherCandidateCount}명.`, "차이가 보이는 항목: 정당, 전과, 경력, 재산·납세."];
   }
 
   return ["요약: 공개된 후보 기본정보부터 확인하세요."];
@@ -843,8 +892,8 @@ function buildVoterComparisonDetails(candidate: Candidate, ballotCandidates: Can
   }
 
   return [
-    "공약 차이를 판단할 원문 정보가 부족합니다. 정당, 전과, 재산·납세, 경력 같은 공개 기본정보부터 비교해 보세요.",
-    "상세 공약이 공개되면 같은 투표지 후보와 대상, 실행 방식, 재원 문구를 나란히 확인해야 합니다.",
+    "같은 투표지 후보와 정당, 전과, 재산·납세, 경력 같은 공개 기본정보를 나란히 확인해 보세요.",
+    "후보별 공개 자료는 관련 링크에서 직접 확인할 수 있습니다.",
   ];
 }
 
@@ -853,7 +902,10 @@ function getCandidatePolicyLeads(candidate: Candidate) {
   const policyLeads =
     sourcePledges.length > 0
       ? sourcePledges.map((pledge) => pledge.title)
-      : [...candidate.pledgeHighlights, ...candidate.fullPledges.map((pledge) => pledge.title)];
+      : [
+          ...candidate.pledgeHighlights,
+          ...getDisplayPledges(candidate, sourcePledges).map((pledge) => pledge.title),
+        ];
 
   return unique(policyLeads)
     .map((item) => item.trim())
@@ -898,8 +950,14 @@ function containsImplementationLanguage(value: string) {
     "PDF 확보",
     "PDF 공개",
     "PDF 링크",
+    "PDF 미제공",
     "원문 PDF",
     "원문 텍스트",
+    "선거공보 연동",
+    "공보 상세 연동",
+    "row 확보",
+    "공개 공약 정보가 부족",
+    "공약 차이를 판단할 원문 정보가 부족",
     "정제 단계",
     "링크 없음",
   ].some((pattern) => value.includes(pattern));
@@ -989,6 +1047,52 @@ function isInternalSourcePath(value: string) {
   return /^(?:data|public|dist)\//.test(value) || /(?:bulletin-texts|pdfs)\//.test(value);
 }
 
+function getDisplayPledges(candidate: Candidate, sourcePledges = getCandidatePersonaSourcePledges(candidate.id)) {
+  return sourcePledges.length > 0 ? sourcePledges : candidate.fullPledges.filter(isDisplayablePledge);
+}
+
+function hasUnavailablePledgeSource(candidate: Candidate) {
+  const searchableText = [
+    candidate.pledgeSummary,
+    candidate.comparison,
+    candidate.cache.policyPdf,
+    ...candidate.publicRecord,
+    ...candidate.focusTags,
+    ...(candidate.candidateTraits ?? []),
+    ...candidate.pledgeHighlights,
+    ...candidate.comparisonDetails,
+    ...candidate.fullPledges.flatMap((pledge) => [pledge.title, pledge.detail]),
+  ].join(" ");
+
+  return [
+    "공약 원문 PDF 링크 없음",
+    "원문 PDF 링크 없음",
+    "5대공약 PDF 없음",
+    "5대공약 PDF 미제공",
+    "선거공보 연동",
+    "공보 상세 연동",
+    "후보 명부·공보 상세 연동 대기",
+    "NEC row metadata only",
+  ].some((pattern) => searchableText.includes(pattern));
+}
+
+function isDisplayablePledge(pledge: Candidate["fullPledges"][number]) {
+  return pledge.title.trim().length > 0 && !containsImplementationLanguage(pledge.title);
+}
+
+function RelatedSourceLinks() {
+  return (
+    <div className="source-links related-source-links">
+      {necRelatedLinks.map((link) => (
+        <a key={link.url} href={link.url} target="_blank" rel="noreferrer">
+          <ExternalLink aria-hidden="true" size={13} />
+          <span>{link.name}</span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
 function CandidateCard({
   candidate,
   ballotCandidates,
@@ -1007,10 +1111,11 @@ function CandidateCard({
   const factCheckReview = getCandidateFactCheck(candidate.id);
   const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
   const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
-  const displayPledges = sourcePledges.length > 0 ? sourcePledges : candidate.fullPledges;
+  const displayPledges = getDisplayPledges(candidate, sourcePledges);
   const primaryPledges = displayPledges.slice(0, 2);
   const pledgeSummary =
     sourcePledges.length === 0 && !containsImplementationLanguage(candidate.pledgeSummary) ? candidate.pledgeSummary : "";
+  const hasVisiblePledges = primaryPledges.length > 0;
 
   return (
     <article className="candidate-card" aria-label={`${candidate.name} 후보 카드`}>
@@ -1055,21 +1160,25 @@ function CandidateCard({
       <section className="card-section pledge-list" aria-label={`${candidate.name} 공약 요약`}>
         <div className="card-section__title">
           <FileText aria-hidden="true" size={16} />
-          <h4>공약 요약</h4>
+          <h4>{hasVisiblePledges ? "공약 요약" : "관련 링크"}</h4>
         </div>
         {pledgeSummary ? <p className="summary-text">{pledgeSummary}</p> : null}
-        <div className="pledge-action-list">
-          {primaryPledges.map((pledge, index) => (
-            <article className="pledge-action" key={pledge.title}>
-              <span className="pledge-action__meta">공약 {index + 1}</span>
-              <strong>{pledge.title}</strong>
-              <p>
-                <span>{getPledgeDetailLabel(pledge)}</span>
-                <ExpandableText text={getVoterPledgeDetail(pledge)} label={`${candidate.name} 공약 ${index + 1}`} />
-              </p>
-            </article>
-          ))}
-        </div>
+        {hasVisiblePledges ? (
+          <div className="pledge-action-list">
+            {primaryPledges.map((pledge, index) => (
+              <article className="pledge-action" key={pledge.title}>
+                <span className="pledge-action__meta">공약 {index + 1}</span>
+                <strong>{pledge.title}</strong>
+                <p>
+                  <span>{getPledgeDetailLabel(pledge)}</span>
+                  <ExpandableText text={getVoterPledgeDetail(pledge)} label={`${candidate.name} 공약 ${index + 1}`} />
+                </p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <RelatedSourceLinks />
+        )}
       </section>
 
       <section className="card-section comparison-summary" aria-label={`${candidate.name} 비교 요약`}>
@@ -1181,7 +1290,8 @@ function CandidateDialog({
   const factCheckReview = getCandidateFactCheck(candidate.id);
   const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
   const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
-  const displayPledges = sourcePledges.length > 0 ? sourcePledges : candidate.fullPledges;
+  const displayPledges = getDisplayPledges(candidate, sourcePledges);
+  const hasVisiblePledges = displayPledges.length > 0;
 
   return (
     <div className="dialog-backdrop">
@@ -1213,18 +1323,22 @@ function CandidateDialog({
           </section>
 
           <section className="detail-section">
-            <h3>5대 공약</h3>
-            <ol className="full-pledges">
-              {displayPledges.map((pledge) => (
-                <li key={pledge.title}>
-                  <strong>{pledge.title}</strong>
-                  <span>
-                    <em>{getPledgeDetailLabel(pledge)}</em>
-                    {getVoterPledgeDetail(pledge)}
-                  </span>
-                </li>
-              ))}
-            </ol>
+            <h3>{hasVisiblePledges ? "5대 공약" : "관련 링크"}</h3>
+            {hasVisiblePledges ? (
+              <ol className="full-pledges">
+                {displayPledges.map((pledge) => (
+                  <li key={pledge.title}>
+                    <strong>{pledge.title}</strong>
+                    <span>
+                      <em>{getPledgeDetailLabel(pledge)}</em>
+                      {getVoterPledgeDetail(pledge)}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <RelatedSourceLinks />
+            )}
           </section>
 
           <section className="detail-section">

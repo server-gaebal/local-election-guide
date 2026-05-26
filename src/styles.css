@@ -339,6 +339,7 @@ h1 {
 }
 
 .region-loading,
+.region-empty-state,
 .load-state {
   display: grid;
   place-items: center;
@@ -350,6 +351,18 @@ h1 {
   border: 1px solid #e3ded2;
   border-radius: 8px;
   text-align: center;
+}
+
+.region-empty-state strong {
+  color: #18211f;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.region-empty-state span {
+  max-width: 34rem;
+  color: #58635f;
+  line-height: 1.5;
 }
 
 .load-state {
@@ -942,6 +955,9 @@ h1 {
 }
 
 .source-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 5px 7px;
   color: #0f5f53;
   background: #e6f4ef;
@@ -949,6 +965,10 @@ h1 {
   font-size: 0.78rem;
   font-weight: 900;
   text-decoration: none;
+}
+
+.related-source-links {
+  margin-top: 2px;
 }
 
 .persona-notice,
