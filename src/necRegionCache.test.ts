@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Residence } from "./electionTypes";
-import { createCandidateInfoIndex } from "./necCandidateInfo";
+import { createCandidateInfoIndex, type NecCandidateInfoRecord } from "./necCandidateInfo";
 import {
   buildResidenceDatasetFromNec,
   extractPledges,
@@ -76,6 +76,31 @@ function necRow(overrides: Partial<NecNormalizedCandidate>): NecNormalizedCandid
   };
 }
 
+function candidateInfoRecord(overrides: Partial<NecCandidateInfoRecord>): NecCandidateInfoRecord {
+  return {
+    candidateId: overrides.candidateId ?? "100",
+    districtName: overrides.districtName ?? "서울특별시",
+    number: overrides.number ?? "1",
+    partyName: overrides.partyName ?? "더불어민주당",
+    name: overrides.name ?? "정원오",
+    gender: overrides.gender ?? "남",
+    birthDate: overrides.birthDate ?? "1968.08.12",
+    age: overrides.age ?? 57,
+    address: overrides.address ?? "서울특별시 성동구",
+    occupation: overrides.occupation ?? "정당인",
+    education: overrides.education ?? "한양대학교 도시대학원 박사 수료",
+    career: overrides.career ?? "(전)성동구청장",
+    assets: overrides.assets ?? "1,823,897",
+    military: overrides.military ?? "군복무를 마친사람",
+    taxPaid: overrides.taxPaid ?? "84,423",
+    taxArrearsFiveYears: overrides.taxArrearsFiveYears ?? "0",
+    taxCurrentArrears: overrides.taxCurrentArrears ?? "0",
+    crimeRecord: overrides.crimeRecord ?? "없음",
+    electionCount: overrides.electionCount ?? "0회",
+    crimeDisclosureFiles: overrides.crimeDisclosureFiles ?? [],
+  };
+}
+
 describe("NEC residence cache builder", () => {
   it("extracts pledge titles from pdftotext output", () => {
     const text = `
@@ -100,6 +125,81 @@ describe("NEC residence cache builder", () => {
       detail: "교통 안전 데이터를 활용해 보행 사고를 줄입니다.",
     });
     expect(extractPolicyTags(text)).toEqual(expect.arrayContaining(["안전", "복지", "주거"]));
+  });
+
+  it("extracts pledge titles when NEC omits the 공약순위 label", () => {
+    const text = `
+      선거명     서울특별시교육감선거        후보자명       이학인
+순위 : 1        제목 : 서울을 하나로, 선택은 무제한
+
+o 목표
+학생의 선택권을 보장하고 공교육 수준을 상향 평준화
+
+o 이행 방법
+거주자 상관 없이 원하는 학교 선택
+-고등학교 서울 단일 학군제 실시 (학군제 폐지)
+-학교 선택을 위한 맞춤형 학교 정보 제공
+
+      선거명     서울특별시교육감선거        후보자명       이학인
+순위 : 2        제목 : 사교육비 절감, 사교육 형평성 강화와 부담 경감
+
+o 목표
+사교육비 경감과 사교육 의존을 낮추고 공교육의 보완재로 기능 변화
+
+o 이행 방법
+과열된 사교육 지역 분산
+-지역(구)별 학원 총량제 실시로 서울시 전역으로 분산 유도
+`;
+
+    expect(extractPledgeTitles(text)).toEqual([
+      "서울을 하나로, 선택은 무제한",
+      "사교육비 절감, 사교육 형평성 강화와 부담 경감",
+    ]);
+    expect(extractPledges(text)[0]).toEqual({
+      title: "서울을 하나로, 선택은 무제한",
+      detail:
+        "거주자 상관 없이 원하는 학교 선택 고등학교 서울 단일 학군제 실시 (학군제 폐지) 학교 선택을 위한 맞춤형 학교 정보 제공",
+    });
+  });
+
+  it("extracts pledge variants from loosely formatted five-pledge PDFs", () => {
+    const text = `
+\f 선거명 전남광주통합특별시장선거 후보자명 민형배
+공약순위 성장통합 신산업 성장으로 일자리와 소득을 키우겠습니다
+□ 목 표
+전남광주통합특별시를 대한민국 남부권 신산업 수도로 육성
+□ 이행방법
+권역별 신성장 산업벨트 조성
+- 광주권: AI, 미래모빌리티, 반도체 산업 육성
+\f 선거명 강북구청장선거 후보자명 장지호
+[공약 1순위] 24시간 어린이 안심의료센터 구축
+□목표
+강북구 내 소아 응급의료 공백 해소
+□ 이행방법
+[1단계] 보건소 산하 소아 안심 응급의료센터 거점 구축
+- 야간·휴일 소아 전문 진료실 설치
+\f 선거명 봉화군수선거 후보자명 최기영
+공약순서: 1 제목: 6차 산업 농업단지 조성사업
+□ 목 표
+가공·유통·체험·관광이 결합된 농업 구조
+□ 이행방법
+농산물 부가가치 창출 기반 구축
+`;
+
+    expect(extractPledges(text)).toEqual([
+      {
+        title: "성장통합 신산업 성장으로 일자리와 소득을 키우겠습니다",
+        detail: "권역별 신성장 산업벨트 조성 광주권: AI, 미래모빌리티, 반도체 산업 육성",
+      },
+      {
+        title: "24시간 어린이 안심의료센터 구축",
+        detail: "[1단계] 보건소 산하 소아 안심 응급의료센터 거점 구축 야간·휴일 소아 전문 진료실 설치",
+      },
+      {
+        title: "6차 산업 농업단지 조성사업",
+        detail: "농산물 부가가치 창출 기반 구축",
+      },
+    ]);
   });
 
   it("extracts pledge highlights from campaign bulletin text without five-pledge headings", () => {
@@ -143,6 +243,146 @@ describe("NEC residence cache builder", () => {
         detail: "수원 돔구장 추진",
       },
     ]);
+  });
+
+  it("extracts numbered promises from campaign bulletin layouts with padded numbers", () => {
+    const text = `
+서울시 1번지 종로 발전을 위한 윤선희의 ‘4대 약속’
+01 교통해결
+강북횡단선 경전철 조기 착공 추진으로 지역 교통불편 해결하겠습니다.
+02 문화도약
+광화문 빛의 광장 상시화로 지역 문화·예술·관광 랜드마크 조성
+03 안전확충
+스마트 보행 안전 시스템 확대로 어르신과 아이들의 이동 안전 확보
+`;
+
+    expect(extractPledges(text)).toEqual([
+      {
+        title: "교통해결",
+        detail: "강북횡단선 경전철 조기 착공 추진으로 지역 교통불편 해결하겠습니다.",
+      },
+      {
+        title: "문화도약",
+        detail: "광화문 빛의 광장 상시화로 지역 문화·예술·관광 랜드마크 조성",
+      },
+      {
+        title: "안전확충",
+        detail: "스마트 보행 안전 시스템 확대로 어르신과 아이들의 이동 안전 확보",
+      },
+    ]);
+  });
+
+  it("extracts action pledges from duplicated two-column campaign bulletin layouts", () => {
+    const text = `
+책자형 선거공보
+\f
+검증된 실전형 지역 일꾼
+01 01종로 서북권
+종로 주민의 이동권, 반드시 찾아드리겠습니다.        02 02 세계가 주목할
+서울시 예산으로 종로의 새 역사 만들겠습니다.
+
+정릉~홍제
+경전철 추진
+종로구 문화
+新랜드마크 건립
+- 강북횡단선-평창구간 밀착 방어
+- 김소월 문학관 건립
+\f
+3 03
+내 집에서 고통받는 시대를 끝내겠습니다. 04 04 종로 서북권
+한옥과 노후 주거환경 전면적 개선
+키즈카페, 체육시설, 도그파크 등 생활편의시설 확충
+반려동물 동반공원(도그파크) 조성
+`;
+
+    expect(extractPledges(text).map((pledge) => pledge.title)).toEqual(
+      expect.arrayContaining([
+        "정릉~홍제 경전철 추진",
+        "종로구 문화 新랜드마크 건립",
+        "김소월 문학관 건립",
+        "한옥과 노후 주거환경 전면적 개선",
+      ]),
+    );
+  });
+
+  it("starts campaign bulletin action fallback from future pledge markers", () => {
+    const text = `
+책자형 선거공보
+지방의원 매니페스토 약속대상
+\f
+앞으로 4년
+해내겠습니다
+신속한 정비사업 서초
+재건축·재개발·모아타운 신속지원
+노후 주거환경 개선으로 주거 가치를 높이겠습니다.
+- 방배 정비사업 추진 지원
+- 공사차량 통학로 진입 관리 - 임시 보행로·안전펜스 설치
+교육의 품격을 완성하는 서초형 교육도시
+- 서초중 체육관 및 급식실 신축 추진
+`;
+
+    const titles = extractPledges(text).map((pledge) => pledge.title);
+
+    expect(titles).toEqual(
+      expect.arrayContaining([
+        "신속한 정비사업 서초",
+        "재건축·재개발·모아타운 신속지원",
+        "노후 주거환경 개선으로 주거 가치를 높이겠습니다.",
+        "방배 정비사업 추진 지원",
+      ]),
+    );
+    expect(titles.join(" ")).not.toContain("약속대상");
+  });
+
+  it("extracts numbered promises from letter-spaced campaign bulletin layouts", () => {
+    const text = `
+책자형 선거공보
+후 보 자 정 보 공 개 자 료
+1 인 적 사 항
+
+“ 생 활 은 더 편 리 하 게 ”
+1         빠 르 고 편 리 한 교 통 도 시 성 북
+막 힘 없 는 출 근 길 로 체 감 하 는 내 삶 의 변 화
+동 북 선 개 통 ( 2 0 2 7 년 1 1 월 예 정 ) 완 수 및 연 계 교 통 체 계 정 비
+버 스 노 선 합 리 화 및 마 을 버 스 배 차 간 격 개 선
+
+2        안 전 하 고 쾌 적 한 주 거 도 시 성 북
+주 거 환 경 개 선 으 로 다 시 살 고 싶 은 동 네 로
+주 민 부 담 최 소 화 ㆍ 신 속 한 재 개 발 등 주 거 정 비 사 업 추 진
+소 규 모 노 후 주 거 지 정 비 사 업 확 대 추 진
+
+3        아 이 키 우 기 좋 은 성 북
+학 교 환 경 개 선 적 극 지 원
+방 과 후 돌 봄 확 대
+`;
+
+    expect(extractPledges(text)).toEqual([
+      {
+        title: "빠르고편리한교통도시성북",
+        detail:
+          "막힘없는출근길로체감하는내삶의변화 동북선개통(2027년11월예정)완수및연계교통체계정비 버스노선합리화및마을버스배차간격개선",
+      },
+      {
+        title: "안전하고쾌적한주거도시성북",
+        detail: "주거환경개선으로다시살고싶은동네로 주민부담최소화ㆍ신속한재개발등주거정비사업추진 소규모노후주거지정비사업확대추진",
+      },
+      {
+        title: "아이키우기좋은성북",
+        detail: "학교환경개선적극지원 방과후돌봄확대",
+      },
+    ]);
+  });
+
+  it("strips repeated title labels from extracted pledge titles", () => {
+    const text = `
+공약순위         제목    분 통근도시 실현으로 시민에게 쉼표를
+목 표
+분 통근도시 실현을 위한 교통망을 확충합니다.
+이행방법
+분 역세권 달성 격자형 철도망 구축
+`;
+
+    expect(extractPledgeTitles(text)).toEqual(["분 통근도시 실현으로 시민에게 쉼표를"]);
   });
 
   it("prefers implementation method details so voters can see how a pledge would be done", () => {
@@ -339,6 +579,65 @@ describe("NEC residence cache builder", () => {
     expect(noDocumentCandidate?.pledgeHighlights).toEqual([]);
     expect(noDocumentCandidate?.fullPledges).toEqual([]);
     expect(dataset.source.mode).toBe("nec");
+  });
+
+  it("guarantees an official source for candidates in the first four ballot groups", () => {
+    const dataset = buildResidenceDatasetFromNec({
+      residence: suwonResidence,
+      generatedAt: "2026-05-26T13:30:00+09:00",
+      downloads: new Map(),
+      candidateInfo: createCandidateInfoIndex([
+        candidateInfoRecord({
+          candidateId: "400",
+          districtName: "수원시제1선거구",
+          name: "광역후보",
+          occupation: "경기도의회의원",
+        }),
+        candidateInfoRecord({
+          candidateId: "500",
+          districtName: "수원시나선거구",
+          name: "기초후보",
+          occupation: "수원시의회의원",
+        }),
+      ]),
+      candidates: [
+        necRow({ id: "governor", raceTypeCode: "3", raceName: "시·도지사선거", districtName: "경기도", name: "도지사후보" }),
+        necRow({ id: "education", raceTypeCode: "11", raceName: "교육감선거", districtName: "경기도", name: "교육감후보" }),
+        necRow({ id: "head", raceTypeCode: "4", raceName: "구·시·군의 장선거", districtName: "수원시", name: "시장후보" }),
+        necRow({
+          id: "city-council",
+          raceTypeCode: "5",
+          raceName: "시·도의회의원선거",
+          districtName: "수원시제1선거구",
+          candidateId: "400",
+          name: "광역후보",
+          fivePledgePdf: null,
+          campaignBulletinPdf: null,
+        }),
+        necRow({
+          id: "local-council",
+          raceTypeCode: "6",
+          raceName: "구·시·군의회의원선거",
+          districtName: "수원시나선거구",
+          candidateId: "500",
+          name: "기초후보",
+          fivePledgePdf: null,
+          campaignBulletinPdf: null,
+        }),
+      ],
+    });
+
+    const priorityCandidate = dataset.candidates.find((candidate) => candidate.name === "광역후보");
+    const lowerCandidate = dataset.candidates.find((candidate) => candidate.name === "기초후보");
+
+    expect(priorityCandidate?.cache.policyPdf).toContain("info.nec.go.kr");
+    expect(priorityCandidate?.publicRecord).toContain("후보자 정보공개 원문 있음");
+    expect(priorityCandidate?.focusTags).toContain("후보자 정보공개");
+    expect(priorityCandidate?.candidateTraits).toContain("근거 자료: 후보자 정보공개");
+    expect(priorityCandidate?.comparison).toContain("후보자 정보공개 원문");
+    expect(priorityCandidate?.cache.policyPdf).not.toBe("NEC row metadata only");
+    expect(lowerCandidate?.cache.policyPdf).toBe("NEC row metadata only");
+    expect(lowerCandidate?.publicRecord).not.toContain("후보자 정보공개 원문 있음");
   });
 
   it("uses election scope embedded in generated nationwide residences", () => {
