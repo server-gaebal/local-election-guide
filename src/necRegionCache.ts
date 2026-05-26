@@ -93,7 +93,9 @@ const policyTagKeywords: Record<string, string[]> = {
 };
 
 const bulletinActionKeywordPattern =
-  /(추진|확대|확충|개선|해결|조성|구축|설치|신설|유치|지원|강화|완공|착공|도입|정비|보장|완성|혁신|책임|건립|만들|바꾸|살리|키우)/;
+  /(추진|확대|확충|개선|해결|해소|조성|구축|설치|신설|유치|지원|강화|완공|착공|도입|정비|보장|완성|혁신|책임|건립|활성화|완화|보호|복원|복개|운영|연결|낮추|높이|늘리|줄이|만들|바꾸|살리|키우)/;
+const bulletinPolicySubjectPattern =
+  /(교통|시장|재개발|악취|복지|교육|안전|주거|주민|지역|동네|환경|상권|관광|공원|일자리|청년|어르신|보행|도로|하천|공동체|소상공인|취약|영양|아동)/;
 
 export function extractPledgeTitles(text: string, limit = 5) {
   return extractPledges(text, limit).map((pledge) => pledge.title);
@@ -290,10 +292,12 @@ function toAppCandidate({
   const hasFivePledgePdf = Boolean(candidate.fivePledgePdf);
   const hasCampaignBulletinPdf = Boolean(candidate.campaignBulletinPdf);
   const officialFallbackSourceLabel =
-    guaranteeOfficialSource && !hasFivePledgePdf && !hasCampaignBulletinPdf
+    !hasFivePledgePdf && !hasCampaignBulletinPdf
       ? disclosure
         ? "후보자 정보공개"
-        : "정책공약마당"
+        : guaranteeOfficialSource || isPartyVote
+          ? "정책공약마당"
+          : undefined
       : undefined;
   const officialFallbackSourcePath = officialFallbackSourceLabel
     ? disclosure
@@ -979,6 +983,8 @@ function extractBulletinPledges(text: string, limit: number): Pledge[] {
     .map(cleanBulletinLine)
     .filter((line) => line && !isBulletinNoiseLine(line));
   const markerIndex = findBulletinPolicyStartIndex(lines);
+  const disclosureIndex = lines.findIndex(isCandidateDisclosureStartLine);
+  const markerAfterDisclosure = markerIndex >= 0 && disclosureIndex >= 0 && markerIndex > disclosureIndex;
   const policyLines = lines.slice(markerIndex >= 0 ? markerIndex : 0);
   const pledges = extractBulletinNumberedPledges(policyLines, limit);
 
@@ -992,6 +998,12 @@ function extractBulletinPledges(text: string, limit: number): Pledge[] {
     if (fullTextNumberedPledges.length >= 3) {
       return fullTextNumberedPledges;
     }
+  }
+
+  const headingPledges = markerAfterDisclosure ? [] : extractBulletinHeadingPledges(policyLines, limit);
+
+  if (headingPledges.length > 0) {
+    return headingPledges;
   }
 
   const actionPledges = extractBulletinActionPledges(policyLines, limit);
@@ -1040,6 +1052,39 @@ function extractBulletinNumberedPledges(lines: string[], limit: number): Pledge[
   }
 
   return pledges;
+}
+
+function extractBulletinHeadingPledges(lines: string[], limit: number): Pledge[] {
+  if (lines.some((line) => /공약이\s*없|공약\s*없/.test(line))) {
+    return [];
+  }
+
+  const stopIndex = lines.findIndex((line, index) => index > 0 && isCandidateDisclosureStartLine(line));
+  const policyLines = (stopIndex > 0 ? lines.slice(0, stopIndex) : lines)
+    .slice(0, 24)
+    .filter((line) => !isBulletinPolicyHeadingLine(line));
+  const pledges: Pledge[] = [];
+  const seen = new Set<string>();
+
+  for (const line of buildBulletinActionCandidateLines(policyLines)) {
+    const title = cleanBulletinTitle(line);
+
+    if (!isBulletinPolicyItemLine(title) || hasOverlappingBulletinTitle(seen, title)) {
+      continue;
+    }
+
+    seen.add(title);
+    pledges.push({
+      title: shortenText(title, 30),
+      detail: title,
+    });
+
+    if (pledges.length >= limit) {
+      return pledges;
+    }
+  }
+
+  return pledges.length >= 2 ? pledges : [];
 }
 
 function extractDuplicatedNumberedBulletinPledges(text: string, limit: number) {
@@ -1092,7 +1137,13 @@ function dedupeAdjacentLines(lines: string[]) {
 }
 
 function isPolicyContextFragment(line: string) {
-  return line.length >= 2 && line.length <= 12 && /[가-힣A-Za-z0-9]/.test(line) && !bulletinActionKeywordPattern.test(line);
+  return (
+    line.length >= 2 &&
+    line.length <= 12 &&
+    /[가-힣A-Za-z0-9]/.test(line) &&
+    !/(해내겠습니다|약속|비전|앞으로)/.test(line) &&
+    !bulletinActionKeywordPattern.test(line)
+  );
 }
 
 function isShortActionFragment(line: string) {
@@ -1202,6 +1253,26 @@ function isBulletinActionLine(line: string) {
     !isBulletinNoiseLine(line) &&
     !/(후보|선거|기호|정당|전과|재산|학력|경력|졸업)/.test(line)
   );
+}
+
+function isBulletinPolicyItemLine(line: string) {
+  return (
+    line.length >= 6 &&
+    line.length <= 60 &&
+    /[가-힣]{2}/.test(line) &&
+    !isBulletinNoiseLine(line) &&
+    !isBulletinPolicyHeadingLine(line) &&
+    !/(후보|선거|기호|정당|전과|재산|학력|경력|졸업|책자형|정보공개|인적사항|생년월일|직업)/.test(line) &&
+    (bulletinActionKeywordPattern.test(line) || bulletinPolicySubjectPattern.test(line))
+  );
+}
+
+function isBulletinPolicyHeadingLine(line: string) {
+  return /(?:공약|약속|프로젝트|비전)$/.test(line) || /(?:공약|약속|정책공약)/.test(line);
+}
+
+function isCandidateDisclosureStartLine(line: string) {
+  return /후보자\s*정보\s*공개|후보자정보공개|정보\s*공개\s*자료|인적사항|재산상황|병역사항/.test(line);
 }
 
 function cleanBulletinLine(value: string) {

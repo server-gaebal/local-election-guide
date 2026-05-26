@@ -373,6 +373,39 @@ o 이행 방법
     ]);
   });
 
+  it("extracts compact local pledge headings before candidate disclosure tables", () => {
+    const text = `
+김춘화의우리지역공약
+삼락동삼락천악취문제
+덕포시장&북부산시장활성화마중물역할
+감전동감전시장활성화
+우리지역함께열어가는공동체
+괘법동신속한재개발추진과철저한공정관리
+후보자정보공개자료
+사상구의회의원선거(가선거구)
+1. 인적사항
+`;
+
+    expect(extractPledges(text).map((pledge) => pledge.title)).toEqual([
+      "삼락동삼락천악취문제",
+      "덕포시장&북부산시장활성화마중물역할",
+      "감전동감전시장활성화",
+      "우리지역함께열어가는공동체",
+      "괘법동신속한재개발추진과철저한공정관리",
+    ]);
+  });
+
+  it("does not synthesize pledge items when a bulletin says there are no pledges", () => {
+    const text = `
+아산시의회의원선거(아산시 라선거구)
+“ 저는 공약이 없습니다 ”
+후보자정보공개자료
+아산시의회의원선거 (아산시 라선거구)
+`;
+
+    expect(extractPledges(text)).toEqual([]);
+  });
+
   it("strips repeated title labels from extracted pledge titles", () => {
     const text = `
 공약순위         제목    분 통근도시 실현으로 시민에게 쉼표를
@@ -521,6 +554,7 @@ o 이행 방법
           districtName: "서울특별시",
           name: "",
           partyName: "국민의힘",
+          candidateId: "",
           candidateNumber: "",
           fivePledgePdf: null,
         }),
@@ -531,6 +565,7 @@ o 이행 방법
           districtName: "마포구",
           name: "",
           partyName: "더불어민주당",
+          candidateId: "",
           candidateNumber: "",
           fivePledgePdf: null,
         }),
@@ -547,6 +582,9 @@ o 이행 방법
       "마포구의원 비례대표",
     ]);
     expect(dataset.candidates.map((candidate) => candidate.name)).toContain("국민의힘 비례대표");
+    const proportionalCandidate = dataset.candidates.find((candidate) => candidate.name === "국민의힘 비례대표");
+    expect(proportionalCandidate?.cache.policyPdf).toContain("policy.nec.go.kr");
+    expect(proportionalCandidate?.publicRecord).toContain("정책공약마당 원문 있음");
     expect(dataset.candidates.map((candidate) => candidate.name)).not.toContain("한기영");
     expect(dataset.candidates[0].age).toBe(57);
     expect(dataset.candidates[0].criminalRecord.summary).toBe("전과 2건");
@@ -581,7 +619,7 @@ o 이행 방법
     expect(dataset.source.mode).toBe("nec");
   });
 
-  it("guarantees an official source for candidates in the first four ballot groups", () => {
+  it("uses candidate disclosure as an official fallback source when pledge PDFs are absent", () => {
     const dataset = buildResidenceDatasetFromNec({
       residence: suwonResidence,
       generatedAt: "2026-05-26T13:30:00+09:00",
@@ -636,8 +674,9 @@ o 이행 방법
     expect(priorityCandidate?.candidateTraits).toContain("근거 자료: 후보자 정보공개");
     expect(priorityCandidate?.comparison).toContain("후보자 정보공개 원문");
     expect(priorityCandidate?.cache.policyPdf).not.toBe("NEC row metadata only");
-    expect(lowerCandidate?.cache.policyPdf).toBe("NEC row metadata only");
-    expect(lowerCandidate?.publicRecord).not.toContain("후보자 정보공개 원문 있음");
+    expect(lowerCandidate?.cache.policyPdf).toContain("info.nec.go.kr");
+    expect(lowerCandidate?.publicRecord).toContain("후보자 정보공개 원문 있음");
+    expect(lowerCandidate?.focusTags).toContain("후보자 정보공개");
   });
 
   it("uses election scope embedded in generated nationwide residences", () => {
