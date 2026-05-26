@@ -17,6 +17,19 @@ const residence: Residence = {
   cachedAt: "2026-05-26 13:30 KST",
 };
 
+const busanResidence: Residence = {
+  id: "nec-2600-2601-5260101-6260101",
+  city: "부산광역시",
+  district: "중구",
+  neighborhood: "중구선거구 · 중구가선거구",
+  cacheKey: "nec:scope:2600:2601:5260101:6260101:v1",
+  cachedAt: "2026-05-26T13:30:00+09:00",
+  electionScope: {
+    cityCouncilDistrict: "중구선거구",
+    localCouncilDistrict: "중구가선거구",
+  },
+};
+
 function necRow(overrides: Partial<NecNormalizedCandidate>): NecNormalizedCandidate {
   return {
     id: overrides.id ?? "row",
@@ -174,5 +187,34 @@ describe("NEC residence cache builder", () => {
     expect(dataset.candidates[0].criminalRecord.tone).toBe("risk");
     expect(dataset.candidates[0].pledgeHighlights).toEqual(["서울 공약 1", "서울 공약 2"]);
     expect(dataset.source.mode).toBe("nec");
+  });
+
+  it("uses election scope embedded in generated nationwide residences", () => {
+    const dataset = buildResidenceDatasetFromNec({
+      residence: busanResidence,
+      generatedAt: "2026-05-26T13:30:00+09:00",
+      downloads: new Map(),
+      candidates: [
+        necRow({ id: "busan-mayor", raceTypeCode: "3", raceName: "시·도지사선거", districtName: "부산광역시", name: "김부산" }),
+        necRow({ id: "busan-education", raceTypeCode: "11", raceName: "교육감선거", districtName: "부산광역시", name: "박교육" }),
+        necRow({ id: "busan-head", raceTypeCode: "4", raceName: "구·시·군의 장선거", districtName: "중구", name: "최중구" }),
+        necRow({ id: "busan-city-council", raceTypeCode: "5", raceName: "시·도의회의원선거", districtName: "중구선거구", name: "이광역" }),
+        necRow({ id: "busan-local-council", raceTypeCode: "6", raceName: "구·시·군의회의원선거", districtName: "중구가선거구", name: "오기초" }),
+        necRow({ id: "busan-metro-prop", raceTypeCode: "8", raceName: "광역의원비례대표선거", districtName: "부산광역시", name: "", partyName: "국민의힘" }),
+        necRow({ id: "busan-local-prop", raceTypeCode: "9", raceName: "기초의원비례대표선거", districtName: "중구", name: "", partyName: "더불어민주당" }),
+        necRow({ id: "other-city-council", raceTypeCode: "5", raceName: "시·도의회의원선거", districtName: "서구제1선거구", name: "제외" }),
+      ],
+    });
+
+    expect(dataset.candidates.map((candidate) => candidate.office)).toEqual([
+      "부산광역시장",
+      "부산광역시교육감",
+      "중구청장",
+      "부산시의원 중구선거구",
+      "중구의원 중구가선거구",
+      "부산시의원 비례대표",
+      "중구의원 비례대표",
+    ]);
+    expect(dataset.candidates.map((candidate) => candidate.name)).not.toContain("제외");
   });
 });

@@ -5,6 +5,8 @@ import { fileURLToPath } from "node:url";
 import { candidates, residences, voterProfiles } from "../src/mockData";
 import { createCandidateInfoIndex, type NecCandidateInfoRecord } from "../src/necCandidateInfo";
 import type { NecNormalizedCandidate } from "../src/necCrawler";
+import type { NecElectionDistrictsCache } from "../src/necElectionInfo";
+import { buildNationalResidences } from "../src/necResidenceIndex";
 import { buildResidenceDatasetFromNec, extractPledgeTitles, type NecDownloadIndex } from "../src/necRegionCache";
 import { necEndpoints } from "../src/necPolicy";
 
@@ -80,27 +82,35 @@ async function buildNecRegionDatasets(nextResidences: typeof residences) {
   const candidateInfo = (await pathExists(candidateInfoPath))
     ? createCandidateInfoIndex((await readJsonFile<NecCandidateInfoCache>(candidateInfoPath)).records)
     : new Map();
-  const seoulMapo = nextResidences.find((residence) => residence.id === "seoul-mapo-gongdeok");
+  const buildableResidences = nextResidences.filter(
+    (residence) => residence.electionScope || residence.id === "seoul-mapo-gongdeok",
+  );
 
-  if (!seoulMapo) {
-    return new Map();
-  }
-
-  return new Map([
-    [
-      seoulMapo.id,
+  return new Map(
+    buildableResidences.map((residence) => [
+      residence.id,
       buildResidenceDatasetFromNec({
-        residence: seoulMapo,
+        residence,
         generatedAt,
         candidates: necCache.candidates,
         downloads,
         candidateInfo,
       }),
-    ],
-  ]);
+    ]),
+  );
 }
 
-const normalizedResidences = residences.map((residence) =>
+async function buildResidences() {
+  const nationalResidences = (await pathExists("data/nec/info/election-districts.json"))
+    ? buildNationalResidences(await readJsonFile<NecElectionDistrictsCache>("data/nec/info/election-districts.json"))
+    : [];
+  const residenceMap = new Map([...residences, ...nationalResidences].map((residence) => [residence.id, residence]));
+
+  return Array.from(residenceMap.values());
+}
+
+const allResidences = await buildResidences();
+const normalizedResidences = allResidences.map((residence) =>
   residence.id === "seoul-mapo-gongdeok"
     ? {
         ...residence,

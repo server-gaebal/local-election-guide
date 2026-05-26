@@ -14,6 +14,11 @@ export type Residence = {
   neighborhood: string;
   cacheKey: string;
   cachedAt: string;
+  electionScope?: {
+    districtHeadDistrict?: string;
+    cityCouncilDistrict?: string;
+    localCouncilDistrict?: string;
+  };
 };
 
 export type Pledge = {

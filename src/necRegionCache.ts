@@ -20,8 +20,9 @@ export type NecDownloadIndex = Map<
 >;
 
 type ResidenceElectionScope = {
-  cityCouncilDistrict: string;
-  localCouncilDistrict: string;
+  districtHeadDistrict?: string;
+  cityCouncilDistrict?: string;
+  localCouncilDistrict?: string;
 };
 
 const residenceElectionScopes: Record<string, ResidenceElectionScope> = {
@@ -94,7 +95,7 @@ export function buildResidenceDatasetFromNec({
   downloads,
   candidateInfo = new Map(),
 }: NecResidenceBuildInput): RegionDataset {
-  const scope = residenceElectionScopes[residence.id];
+  const scope = residence.electionScope ?? residenceElectionScopes[residence.id];
 
   if (!scope) {
     throw new Error(`No NEC election scope configured for ${residence.id}`);
@@ -141,11 +142,11 @@ function isInResidenceScope(
       return candidate.districtName === residence.city;
     case "4":
     case "9":
-      return candidate.districtName === residence.district;
+      return candidate.districtName === (scope.districtHeadDistrict ?? residence.district);
     case "5":
-      return candidate.districtName === scope.cityCouncilDistrict;
+      return Boolean(scope.cityCouncilDistrict) && candidate.districtName === scope.cityCouncilDistrict;
     case "6":
-      return candidate.districtName === scope.localCouncilDistrict;
+      return Boolean(scope.localCouncilDistrict) && candidate.districtName === scope.localCouncilDistrict;
     default:
       return false;
   }
@@ -217,19 +218,19 @@ function toAppCandidate({
 function officeFor(candidate: NecNormalizedCandidate, residence: Residence, scope: ResidenceElectionScope) {
   switch (candidate.raceTypeCode) {
     case "3":
-      return `${residence.city}장`;
+      return wideGovernmentHeadOfficeName(residence.city);
     case "11":
       return `${residence.city}교육감`;
     case "4":
-      return `${residence.district}청장`;
+      return localGovernmentHeadOfficeName(residence.district);
     case "5":
-      return `서울시의원 ${scope.cityCouncilDistrict}`;
+      return `${cityCouncilOfficeName(residence.city)} ${scope.cityCouncilDistrict ?? candidate.districtName}`;
     case "6":
-      return `${residence.district}의원 ${scope.localCouncilDistrict}`;
+      return `${scope.districtHeadDistrict ?? residence.district}의원 ${scope.localCouncilDistrict ?? candidate.districtName}`;
     case "8":
-      return "서울시의원 비례대표";
+      return `${cityCouncilOfficeName(residence.city)} 비례대표`;
     case "9":
-      return `${residence.district}의원 비례대표`;
+      return `${scope.districtHeadDistrict ?? residence.district}의원 비례대표`;
     default:
       return candidate.raceName;
   }
@@ -371,6 +372,34 @@ function sortNecRows(a: NecNormalizedCandidate, b: NecNormalizedCandidate) {
     a.partyName.localeCompare(b.partyName) ||
     a.name.localeCompare(b.name)
   );
+}
+
+function wideGovernmentHeadOfficeName(city: string) {
+  return city.endsWith("도") ? `${city}지사` : `${city}장`;
+}
+
+function localGovernmentHeadOfficeName(district: string) {
+  if (district.endsWith("군")) {
+    return `${district}수`;
+  }
+
+  if (district.endsWith("시")) {
+    return `${district}장`;
+  }
+
+  return `${district}청장`;
+}
+
+function cityCouncilOfficeName(city: string) {
+  if (city === "서울특별시") {
+    return "서울시의원";
+  }
+
+  if (city.endsWith("광역시")) {
+    return `${city.replace(/광역시$/, "시")}의원`;
+  }
+
+  return `${city}의원`;
 }
 
 function numericOrder(value: string) {
