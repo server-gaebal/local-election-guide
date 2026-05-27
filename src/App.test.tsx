@@ -223,6 +223,22 @@ describe("local election guide static experience", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("marks pledge sections as preparing when source pledges are not found", async () => {
+    render(<App />);
+
+    await screen.findByRole("heading", { name: "서울특별시장 후보" });
+
+    const localCouncilCard = screen.getByRole("article", { name: /장덕준 후보 카드/ });
+    const proportionalCards = screen.getAllByRole("article", { name: /비례대표 후보 카드/ });
+
+    expect(within(localCouncilCard).getByText("준비중")).toBeInTheDocument();
+    expect(proportionalCards.length).toBeGreaterThan(0);
+
+    for (const card of proportionalCards) {
+      expect(within(card).getByText("준비중")).toBeInTheDocument();
+    }
+  });
+
   it("shows first-wave detailed persona details for selected city and race candidates", async () => {
     const user = userEvent.setup();
     render(<App />);
