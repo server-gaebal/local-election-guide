@@ -132,10 +132,11 @@ describe("local election guide static experience", () => {
     render(<App />);
 
     const districtHeadCard = await screen.findByRole("article", { name: /유동균 후보 카드/ });
+    const factCheckSection = within(districtHeadCard).getByLabelText("유동균 공약 팩트체크");
 
-    expect(within(districtHeadCard).getByText("팩트체크")).toBeInTheDocument();
-    expect(within(districtHeadCard).getByText(/구청장 공약은/)).toBeInTheDocument();
-    expect(within(districtHeadCard).getByText("권한 확인 필요")).toBeInTheDocument();
+    expect(within(factCheckSection).getByText("팩트체크")).toBeInTheDocument();
+    expect(within(factCheckSection).getAllByText(/AI로 똑똑한 행정/).length).toBeGreaterThan(0);
+    expect(within(factCheckSection).getByText("재원 확인 필요")).toBeInTheDocument();
   });
 
   it("shares the selected region through a crawlable preview page", async () => {

@@ -1,4 +1,5 @@
 import type { Candidate, RaceType } from "./electionTypes";
+import { guDistrictHeadFactChecks } from "./guDistrictHeadFactChecks";
 
 export type FactCheckTone = "verified" | "caution" | "unknown";
 
@@ -81,6 +82,7 @@ const elementarySecondaryEducationLawSource = {
 };
 
 const factChecks: Record<string, FactCheckReview> = {
+  ...guDistrictHeadFactChecks,
   "20260603-320260603-100157144": {
     summary: "서울 철도망·돌봄 공약은 공식 계획 또는 지방정부 사무와 맞닿지만, 장기 철도·재원은 후속 절차 확인이 필요합니다.",
     tone: "caution",
