@@ -1,4 +1,5 @@
 import type { Candidate, RaceType } from "./electionTypes";
+import { guDistrictHeadFactChecks } from "./guDistrictHeadFactChecks";
 
 export type FactCheckTone = "verified" | "caution" | "unknown";
 
@@ -81,6 +82,7 @@ const elementarySecondaryEducationLawSource = {
 };
 
 const factChecks: Record<string, FactCheckReview> = {
+  ...guDistrictHeadFactChecks,
   "20260603-320260603-100157144": {
     summary: "서울 철도망·돌봄 공약은 공식 계획 또는 지방정부 사무와 맞닿지만, 장기 철도·재원은 후속 절차 확인이 필요합니다.",
     tone: "caution",
@@ -1204,7 +1206,34 @@ const raceCategoryFactChecks: Partial<Record<RaceType, FactCheckReview>> = {
   },
 };
 
-type FactCheckTarget = string | Pick<Candidate, "id" | "race">;
+const guDistrictHeadFactCheck: FactCheckReview = {
+  summary:
+    "구청장 공약은 생활 인프라, 복지, 상권, 재개발·재건축 지원처럼 주민 생활과 가까운 사무가 많지만 권한과 재원은 구청 단독으로 끝나지 않는 경우가 많습니다.",
+  tone: "caution",
+  items: [
+    {
+      claim: "골목상권, 복지·돌봄, 안전, 청년·어르신 지원 같은 생활 행정 확대",
+      verdict: "재원 확인 필요",
+      check:
+        "자치구는 주민 복지, 지역경제, 안전, 시설 관리 등 생활 행정을 추진할 수 있습니다. 다만 현금성 지원, 센터 신설, 인력 확충은 조례, 구의회 예산 심의, 국비·시비·구비 분담과 반복 운영비를 확인해야 합니다.",
+      sources: [necSource, localAutonomyLawSource],
+    },
+    {
+      claim: "재개발·재건축, 교통·주차, 공원·문화시설, 학교 주변 환경 개선",
+      verdict: "권한 확인 필요",
+      check:
+        "도시정비, 교통, 공원·문화시설, 교육환경 개선은 구청이 민원 조정과 행정 절차를 맡을 수 있지만 서울시·광역시, 중앙부처, 교육청, 민간 조합·사업자 협의가 필요한 항목이 섞입니다. 후보 공약은 구청장 단독 결정인지, 인허가·상위계획·재원 분담이 필요한지 나눠 봐야 합니다.",
+      sources: [necSource, localAutonomyLawSource, nationalFinanceActSource],
+    },
+  ],
+};
+
+type CandidateFactCheckTarget = Pick<Candidate, "id" | "race"> & Partial<Pick<Candidate, "office">>;
+type FactCheckTarget = string | CandidateFactCheckTarget;
+
+function isGuDistrictHeadCandidate(target: CandidateFactCheckTarget) {
+  return target.race === "기초단체장" && target.office?.endsWith("구청장");
+}
 
 export function getCandidateFactCheck(target: FactCheckTarget) {
   const candidateId = typeof target === "string" ? target : target.id;
@@ -1212,6 +1241,10 @@ export function getCandidateFactCheck(target: FactCheckTarget) {
 
   if (candidateSpecificFactCheck) {
     return candidateSpecificFactCheck;
+  }
+
+  if (typeof target !== "string" && isGuDistrictHeadCandidate(target)) {
+    return guDistrictHeadFactCheck;
   }
 
   const race = typeof target === "string" ? undefined : target.race;
