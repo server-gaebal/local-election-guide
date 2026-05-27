@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getCandidateFactCheck } from "./factChecks";
+import { guDistrictHeadFactChecks } from "./guDistrictHeadFactChecks";
 import mayorGovernorRace from "../data/nec/full/races/3-시-도지사선거.json";
 import superintendentRace from "../data/nec/full/races/11-교육감선거.json";
 import districtHeadRace from "../data/nec/full/races/4-구-시-군의-장선거.json";
@@ -47,24 +48,29 @@ describe("candidate fact checks", () => {
     expect(missingCandidateFactChecks).toEqual([]);
   });
 
-  it("falls back to gu mayor fact checks for every district office candidate without covering city or county heads", () => {
+  it("provides candidate-specific gu mayor fact checks without covering city or county heads", () => {
     const guCandidates = districtHeadRace.candidates.filter((candidate) => candidate.districtName.endsWith("구"));
     const nonGuCandidates = districtHeadRace.candidates.filter((candidate) => !candidate.districtName.endsWith("구"));
-    const missingGuFactChecks = guCandidates
-      .filter(
-        (candidate) =>
-          !getCandidateFactCheck({
-            id: candidate.id,
-            race: "기초단체장",
-            office: `${candidate.districtName}청장`,
-          }),
-      )
+    const missingGuCandidateFactChecks = guCandidates
+      .filter((candidate) => !getCandidateFactCheck(candidate.id))
+      .map((candidate) => `${candidate.districtName} ${candidate.name} ${candidate.id}`);
+    const missingGuFactCheckEntries = guCandidates
+      .filter((candidate) => !guDistrictHeadFactChecks[candidate.id])
       .map((candidate) => `${candidate.districtName} ${candidate.name} ${candidate.id}`);
     const cityCandidate = nonGuCandidates.find((candidate) => candidate.districtName.endsWith("시"));
     const countyCandidate = nonGuCandidates.find((candidate) => candidate.districtName.endsWith("군"));
 
     expect(guCandidates).toHaveLength(165);
-    expect(missingGuFactChecks).toEqual([]);
+    expect(Object.keys(guDistrictHeadFactChecks)).toHaveLength(165);
+    expect(missingGuCandidateFactChecks).toEqual([]);
+    expect(missingGuFactCheckEntries).toEqual([]);
+    expect(
+      getCandidateFactCheck({
+        id: "synthetic-gu-mayor-candidate",
+        race: "기초단체장",
+        office: "마포구청장",
+      })?.summary,
+    ).toContain("구청장 공약은");
     expect(
       getCandidateFactCheck({
         id: cityCandidate?.id ?? "synthetic-city-head",
