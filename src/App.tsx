@@ -63,6 +63,7 @@ const raceOrder: Record<RaceType, number> = {
   기초의원: 50,
 };
 
+const preparingPledgeNotice = "준비중";
 const preferredInitialResidenceId = "seoul-mapo-gongdeok";
 const necRelatedLinks = [
   {
@@ -1024,26 +1025,6 @@ function getDisplayPledges(candidate: Candidate, sourcePledges = getCandidatePer
   return sourcePledges.length > 0 ? sourcePledges : candidate.fullPledges.filter(isDisplayablePledge);
 }
 
-function getPledgeAvailabilityNotice(candidate: Candidate) {
-  if (candidate.numberLabel === "정당투표") {
-    return "비례대표 정당 투표 항목입니다. 정당별 공보와 정책 자료는 선관위 원문에서 확인해 주세요.";
-  }
-
-  if (candidate.cache.policyPdf === "NEC row metadata only") {
-    return "선관위 후보 기본정보는 확인됐지만 공식 공약 원문 링크는 아직 확보되지 않았습니다.";
-  }
-
-  if (candidate.publicRecord.some((record) => record.includes("후보자 정보공개 원문 있음"))) {
-    return "공약 PDF는 별도로 확인되지 않았지만 후보자 정보공개 원문에서 기본 공개자료를 확인할 수 있습니다.";
-  }
-
-  if (candidate.publicRecord.some((record) => /(?:5대공약|선거공보) PDF 있음/.test(record))) {
-    return "공식 원문 PDF는 공개되어 있으나 자동으로 구조화 가능한 공약 문장이 부족해 원문 확인이 필요합니다.";
-  }
-
-  return "선관위 관련 페이지에서 후보 공개 자료와 공약 원문 여부를 확인해 주세요.";
-}
-
 function isDisplayablePledge(pledge: Candidate["fullPledges"][number]) {
   return pledge.title.trim().length > 0 && !containsImplementationLanguage(pledge.title);
 }
@@ -1074,7 +1055,7 @@ function CandidateCard({
 }) {
   const comparisonPreview = getVoterComparisonPreview(candidate, ballotCandidates);
   const comparisonCardDetails = getVoterComparisonCardDetails(candidate, ballotCandidates);
-  const factCheckReview = getCandidateFactCheck(candidate.id);
+  const factCheckReview = getCandidateFactCheck(candidate);
   const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
   const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
   const displayPledges = getDisplayPledges(candidate, sourcePledges);
@@ -1082,7 +1063,7 @@ function CandidateCard({
   const pledgeSummary =
     sourcePledges.length === 0 && !containsImplementationLanguage(candidate.pledgeSummary) ? candidate.pledgeSummary : "";
   const hasVisiblePledges = primaryPledges.length > 0;
-  const pledgeAvailabilityNotice = hasVisiblePledges ? "" : getPledgeAvailabilityNotice(candidate);
+  const pledgeAvailabilityNotice = hasVisiblePledges ? "" : preparingPledgeNotice;
 
   return (
     <article
@@ -1113,7 +1094,7 @@ function CandidateCard({
       <section className="card-section pledge-list" aria-label={`${candidate.name} 공약 요약`}>
         <div className="card-section__title">
           <FileText aria-hidden="true" size={16} />
-          <h4>{hasVisiblePledges ? "공약 요약" : "관련 링크"}</h4>
+          <h4>공약 요약</h4>
         </div>
         {pledgeSummary ? <p className="summary-text">{pledgeSummary}</p> : null}
         {hasVisiblePledges ? (
@@ -1243,12 +1224,12 @@ function CandidateDialog({
   onClose: () => void;
 }) {
   const comparisonDetails = getVoterComparisonDetails(candidate, ballotCandidates);
-  const factCheckReview = getCandidateFactCheck(candidate.id);
+  const factCheckReview = getCandidateFactCheck(candidate);
   const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
   const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
   const displayPledges = getDisplayPledges(candidate, sourcePledges);
   const hasVisiblePledges = displayPledges.length > 0;
-  const pledgeAvailabilityNotice = hasVisiblePledges ? "" : getPledgeAvailabilityNotice(candidate);
+  const pledgeAvailabilityNotice = hasVisiblePledges ? "" : preparingPledgeNotice;
 
   return (
     <div className="dialog-backdrop">
@@ -1280,7 +1261,7 @@ function CandidateDialog({
           </section>
 
           <section className="detail-section">
-            <h3>{hasVisiblePledges ? "5대 공약" : "관련 링크"}</h3>
+            <h3>{hasVisiblePledges ? "5대 공약" : "공약 요약"}</h3>
             {hasVisiblePledges ? (
               <ol className="full-pledges">
                 {displayPledges.map((pledge) => (
