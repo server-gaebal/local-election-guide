@@ -7,17 +7,70 @@ import cacheManifest from "../public/data/cache-manifest.json";
 import regionIndex from "../public/data/regions/index.json";
 import busanRegion from "../public/data/regions/busan-haeundae-woojedong.json";
 import gyeonggiRegion from "../public/data/regions/gyeonggi-seongnam-jeongja.json";
-import uiwangCheonggyeRegion from "../public/data/regions/nec-4100-4124-dong-1gfp6af.json";
 import seoulRegion from "../public/data/regions/seoul-mapo-gongdeok.json";
+
+const uiwangCheonggyeResidence = {
+  id: "nec-4100-4124-dong-1gfp6af",
+  city: "경기도",
+  district: "의왕시",
+  neighborhood: "청계동",
+  cacheKey: "nec:area:4100:4124:청계동:v1",
+  cachedAt: "2026-05-26T06:35:38.514Z",
+  electionScope: {
+    districtHeadDistrict: "의왕시",
+    cityCouncilDistrict: "의왕시제2선거구",
+    localCouncilDistrict: "의왕시나선거구",
+  },
+};
+
+const suwonPyeongResidence = {
+  id: "nec-4100-4102-dong-ctpjpj",
+  city: "경기도",
+  district: "수원시 권선구",
+  neighborhood: "평동",
+  cacheKey: "nec:area:4100:4102:평동:v1",
+  cachedAt: "2026-05-26T06:35:38.514Z",
+  electionScope: {
+    districtHeadDistrict: "수원시",
+    cityCouncilDistrict: "수원시제4선거구",
+    localCouncilDistrict: "수원시마선거구",
+  },
+};
+
+const createEmptyRegion = (residence: typeof uiwangCheonggyeResidence) => ({
+  residence,
+  candidates: [],
+  source: {
+    mode: "nec" as const,
+    generatedAt: "2026-05-26T13:50:00+09:00",
+    sourceName: "Test fixture",
+    sourceUrl: "https://policy.nec.go.kr/",
+    pdfCount: 0,
+  },
+});
+
+const uiwangCheonggyeRegion = createEmptyRegion(uiwangCheonggyeResidence);
+const suwonPyeongRegion = createEmptyRegion(suwonPyeongResidence);
 
 const testRegionIndex = {
   ...regionIndex,
-  residences: [gyeonggiRegion.residence, busanRegion.residence, seoulRegion.residence, uiwangCheonggyeRegion.residence],
+  residences: [
+    gyeonggiRegion.residence,
+    busanRegion.residence,
+    seoulRegion.residence,
+    uiwangCheonggyeRegion.residence,
+    suwonPyeongRegion.residence,
+  ],
   residenceAliases: [
     {
       label: "경기도 의왕시 포일동",
       residenceId: uiwangCheonggyeRegion.residence.id,
       targetLabel: "경기도 의왕시 청계동",
+    },
+    {
+      label: "경기도 수원시 권선구 고색동",
+      residenceId: suwonPyeongRegion.residence.id,
+      targetLabel: "경기도 수원시 권선구 평동",
     },
   ],
 };
@@ -29,6 +82,7 @@ const jsonFixtures = {
   "data/regions/gyeonggi-seongnam-jeongja.json": gyeonggiRegion,
   "data/regions/busan-haeundae-woojedong.json": busanRegion,
   [`data/regions/${uiwangCheonggyeRegion.residence.id}.json`]: uiwangCheonggyeRegion,
+  [`data/regions/${suwonPyeongRegion.residence.id}.json`]: suwonPyeongRegion,
 };
 
 function installStaticDataFetch() {
@@ -108,6 +162,17 @@ describe("local election guide static experience", () => {
 
     expect(await screen.findByRole("heading", { name: "경기도 의왕시 청계동에서 공약을 비교할 후보" })).toBeInTheDocument();
     expect(screen.getByText("주소 동이 안 보이면 검색하면 관할 행정동 후보로 연결합니다.")).toBeInTheDocument();
+  });
+
+  it("maps another legal dong search term to its administrative election region", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const searchbox = await screen.findByLabelText("지역 검색");
+    await user.type(searchbox, "경기도 수원시 권선구 고색동");
+    await user.click(screen.getByRole("button", { name: "지역 검색 적용" }));
+
+    expect(await screen.findByRole("heading", { name: "경기도 수원시 권선구 평동에서 공약을 비교할 후보" })).toBeInTheDocument();
   });
 
   it("opens a shared region from the URL query", async () => {
