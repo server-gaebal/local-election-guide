@@ -191,11 +191,14 @@ async function ocrPdf(target: OcrTarget, options: { maxPages: number; resolution
 }
 
 function matchesFilters(result: NecDownloadResult, candidate?: NecNormalizedCandidate) {
+  return matchesCandidateFilters(result, candidate) && matchesDocumentFilter(result);
+}
+
+function matchesCandidateFilters(result: NecDownloadResult, candidate?: NecNormalizedCandidate) {
   const candidateId = readOptionalArg("candidate-id");
   const candidateRowId = readOptionalArg("candidate-row-id");
   const race = readOptionalArg("race");
   const district = readOptionalArg("district");
-  const documentType = readOptionalArg("document-type");
 
   if (candidateId && candidate?.candidateId !== candidateId && result.candidateId !== candidateId) {
     return false;
@@ -213,6 +216,12 @@ function matchesFilters(result: NecDownloadResult, candidate?: NecNormalizedCand
     return false;
   }
 
+  return true;
+}
+
+function matchesDocumentFilter(result: NecDownloadResult) {
+  const documentType = readOptionalArg("document-type");
+
   if (documentType && (result.documentType ?? "fivePledges") !== documentType) {
     return false;
   }
@@ -222,9 +231,15 @@ function matchesFilters(result: NecDownloadResult, candidate?: NecNormalizedCand
 
 async function buildTargets(outDir: string, candidates: NecNormalizedCandidate[], downloads: NecDownloadsCache) {
   const candidateById = new Map(candidates.map((candidate) => [candidate.id, candidate]));
+  const filteredResults = (downloads.results ?? [])
+    .map((result) => ({
+      result,
+      candidate: candidateById.get(result.candidateId),
+    }))
+    .filter(({ result, candidate }) => matchesCandidateFilters(result, candidate));
   const bestPledgeCounts = new Map<string, number>();
 
-  for (const result of downloads.results ?? []) {
+  for (const { result } of filteredResults) {
     if (result.downloadStatus === "failed" || result.extractStatus === "failed" || !(await pathExists(join(repoRoot, result.textPath)))) {
       continue;
     }
@@ -236,8 +251,7 @@ async function buildTargets(outDir: string, candidates: NecNormalizedCandidate[]
 
   const targets: OcrTarget[] = [];
 
-  for (const result of downloads.results ?? []) {
-    const candidate = candidateById.get(result.candidateId);
+  for (const { result, candidate } of filteredResults) {
     const pdfPath = result.pdfPath ? join(repoRoot, result.pdfPath) : "";
     const existingTextPath = join(repoRoot, result.textPath);
 
@@ -245,7 +259,7 @@ async function buildTargets(outDir: string, candidates: NecNormalizedCandidate[]
       continue;
     }
 
-    if (!matchesFilters(result, candidate)) {
+    if (!matchesDocumentFilter(result)) {
       continue;
     }
 
