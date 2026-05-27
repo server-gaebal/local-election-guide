@@ -45,7 +45,6 @@ import {
 } from "./sharePreview";
 
 const allRaces = "전체";
-const priorityBallotGroupCount = 4;
 type BallotFilter = typeof allRaces | string;
 
 type BallotGroup = {
@@ -266,21 +265,6 @@ function createBallotGroups(candidateList: Candidate[]): BallotGroup[] {
     .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 }
 
-function hasReadyPledgeGroup(group: BallotGroup, index: number) {
-  return (
-    isPriorityBallotGroup(group, index) ||
-    (group.candidates.length > 0 && group.candidates.every(hasReadyStructuredPledges))
-  );
-}
-
-function isPriorityBallotGroup(group: BallotGroup, index: number) {
-  return index < priorityBallotGroupCount || group.title.startsWith("서울특별시교육감");
-}
-
-function hasReadyStructuredPledges(candidate: Candidate) {
-  return !hasUnavailablePledgeSource(candidate) && getDisplayPledges(candidate).length > 0;
-}
-
 export function App() {
   const [manifest, setManifest] = useState<CacheManifest | null>(null);
   const [regionIndex, setRegionIndex] = useState<RegionIndex | null>(null);
@@ -406,10 +390,7 @@ export function App() {
   );
 
   const allBallotGroups = useMemo(() => createBallotGroups(regionalCandidates), [regionalCandidates]);
-  const ballotGroups = useMemo(
-    () => allBallotGroups.filter((group, index) => hasReadyPledgeGroup(group, index)),
-    [allBallotGroups],
-  );
+  const ballotGroups = allBallotGroups;
 
   const ballotOptions = useMemo(
     () => [allRaces, ...ballotGroups.map((group) => group.id)],
@@ -759,8 +740,8 @@ export function App() {
           ) : regionDataset ? (
             <div className="region-empty-state" aria-live="polite">
               <FileText aria-hidden="true" size={18} />
-              <strong>공약 비교 준비중</strong>
-              <span>이 지역은 현재 표시할 공약 비교 항목을 정리하고 있습니다.</span>
+              <strong>표시할 후보 없음</strong>
+              <span>이 지역에는 현재 표시할 후보 자료가 없습니다.</span>
             </div>
           ) : (
             <div className="region-loading" aria-live="polite">
@@ -1043,29 +1024,24 @@ function getDisplayPledges(candidate: Candidate, sourcePledges = getCandidatePer
   return sourcePledges.length > 0 ? sourcePledges : candidate.fullPledges.filter(isDisplayablePledge);
 }
 
-function hasUnavailablePledgeSource(candidate: Candidate) {
-  const searchableText = [
-    candidate.pledgeSummary,
-    candidate.comparison,
-    candidate.cache.policyPdf,
-    ...candidate.publicRecord,
-    ...candidate.focusTags,
-    ...(candidate.candidateTraits ?? []),
-    ...candidate.pledgeHighlights,
-    ...candidate.comparisonDetails,
-    ...candidate.fullPledges.flatMap((pledge) => [pledge.title, pledge.detail]),
-  ].join(" ");
+function getPledgeAvailabilityNotice(candidate: Candidate) {
+  if (candidate.numberLabel === "정당투표") {
+    return "비례대표 정당 투표 항목입니다. 정당별 공보와 정책 자료는 선관위 원문에서 확인해 주세요.";
+  }
 
-  return [
-    "공약 원문 PDF 링크 없음",
-    "원문 PDF 링크 없음",
-    "5대공약 PDF 없음",
-    "5대공약 PDF 미제공",
-    "선거공보 연동",
-    "공보 상세 연동",
-    "후보 명부·공보 상세 연동 대기",
-    "NEC row metadata only",
-  ].some((pattern) => searchableText.includes(pattern));
+  if (candidate.cache.policyPdf === "NEC row metadata only") {
+    return "선관위 후보 기본정보는 확인됐지만 공식 공약 원문 링크는 아직 확보되지 않았습니다.";
+  }
+
+  if (candidate.publicRecord.some((record) => record.includes("후보자 정보공개 원문 있음"))) {
+    return "공약 PDF는 별도로 확인되지 않았지만 후보자 정보공개 원문에서 기본 공개자료를 확인할 수 있습니다.";
+  }
+
+  if (candidate.publicRecord.some((record) => /(?:5대공약|선거공보) PDF 있음/.test(record))) {
+    return "공식 원문 PDF는 공개되어 있으나 자동으로 구조화 가능한 공약 문장이 부족해 원문 확인이 필요합니다.";
+  }
+
+  return "선관위 관련 페이지에서 후보 공개 자료와 공약 원문 여부를 확인해 주세요.";
 }
 
 function isDisplayablePledge(pledge: Candidate["fullPledges"][number]) {
@@ -1106,6 +1082,7 @@ function CandidateCard({
   const pledgeSummary =
     sourcePledges.length === 0 && !containsImplementationLanguage(candidate.pledgeSummary) ? candidate.pledgeSummary : "";
   const hasVisiblePledges = primaryPledges.length > 0;
+  const pledgeAvailabilityNotice = hasVisiblePledges ? "" : getPledgeAvailabilityNotice(candidate);
 
   return (
     <article className="candidate-card" aria-label={`${candidate.name} 후보 카드`}>
@@ -1155,7 +1132,10 @@ function CandidateCard({
             ))}
           </div>
         ) : (
-          <RelatedSourceLinks />
+          <>
+            <p className="summary-text">{pledgeAvailabilityNotice}</p>
+            <RelatedSourceLinks />
+          </>
         )}
       </section>
 
@@ -1270,6 +1250,7 @@ function CandidateDialog({
   const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
   const displayPledges = getDisplayPledges(candidate, sourcePledges);
   const hasVisiblePledges = displayPledges.length > 0;
+  const pledgeAvailabilityNotice = hasVisiblePledges ? "" : getPledgeAvailabilityNotice(candidate);
 
   return (
     <div className="dialog-backdrop">
@@ -1315,7 +1296,10 @@ function CandidateDialog({
                 ))}
               </ol>
             ) : (
-              <RelatedSourceLinks />
+              <>
+                <p>{pledgeAvailabilityNotice}</p>
+                <RelatedSourceLinks />
+              </>
             )}
           </section>
 

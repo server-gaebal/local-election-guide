@@ -1,7 +1,6 @@
 import { execFile } from "node:child_process";
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
-import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import type { NecNormalizedCandidate } from "../../src/necCrawler";
@@ -33,11 +32,13 @@ type NecDownloadResult = {
   textPath: string;
   downloadStatus?: string;
   extractStatus?: string;
+  extractMode?: string;
   error?: string;
 };
 
 type CampaignBulletinTarget = {
   candidate: NecNormalizedCandidate;
+  pdfPath: string;
   textPath: string;
 };
 
@@ -99,9 +100,37 @@ async function downloadFile(url: string, target: string) {
 
 async function extractText(pdfPath: string, textPath: string) {
   await mkdir(dirname(textPath), { recursive: true });
-  await execFileAsync("pdftotext", ["-layout", pdfPath, textPath]);
-  await writeFile(textPath, normalizeExtractedText(await readFile(textPath, "utf8")));
-  return "extracted";
+  const attempts = [
+    { mode: "layout", args: ["-layout"] },
+    { mode: "raw", args: ["-raw"] },
+    { mode: "default", args: [] },
+  ];
+  let bestAttempt: { mode: string; text: string; score: number } | undefined;
+
+  for (const attempt of attempts) {
+    const attemptTextPath = `${textPath}.${process.pid}.${attempt.mode}.tmp`;
+
+    try {
+      await execFileAsync("pdftotext", [...attempt.args, pdfPath, attemptTextPath]);
+      const text = normalizeExtractedText(await readFile(attemptTextPath, "utf8"));
+      const score = scoreExtractedText(text);
+
+      if (!bestAttempt || score > bestAttempt.score) {
+        bestAttempt = { mode: attempt.mode, text, score };
+      }
+    } finally {
+      await rm(attemptTextPath, { force: true });
+    }
+  }
+
+  const selected = bestAttempt ?? { mode: "layout", text: "\n", score: 0 };
+
+  await writeFile(textPath, selected.text);
+
+  return {
+    status: hasMeaningfulExtractedText(selected.text) ? "extracted" : "empty",
+    mode: selected.mode,
+  };
 }
 
 function normalizeExtractedText(value: string) {
@@ -112,6 +141,21 @@ function normalizeExtractedText(value: string) {
     .map((line) => line.replace(/\t/g, " ").trimEnd())
     .join("\n")
     .trimEnd()}\n`;
+}
+
+function hasMeaningfulExtractedText(value: string) {
+  return value.replace(/\f/g, "").trim().length > 0;
+}
+
+function scoreExtractedText(value: string) {
+  const text = value.replace(/\f/g, "");
+  const koreanCharacters = text.match(/[가-힣]/g)?.length ?? 0;
+  const actionKeywords =
+    text.match(/추진|확대|확충|개선|해결|조성|구축|설치|신설|유치|지원|강화|완공|착공|도입|정비|보장|완성|혁신|건립/g)
+      ?.length ?? 0;
+  const numberedPolicyMarkers = text.match(/(?:^|\n)\s*(?:0?[1-5][.)]?|[①②③④⑤])\s*[가-힣]/g)?.length ?? 0;
+
+  return koreanCharacters + actionKeywords * 20 + numberedPolicyMarkers * 30;
 }
 
 async function runLimited<T, R>(items: T[], concurrency: number, worker: (item: T, index: number) => Promise<R>) {
@@ -132,14 +176,23 @@ async function runLimited<T, R>(items: T[], concurrency: number, worker: (item: 
   return results;
 }
 
-function buildTextPath(outDir: string, candidate: NecNormalizedCandidate) {
+function buildCampaignBulletinFileStem(candidate: NecNormalizedCandidate) {
   const label = candidate.name || candidate.partyName || candidate.candidateId || candidate.id;
-  const raceDir = `${candidate.raceTypeCode}-${safeName(candidate.raceName)}`;
-  const fileName = `${safeName(candidate.candidateNumber || "n")}-${safeName(candidate.districtName)}-${safeName(label)}-${safeName(
+  return `${safeName(candidate.candidateNumber || "n")}-${safeName(candidate.districtName)}-${safeName(label)}-${safeName(
     candidate.candidateId ?? candidate.id,
-  )}-campaign-bulletin.txt`;
+  )}-campaign-bulletin`;
+}
 
-  return join(outDir, "bulletin-texts", raceDir, fileName);
+function buildRaceDir(candidate: NecNormalizedCandidate) {
+  return `${candidate.raceTypeCode}-${safeName(candidate.raceName)}`;
+}
+
+function buildTextPath(outDir: string, candidate: NecNormalizedCandidate) {
+  return join(outDir, "bulletin-texts", buildRaceDir(candidate), `${buildCampaignBulletinFileStem(candidate)}.txt`);
+}
+
+function buildPdfPath(outDir: string, candidate: NecNormalizedCandidate) {
+  return join(outDir, "bulletin-pdfs", buildRaceDir(candidate), `${buildCampaignBulletinFileStem(candidate)}.pdf`);
 }
 
 function matchesFilters(candidate: NecNormalizedCandidate) {
@@ -183,12 +236,17 @@ function buildTargets(candidates: NecNormalizedCandidate[], outDir: string) {
     .filter((candidate) => candidate.campaignBulletinPdf)
     .filter((candidate) => includeWithFivePledges || !candidate.fivePledgePdf)
     .filter(matchesFilters)
-    .map((candidate): CampaignBulletinTarget => ({ candidate, textPath: buildTextPath(outDir, candidate) }));
+    .map((candidate): CampaignBulletinTarget => ({
+      candidate,
+      pdfPath: buildPdfPath(outDir, candidate),
+      textPath: buildTextPath(outDir, candidate),
+    }));
 }
 
-async function extractCampaignBulletinText(tempRoot: string, target: CampaignBulletinTarget): Promise<NecDownloadResult> {
-  const { candidate, textPath } = target;
+async function extractCampaignBulletinText(target: CampaignBulletinTarget): Promise<NecDownloadResult> {
+  const { candidate, pdfPath, textPath } = target;
   const pdf = candidate.campaignBulletinPdf;
+  const pdfRelativePath = relative(repoRoot, pdfPath);
   const textRelativePath = relative(repoRoot, textPath);
 
   if (!pdf) {
@@ -198,11 +256,20 @@ async function extractCampaignBulletinText(tempRoot: string, target: CampaignBul
   try {
     let downloadStatus = "skipped";
     let extractStatus = "skipped";
+    let extractMode: string | undefined;
 
-    if (!(await pathExists(textPath))) {
-      const tempPdfPath = join(tempRoot, `${safeName(candidate.id)}.pdf`);
-      downloadStatus = await downloadFile(pdf.downloadUrl, tempPdfPath);
-      extractStatus = await extractText(tempPdfPath, textPath);
+    if (!(await pathExists(pdfPath))) {
+      downloadStatus = await downloadFile(pdf.downloadUrl, pdfPath);
+    }
+
+    const textExists = await pathExists(textPath);
+    const existingText = textExists ? await readFile(textPath, "utf8") : "";
+    const shouldExtract = hasFlag("force") || !textExists || !hasMeaningfulExtractedText(existingText);
+
+    if (shouldExtract) {
+      const result = await extractText(pdfPath, textPath);
+      extractStatus = result.status;
+      extractMode = result.mode;
     }
 
     return {
@@ -214,10 +281,11 @@ async function extractCampaignBulletinText(tempRoot: string, target: CampaignBul
       raceName: candidate.raceName,
       requestedFileName: pdf.requestedFileName,
       requestedFullPath: pdf.requestedFullPath,
-      pdfPath: null,
+      pdfPath: pdfRelativePath,
       textPath: textRelativePath,
       downloadStatus,
       extractStatus,
+      extractMode,
     };
   } catch (error) {
     return {
@@ -229,7 +297,7 @@ async function extractCampaignBulletinText(tempRoot: string, target: CampaignBul
       raceName: candidate.raceName,
       requestedFileName: pdf.requestedFileName,
       requestedFullPath: pdf.requestedFullPath,
-      pdfPath: null,
+      pdfPath: pdfRelativePath,
       textPath: textRelativePath,
       downloadStatus: "failed",
       extractStatus: "failed",
@@ -277,20 +345,16 @@ const limit = Number(readArg("limit", "0"));
 const concurrency = Number(readArg("concurrency", "2"));
 const cache = await readJson<NecCandidatesCache>(candidatesPath);
 const targets = applyLimit(buildTargets(cache.candidates, outDir), limit);
-const tempRoot = await mkdtemp(join(tmpdir(), "nec-campaign-bulletins-"));
 
 console.log(`[bulletin] ${targets.length} campaign bulletin text targets, concurrency=${concurrency}`);
 
-try {
-  const results = await runLimited(targets, concurrency, async (target, index) => {
-    const result = await extractCampaignBulletinText(tempRoot, target);
-    const label = target.candidate.name || target.candidate.partyName || target.candidate.id;
-    console.log(`[bulletin] ${index + 1}/${targets.length} ${label}: ${result.extractStatus}`);
-    return result;
-  });
+const results = await runLimited(targets, concurrency, async (target, index) => {
+  const result = await extractCampaignBulletinText(target);
+  const label = target.candidate.name || target.candidate.partyName || target.candidate.id;
+  const modeText = result.extractMode ? `:${result.extractMode}` : "";
+  console.log(`[bulletin] ${index + 1}/${targets.length} ${label}: ${result.extractStatus}${modeText}`);
+  return result;
+});
 
-  await mergeDownloadResults(downloadsPath, results);
-  console.log(`[bulletin] merged ${results.length} campaign bulletin entries into ${relative(repoRoot, downloadsPath)}`);
-} finally {
-  await rm(tempRoot, { recursive: true, force: true });
-}
+await mergeDownloadResults(downloadsPath, results);
+console.log(`[bulletin] merged ${results.length} campaign bulletin entries into ${relative(repoRoot, downloadsPath)}`);
