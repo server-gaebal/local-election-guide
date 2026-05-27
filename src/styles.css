@@ -143,6 +143,13 @@ h1 {
   padding-right: 12px;
 }
 
+.field-hint {
+  margin: 6px 0 0;
+  color: #5f6661;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
 .profile-switch {
   display: grid;
   grid-column: 1 / 5;
