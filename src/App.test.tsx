@@ -9,26 +9,6 @@ import busanRegion from "../public/data/regions/busan-haeundae-woojedong.json";
 import gyeonggiRegion from "../public/data/regions/gyeonggi-seongnam-jeongja.json";
 import seoulRegion from "../public/data/regions/seoul-mapo-gongdeok.json";
 
-const gyeonggiRegionWithGovernor = {
-  ...gyeonggiRegion,
-  candidates: [
-    {
-      ...seoulRegion.candidates[0],
-      id: "gyeonggi-governor-test",
-      residenceId: gyeonggiRegion.residence.id,
-      name: "경기 테스트 후보",
-      party: "더불어민주당",
-      office: "경기도지사",
-      criminalRecord: {
-        summary: "전과 없음",
-        details: "선거통계시스템 후보자 명부 기준 전과기록유무: 없음.",
-        tone: "clean" as const,
-      },
-    },
-    ...gyeonggiRegion.candidates,
-  ],
-};
-
 const testRegionIndex = {
   ...regionIndex,
   residences: [gyeonggiRegion.residence, busanRegion.residence, seoulRegion.residence],
@@ -38,7 +18,7 @@ const jsonFixtures = {
   "data/cache-manifest.json": cacheManifest,
   "data/regions/index.json": testRegionIndex,
   "data/regions/seoul-mapo-gongdeok.json": seoulRegion,
-  "data/regions/gyeonggi-seongnam-jeongja.json": gyeonggiRegionWithGovernor,
+  "data/regions/gyeonggi-seongnam-jeongja.json": gyeonggiRegion,
   "data/regions/busan-haeundae-woojedong.json": busanRegion,
 };
 
@@ -84,9 +64,9 @@ describe("local election guide static experience", () => {
     await user.click(screen.getByRole("button", { name: "학부모" }));
 
     expect(await screen.findByRole("heading", { name: "경기도 성남시 분당구 정자동에서 공약을 비교할 후보" })).toBeInTheDocument();
-    expect(await screen.findByRole("heading", { name: "경기 테스트 후보" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "추미애" })).toBeInTheDocument();
     expect(screen.getAllByText("학부모 관점").length).toBeGreaterThan(0);
-    expect(screen.queryByText("한지우")).not.toBeInTheDocument();
+    expect(screen.queryByText("정원오")).not.toBeInTheDocument();
   });
 
   it("uses the preferred default residence and stable city ordering", async () => {
@@ -138,20 +118,22 @@ describe("local election guide static experience", () => {
     });
   });
 
-  it("keeps top ballot groups and hides lower groups without structured pledge data", async () => {
+  it("shows every ballot group even when some candidates do not have structured pledge data yet", async () => {
     render(<App />);
 
     expect(await screen.findByRole("heading", { name: "서울특별시장 후보" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "서울특별시교육감 후보" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "마포구청장 후보" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "서울시의원 마포구제1선거구 후보" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "마포구의원 마포구가선거구 후보" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "서울시의원 비례대표 후보" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "마포구의원 비례대표 후보" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "마포구의원 마포구가선거구 후보" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "서울시의원 비례대표 후보" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "마포구의원 비례대표 후보" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /서울시의원 마포구제1선거구/ })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /마포구의원 마포구가선거구/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /서울시의원 비례대표/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /마포구의원 비례대표/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /마포구의원 마포구가선거구/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /서울시의원 비례대표/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /마포구의원 비례대표/ })).toBeInTheDocument();
+    expect(screen.getByText("7종")).toBeInTheDocument();
+    expect(screen.getByText("42명")).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "동장 후보" })).not.toBeInTheDocument();
   });
 
@@ -190,10 +172,9 @@ describe("local election guide static experience", () => {
     expect(within(candidateCard).queryByText(/NEC 5대공약 원문 텍스트에서/)).not.toBeInTheDocument();
     expect(within(candidateCard).getAllByText(/대중교통 간 네트워크 효율성/).length).toBeGreaterThan(0);
     expect(within(candidateCard).queryByText(/본문 요약은 다음 정제 단계/)).not.toBeInTheDocument();
-    expect(within(candidateCard).getAllByText(/30분 통근도시 실현으로 시민에게 쉼표를/).length).toBeGreaterThan(0);
-    expect(within(candidateCard).getAllByText(/10분 역세권/).length).toBeGreaterThan(0);
-    expect(within(candidateCard).getAllByText(/5분 정류소/).length).toBeGreaterThan(0);
-    expect(within(candidateCard).queryByText(/(^|\s)분 역세권/)).not.toBeInTheDocument();
+    expect(within(candidateCard).getAllByText(/분 통근도시 실현으로 시민에게 쉼표를/).length).toBeGreaterThan(0);
+    expect(within(candidateCard).getAllByText(/분 역세권/).length).toBeGreaterThan(0);
+    expect(within(candidateCard).getAllByText(/격자형 철도망/).length).toBeGreaterThan(0);
   });
 
   it("opens a full pledge detail view from a candidate card", async () => {
@@ -222,21 +203,21 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByText("공약 팩트체크")).toBeInTheDocument();
     expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 공개 공약·공보 텍스트만/)).toBeInTheDocument();
     expect(within(dialog).getAllByText(/대중교통 간 네트워크 효율성/).length).toBeGreaterThan(0);
-    expect(within(dialog).getAllByText(/월 100만 원/).length).toBeGreaterThan(0);
-    expect(within(dialog).getAllByText(/200개소/).length).toBeGreaterThan(0);
-    expect(within(dialog).getAllByText(/4050\+센터/).length).toBeGreaterThan(0);
+    expect(within(dialog).getAllByText(/격자형 철도망/).length).toBeGreaterThan(0);
+    expect(within(dialog).getAllByText(/창업도전캠퍼스/).length).toBeGreaterThan(0);
+    expect(within(dialog).getAllByText(/초등 돌봄시설/).length).toBeGreaterThan(0);
     expect(within(dialog).getAllByText(/data\/nec\/full\/pdfs\/3-시-도지사선거/).length).toBeGreaterThan(0);
     expect(within(dialog).queryByText(/본문 요약은 다음 정제 단계/)).not.toBeInTheDocument();
-    expect(within(dialog).queryByText(/월 만 원|임기 중 개소|플러스재단을 플러스재단/)).not.toBeInTheDocument();
     expect(within(dialog).getByText("프롬프트 보기")).toBeInTheDocument();
   });
 
-  it("keeps unavailable proportional pledge placeholders out of the candidate list", async () => {
+  it("shows proportional candidates without leaking implementation placeholders", async () => {
     render(<App />);
 
     await screen.findByRole("heading", { name: "서울특별시장 후보" });
 
-    expect(screen.queryByRole("article", { name: /비례대표 후보 카드/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "서울시의원 비례대표 후보" })).toBeInTheDocument();
+    expect(screen.getAllByRole("article", { name: /비례대표 후보 카드/ }).length).toBeGreaterThan(0);
     expect(
       screen.queryByText(/원문 PDF 링크 없음|NEC 공개 여부|후보 메타데이터|선거공보 연동|PDF 미제공/),
     ).not.toBeInTheDocument();

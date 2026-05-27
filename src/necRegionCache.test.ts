@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Residence } from "./electionTypes";
-import { createCandidateInfoIndex } from "./necCandidateInfo";
+import { createCandidateInfoIndex, type NecCandidateInfoRecord } from "./necCandidateInfo";
 import {
   buildResidenceDatasetFromNec,
   extractPledges,
@@ -73,6 +73,31 @@ function necRow(overrides: Partial<NecNormalizedCandidate>): NecNormalizedCandid
           }
         : overrides.fivePledgePdf,
     campaignBulletinPdf: overrides.campaignBulletinPdf ?? null,
+  };
+}
+
+function candidateInfoRecord(overrides: Partial<NecCandidateInfoRecord>): NecCandidateInfoRecord {
+  return {
+    candidateId: overrides.candidateId ?? "100",
+    districtName: overrides.districtName ?? "서울특별시",
+    number: overrides.number ?? "1",
+    partyName: overrides.partyName ?? "더불어민주당",
+    name: overrides.name ?? "정원오",
+    gender: overrides.gender ?? "남",
+    birthDate: overrides.birthDate ?? "1968.08.12",
+    age: overrides.age ?? 57,
+    address: overrides.address ?? "서울특별시 성동구",
+    occupation: overrides.occupation ?? "정당인",
+    education: overrides.education ?? "한양대학교 도시대학원 박사 수료",
+    career: overrides.career ?? "(전)성동구청장",
+    assets: overrides.assets ?? "1,823,897",
+    military: overrides.military ?? "군복무를 마친사람",
+    taxPaid: overrides.taxPaid ?? "84,423",
+    taxArrearsFiveYears: overrides.taxArrearsFiveYears ?? "0",
+    taxCurrentArrears: overrides.taxCurrentArrears ?? "0",
+    crimeRecord: overrides.crimeRecord ?? "없음",
+    electionCount: overrides.electionCount ?? "0회",
+    crimeDisclosureFiles: overrides.crimeDisclosureFiles ?? [],
   };
 }
 
@@ -348,6 +373,106 @@ o 이행 방법
     ]);
   });
 
+  it("extracts compact local pledge headings before candidate disclosure tables", () => {
+    const text = `
+김춘화의우리지역공약
+삼락동삼락천악취문제
+덕포시장&북부산시장활성화마중물역할
+감전동감전시장활성화
+우리지역함께열어가는공동체
+괘법동신속한재개발추진과철저한공정관리
+후보자정보공개자료
+사상구의회의원선거(가선거구)
+1. 인적사항
+`;
+
+    expect(extractPledges(text).map((pledge) => pledge.title)).toEqual([
+      "삼락동삼락천악취문제",
+      "덕포시장&북부산시장활성화마중물역할",
+      "감전동감전시장활성화",
+      "우리지역함께열어가는공동체",
+      "괘법동신속한재개발추진과철저한공정관리",
+    ]);
+  });
+
+  it("extracts local pledge lists around a standalone bulletin pledge heading", () => {
+    const text = `
+· 정의당 은평갑위원회 사무국장
+· 권영국 당대표 사회복지정책 특보
+약력 · 노회찬 · 심상정 사회복지정책 특보
+은평구의회 외유성 출장 금지
+소수자 · 여성 · 아이가 안전한 은평구, 안전 종합 점검
+공약
+보건복지 사각지대 발굴 봉산 · 불광천 난개발 금지
+모바일 의정보고서 및 기타 자료 발행
+`;
+
+    expect(extractPledges(text).map((pledge) => pledge.title)).toEqual([
+      "은평구의회 외유성 출장 금지",
+      "소수자 · 여성 · 아이가 안전한 은평구, 안전 종합…",
+      "보건복지 사각지대 발굴 봉산 · 불광천 난개발 금지",
+      "모바일 의정보고서 및 기타 자료 발행",
+    ]);
+  });
+
+  it("extracts bullet-style local promises with additional action words", () => {
+    const text = `
+• 주거 지역 주차 문제의 획기적인 개선책 마련
+• 동대구 역에서 창원중앙역, 부산신항까지 철도 직선화
+• 경노당 급식도우미 지원
+`;
+
+    expect(extractPledges(text).map((pledge) => pledge.title)).toEqual([
+      "주거 지역 주차 문제의 획기적인 개선책 마련",
+      "동대구 역에서 창원중앙역, 부산신항까지 철도 직선화",
+      "경노당 급식도우미 지원",
+    ]);
+  });
+
+  it("extracts explicit representative pledges without opening disclosure tables", () => {
+    const text = `
+후보 중 유일한 현역, 당선 즉시 일합니다!
+대표공약 신속한 재개발·재건축, 지금 바로 시작 !!
+윤보수(선거공보)_레이아웃 1 26. 5. 16. 오후 2:52 페이지 4
+`;
+
+    expect(extractPledges(text).map((pledge) => pledge.title)).toEqual(["신속한 재개발·재건축, 지금 바로 시작 !!"]);
+  });
+
+  it("does not synthesize pledge items when a bulletin says there are no pledges", () => {
+    const text = `
+아산시의회의원선거(아산시 라선거구)
+“ 저는 공약이 없습니다 ”
+후보자정보공개자료
+아산시의회의원선거 (아산시 라선거구)
+`;
+
+    expect(extractPledges(text)).toEqual([]);
+  });
+
+  it("keeps a campaign bulletin source fallback when OCR has no structured pledge text", () => {
+    const text = `
+책자형 선거공보
+성북구제1선거구
+현) 성북구 26년 거주
+현) 국민의힘 서울시의원 후보
+서강대학교 공공정책대학원 졸업
+
+후보자정보공개자료
+서울특별시의회의원선거 (성북구제1선거구)
+1. 인적사항
+2. 재산상황 및 병역사항
+3. 세금납부.체납실적 및 전과기록
+`;
+
+    expect(extractPledges(text)).toEqual([
+      {
+        title: "선거공보 원문 확인 가능",
+        detail: "선거공보 원문 OCR 텍스트가 확보되어 있습니다. 자동으로 구조화 가능한 공약 문장이 부족해 원문 확인이 필요합니다.",
+      },
+    ]);
+  });
+
   it("strips repeated title labels from extracted pledge titles", () => {
     const text = `
 공약순위         제목    분 통근도시 실현으로 시민에게 쉼표를
@@ -358,6 +483,28 @@ o 이행 방법
 `;
 
     expect(extractPledgeTitles(text)).toEqual(["분 통근도시 실현으로 시민에게 쉼표를"]);
+  });
+
+  it("keeps OCR pledge titles on the title line instead of absorbing details", () => {
+    const text = `
+가 1 제목 : 어르신, 청년, 장애인 일자리 및 권익 창출
+목표
+O 세대별 맞춤 일자리 패키지로 모두가 자긍심 갖고 일할 수 있는 도시를 만들겠습니다.
+
+공약순위: 2 AS: 재개발, 재건축 조속 실행 및 소상공인 지원
+1} =
+O 원스톱 추진단으로 인허가 절반 단축, 소상공인 상권 보호도 함께 챙기겠습니다.
+
+공약순위: 3 제목 : 신평 예비군 훈련장 부지 복합체육문화시설
+Oz 7 0
+O 장기간 표류된 부지를 부산시, 국방부와 직접 협상해 복합 시설로 만들겠습니다.
+`;
+
+    expect(extractPledgeTitles(text)).toEqual([
+      "어르신, 청년, 장애인 일자리 및 권익 창출",
+      "재개발, 재건축 조속 실행 및 소상공인 지원",
+      "신평 예비군 훈련장 부지 복합체육문화시설",
+    ]);
   });
 
   it("prefers implementation method details so voters can see how a pledge would be done", () => {
@@ -383,7 +530,7 @@ o 이행 방법
     });
   });
 
-  it("does not turn candidate disclosure tables into campaign bulletin pledges", () => {
+  it("keeps source fallback without turning disclosure tables into campaign bulletin pledges", () => {
     const text = `
 책자형선거공보 | 경기도의회의원선거 / 가평군 선거구
 가평 예산,
@@ -402,7 +549,12 @@ o 이행 방법
                어르신 및 교통약자 교통사각지대 해소                                                                     관광연계형 활성화 시범사업 도입 추진
 `;
 
-    expect(extractPledges(text)).toEqual([]);
+    expect(extractPledges(text)).toEqual([
+      {
+        title: "가평 예산, 바꾸겠습니다!",
+        detail: "가평 예산, 바꾸겠습니다!",
+      },
+    ]);
   });
 
   it("builds the selected residence ballot from matching NEC districts only", () => {
@@ -496,6 +648,7 @@ o 이행 방법
           districtName: "서울특별시",
           name: "",
           partyName: "국민의힘",
+          candidateId: "",
           candidateNumber: "",
           fivePledgePdf: null,
         }),
@@ -506,6 +659,7 @@ o 이행 방법
           districtName: "마포구",
           name: "",
           partyName: "더불어민주당",
+          candidateId: "",
           candidateNumber: "",
           fivePledgePdf: null,
         }),
@@ -522,6 +676,9 @@ o 이행 방법
       "마포구의원 비례대표",
     ]);
     expect(dataset.candidates.map((candidate) => candidate.name)).toContain("국민의힘 비례대표");
+    const proportionalCandidate = dataset.candidates.find((candidate) => candidate.name === "국민의힘 비례대표");
+    expect(proportionalCandidate?.cache.policyPdf).toContain("policy.nec.go.kr");
+    expect(proportionalCandidate?.publicRecord).toContain("정책공약마당 원문 있음");
     expect(dataset.candidates.map((candidate) => candidate.name)).not.toContain("한기영");
     expect(dataset.candidates[0].age).toBe(57);
     expect(dataset.candidates[0].criminalRecord.summary).toBe("전과 2건");
@@ -554,6 +711,66 @@ o 이행 방법
     expect(noDocumentCandidate?.pledgeHighlights).toEqual([]);
     expect(noDocumentCandidate?.fullPledges).toEqual([]);
     expect(dataset.source.mode).toBe("nec");
+  });
+
+  it("uses candidate disclosure as an official fallback source when pledge PDFs are absent", () => {
+    const dataset = buildResidenceDatasetFromNec({
+      residence: suwonResidence,
+      generatedAt: "2026-05-26T13:30:00+09:00",
+      downloads: new Map(),
+      candidateInfo: createCandidateInfoIndex([
+        candidateInfoRecord({
+          candidateId: "400",
+          districtName: "수원시제1선거구",
+          name: "광역후보",
+          occupation: "경기도의회의원",
+        }),
+        candidateInfoRecord({
+          candidateId: "500",
+          districtName: "수원시나선거구",
+          name: "기초후보",
+          occupation: "수원시의회의원",
+        }),
+      ]),
+      candidates: [
+        necRow({ id: "governor", raceTypeCode: "3", raceName: "시·도지사선거", districtName: "경기도", name: "도지사후보" }),
+        necRow({ id: "education", raceTypeCode: "11", raceName: "교육감선거", districtName: "경기도", name: "교육감후보" }),
+        necRow({ id: "head", raceTypeCode: "4", raceName: "구·시·군의 장선거", districtName: "수원시", name: "시장후보" }),
+        necRow({
+          id: "city-council",
+          raceTypeCode: "5",
+          raceName: "시·도의회의원선거",
+          districtName: "수원시제1선거구",
+          candidateId: "400",
+          name: "광역후보",
+          fivePledgePdf: null,
+          campaignBulletinPdf: null,
+        }),
+        necRow({
+          id: "local-council",
+          raceTypeCode: "6",
+          raceName: "구·시·군의회의원선거",
+          districtName: "수원시나선거구",
+          candidateId: "500",
+          name: "기초후보",
+          fivePledgePdf: null,
+          campaignBulletinPdf: null,
+        }),
+      ],
+    });
+
+    const priorityCandidate = dataset.candidates.find((candidate) => candidate.name === "광역후보");
+    const lowerCandidate = dataset.candidates.find((candidate) => candidate.name === "기초후보");
+
+    expect(priorityCandidate?.cache.policyPdf).toContain("info.nec.go.kr");
+    expect(priorityCandidate?.publicRecord).toContain("후보자 정보공개 원문 있음");
+    expect(priorityCandidate?.focusTags).toContain("후보자 정보공개");
+    expect(priorityCandidate?.candidateTraits).toContain("근거 자료: 후보자 정보공개");
+    expect(priorityCandidate?.comparison).toContain("후보자 정보공개 원문");
+    expect(priorityCandidate?.cache.policyPdf).not.toBe("NEC row metadata only");
+    expect(lowerCandidate?.cache.policyPdf).toContain("info.nec.go.kr");
+    expect(lowerCandidate?.publicRecord).toContain("후보자 정보공개 원문 있음");
+    expect(lowerCandidate?.focusTags).toContain("후보자 정보공개");
   });
 
   it("uses election scope embedded in generated nationwide residences", () => {
