@@ -1055,7 +1055,7 @@ function CandidateCard({
 }) {
   const comparisonPreview = getVoterComparisonPreview(candidate, ballotCandidates);
   const comparisonCardDetails = getVoterComparisonCardDetails(candidate, ballotCandidates);
-  const factCheckReview = getCandidateFactCheck(candidate.id);
+  const factCheckReview = getCandidateFactCheck(candidate);
   const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
   const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
   const displayPledges = getDisplayPledges(candidate, sourcePledges);
@@ -1224,7 +1224,7 @@ function CandidateDialog({
   onClose: () => void;
 }) {
   const comparisonDetails = getVoterComparisonDetails(candidate, ballotCandidates);
-  const factCheckReview = getCandidateFactCheck(candidate.id);
+  const factCheckReview = getCandidateFactCheck(candidate);
   const personaReview = getCandidatePersonaReviewForCandidate(candidate, profile);
   const sourcePledges = getCandidatePersonaSourcePledges(candidate.id);
   const displayPledges = getDisplayPledges(candidate, sourcePledges);
