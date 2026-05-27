@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>관심 라이벌 기능 확인 리포트</title>
+    <style>
+      :root {
+        color: #18211f;
+        background: #f6f5f1;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      main {
+        width: min(1040px, 100%);
+        margin: 0 auto;
+        padding: 28px;
+      }
+
+      header,
+      section {
+        margin-bottom: 16px;
+        padding: 18px;
+        background: #fffdf8;
+        border: 1px solid #e3ded2;
+        border-radius: 8px;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+        font-size: 1.9rem;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      p,
+      li {
+        line-height: 1.58;
+      }
+
+      ul {
+        margin-bottom: 0;
+      }
+
+      a {
+        color: #0f5f53;
+        font-weight: 800;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .meta span,
+      code {
+        padding: 4px 7px;
+        background: #f1eee7;
+        border-radius: 7px;
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+
+      .checks {
+        display: grid;
+        gap: 8px;
+        padding-left: 0;
+        list-style: none;
+      }
+
+      .checks li::before {
+        content: "✓ ";
+        color: #0f766e;
+        font-weight: 900;
+      }
+
+      .screens {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      figure {
+        margin: 0;
+      }
+
+      img {
+        width: 100%;
+        border: 1px solid #d9d2c3;
+        border-radius: 8px;
+      }
+
+      figcaption {
+        margin-top: 6px;
+        color: #5a5147;
+        font-size: 0.88rem;
+        font-weight: 800;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          padding: 16px;
+        }
+
+        .screens {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>관심 라이벌 기능 확인 리포트</h1>
+        <p>
+          기존 후보 목록과 분리된 <strong>초접전 라이벌</strong> 탭을 추가했습니다. 2026-05-27
+          인터넷 기사 종합 기준으로 서울·부산·대구·충남·충북의 후보 2명 라이벌 구도를 한 화면에서 비교합니다.
+        </p>
+        <div class="meta">
+          <span>작성일: 2026-05-27</span>
+          <span>브랜치: feature/legal-dong-search-aliases</span>
+          <span>앱 URL: http://127.0.0.1:5173/</span>
+        </div>
+      </header>
+
+      <section>
+        <h2>구현 내용</h2>
+        <ul>
+          <li><code>내 지역 후보</code>와 <code>초접전 라이벌</code>을 별도 탭으로 분리했습니다.</li>
+          <li><code>?view=rivalries</code>로 직접 진입하면 라이벌 탭이 선택되도록 URL 상태를 연결했습니다.</li>
+          <li><code>src/hotRivalries.ts</code>에 서울·부산·대구·충남·충북 접전 대진과 기사 근거를 추가했습니다.</li>
+          <li>라이벌 후보를 누르면 기존 후보 상세 공약 패널이 열립니다.</li>
+          <li>선택 지역이 아닌 접전 카드는 후보명 중심으로 보여주고, 해당 지역 후보 보기 버튼을 제공합니다.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>검색 근거</h2>
+        <ul>
+          <li>
+            종합:
+            <a href="https://www.newspim.com/news/view/20260526000890">뉴스핌 전국 7개 지역 광역 판세 종합</a>
+          </li>
+          <li>
+            서울:
+            <a href="https://www.newspim.com/news/view/20260526001189">뉴스핌 서울시장 정원오 vs 오세훈 보도</a>,
+            <a href="https://biz.chosun.com/policy/politics/election/2026/05/21/IZVN7IFC4JASHBR4RMW7TAGRDU/">조선비즈 초접전 보도</a>
+          </li>
+          <li>
+            부산:
+            <a href="https://www.newspim.com/news/view/20260525000137">뉴스핌 부산시장 전재수 vs 박형준 보도</a>,
+            <a href="https://www.newsis.com/view/NISX20260522_0003641544">뉴시스 주요 격전지 판세 보도</a>
+          </li>
+          <li>
+            대구:
+            <a href="https://imnews.imbc.com/news/2026/politics/article/6823379_36912.html">MBC 김부겸 vs 추경호 접전 보도</a>,
+            <a href="https://www.khan.co.kr/article/202605220600041">경향신문 대구 초접전 분석</a>
+          </li>
+          <li>충남·충북: 뉴스핌 전국 판세 종합 기사 기준으로 각각 박수현 vs 김태흠, 신용한 vs 김영환을 반영했습니다.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>뉴스 종합 판단</h2>
+        <ul>
+          <li>부산·충남은 최신 종합 기사에서 가장 명확한 초접전 권역입니다. 특히 충남은 0.4%p 차로 투표율 변동성이 큽니다.</li>
+          <li>대구·충북은 오차범위 내 접전으로 분류했습니다. 대구는 보수 결집과 지역경제 이슈, 충북은 현역 평가와 청주권 표심이 핵심입니다.</li>
+          <li>서울은 최신 뉴스핌 조사만 보면 오차범위 밖 우세지만, 뉴시스·조선비즈 등 다른 기사에서 초박빙 흐름이 확인돼 관심 라이벌로 유지했습니다.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>검증 결과</h2>
+        <ul class="checks">
+          <li><code>npx vitest run src/App.hotRivalries.test.tsx</code> 통과</li>
+          <li><code>npm test</code> 통과: 12개 파일, 77개 테스트</li>
+          <li><code>npm run build</code> 통과: data build, TypeScript, Vite production build</li>
+          <li>Headless Chrome 데스크톱/모바일 캡처 확인</li>
+          <li>CDP 확인: <code>?view=rivalries</code>에서 초접전 라이벌 탭 선택, 대구·충북 카드 렌더링, 모바일 가로 오버플로 없음</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>화면 캡처</h2>
+        <div class="screens">
+          <figure>
+            <img src="hot-rivalry-tabs-desktop.png" alt="데스크톱 초접전 라이벌 탭 캡처" />
+            <figcaption>데스크톱 초접전 라이벌 탭</figcaption>
+          </figure>
+          <figure>
+            <img src="hot-rivalry-tabs-mobile-tall.png" alt="모바일 초접전 라이벌 탭 캡처" />
+            <figcaption>모바일 초접전 라이벌 탭</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

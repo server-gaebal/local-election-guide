@@ -35,6 +35,10 @@ import {
 } from "./electionTypes";
 import { getCandidateFactCheck } from "./factChecks";
 import {
+  searchBackedRivalries,
+  type HotRivalryDefinition,
+} from "./hotRivalries";
+import {
   getCandidatePersonaReviewForCandidate,
   getCandidatePersonaSourcePledges,
   personaReviewScopeNotice,
@@ -54,6 +58,14 @@ type BallotGroup = {
   race: RaceType;
   order: number;
   candidates: Candidate[];
+};
+
+type ActiveView = "candidates" | "rivalries";
+
+type RivalryCard = HotRivalryDefinition & {
+  candidates: [Candidate, Candidate] | null;
+  representativeResidence: Residence | null;
+  isSelectedRegion: boolean;
 };
 
 const raceOrder: Record<RaceType, number> = {
@@ -239,6 +251,14 @@ function findResidenceFromUrl(residences: Residence[]) {
   return residences.find((residence) => residence.id === residenceId) ?? null;
 }
 
+function findActiveViewFromUrl(): ActiveView {
+  if (typeof window === "undefined") {
+    return "candidates";
+  }
+
+  return new URLSearchParams(window.location.search).get("view") === "rivalries" ? "rivalries" : "candidates";
+}
+
 function replaceResidenceInUrl(residenceId: string) {
   if (typeof window === "undefined") {
     return;
@@ -246,6 +266,22 @@ function replaceResidenceInUrl(residenceId: string) {
 
   const url = new URL(window.location.href);
   url.searchParams.set("region", residenceId);
+  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+function replaceActiveViewInUrl(view: ActiveView) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+
+  if (view === "rivalries") {
+    url.searchParams.set("view", view);
+  } else {
+    url.searchParams.delete("view");
+  }
+
   window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
@@ -292,6 +328,21 @@ function createBallotGroups(candidateList: Candidate[]): BallotGroup[] {
     .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 }
 
+function resolveRivalryCandidates(
+  candidates: Candidate[],
+  rivalry: HotRivalryDefinition,
+): [Candidate, Candidate] | null {
+  const pair = rivalry.candidateNames.map((name) =>
+    candidates.find((candidate) => candidate.office === rivalry.office && candidate.name === name),
+  );
+
+  return pair[0] && pair[1] ? [pair[0], pair[1]] : null;
+}
+
+function findRepresentativeResidence(residences: Residence[], rivalry: HotRivalryDefinition) {
+  return residences.find((residence) => residence.city === rivalry.city) ?? null;
+}
+
 export function App() {
   const [manifest, setManifest] = useState<CacheManifest | null>(null);
   const [regionIndex, setRegionIndex] = useState<RegionIndex | null>(null);
@@ -304,6 +355,7 @@ export function App() {
   const [profile, setProfile] = useState<VoterProfile>("청년");
   const [largeText, setLargeText] = useState(false);
   const [ballotFilter, setBallotFilter] = useState<BallotFilter>(allRaces);
+  const [activeView, setActiveView] = useState<ActiveView>(() => findActiveViewFromUrl());
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [shareStatus, setShareStatus] = useState<"idle" | "done">("idle");
 
@@ -445,6 +497,21 @@ export function App() {
     () => ballotGroups.reduce((sum, group) => sum + group.candidates.length, 0),
     [ballotGroups],
   );
+  const rivalryCards = useMemo<RivalryCard[]>(
+    () =>
+      searchBackedRivalries.map((rivalry) => ({
+        ...rivalry,
+        candidates: selectedResidence?.city === rivalry.city ? resolveRivalryCandidates(regionalCandidates, rivalry) : null,
+        representativeResidence: findRepresentativeResidence(residences, rivalry),
+        isSelectedRegion: selectedResidence?.city === rivalry.city,
+      })),
+    [regionalCandidates, residences, selectedResidence?.city],
+  );
+
+  const selectActiveView = (nextView: ActiveView) => {
+    setActiveView(nextView);
+    replaceActiveViewInUrl(nextView);
+  };
 
   const selectResidence = (nextResidence: Residence, options?: { searchLabel?: string }) => {
     setCity(nextResidence.city);
@@ -455,6 +522,11 @@ export function App() {
     setSelectedCandidate(null);
     setShareStatus("idle");
     setRegionSearch(options?.searchLabel ?? "");
+  };
+
+  const handleRivalryResidenceSelect = (nextResidence: Residence) => {
+    selectResidence(nextResidence, { searchLabel: formatResidenceLabel(nextResidence) });
+    selectActiveView("candidates");
   };
 
   const handleCityChange = (nextCity: string) => {
@@ -704,88 +776,136 @@ export function App() {
         </div>
       </section>
 
-      <section className="workspace">
-        <aside className="filter-rail" aria-label="투표지 필터">
-          <div className="rail-title">
-            <Filter aria-hidden="true" size={16} />
-            <span>투표지</span>
-          </div>
-          <div className="race-list">
-            {ballotOptions.map((ballotId) => {
-              const group = ballotGroups.find((item) => item.id === ballotId);
-              const label = group?.title.replace(/ 후보$/, "") ?? allRaces;
+      <div className="view-tabs" role="tablist" aria-label="화면 전환">
+        <button
+          id="view-candidates-tab"
+          type="button"
+          role="tab"
+          aria-selected={activeView === "candidates"}
+          aria-controls="view-candidates-panel"
+          className={activeView === "candidates" ? "view-tab is-active" : "view-tab"}
+          onClick={() => selectActiveView("candidates")}
+        >
+          <Vote aria-hidden="true" size={17} />
+          <span>내 지역 후보</span>
+        </button>
+        <button
+          id="view-rivalries-tab"
+          type="button"
+          role="tab"
+          aria-selected={activeView === "rivalries"}
+          aria-controls="view-rivalries-panel"
+          className={activeView === "rivalries" ? "view-tab is-active" : "view-tab"}
+          onClick={() => selectActiveView("rivalries")}
+        >
+          <Scale aria-hidden="true" size={17} />
+          <span>초접전 라이벌</span>
+        </button>
+      </div>
 
-              return (
-                <button
-                  key={ballotId}
-                  type="button"
-                  className={ballotId === ballotFilter ? "is-active" : ""}
-                  onClick={() => setBallotFilter(ballotId)}
-                >
-                  <Landmark aria-hidden="true" size={15} />
-                  <span>{label}</span>
-                </button>
-              );
-            })}
-          </div>
-          <div className="source-box">
-            <FileText aria-hidden="true" size={16} />
-            <span>{regionDataset?.source.sourceName ?? manifest.sourceName}</span>
-          </div>
-        </aside>
+      {activeView === "candidates" ? (
+        <div
+          id="view-candidates-panel"
+          role="tabpanel"
+          aria-labelledby="view-candidates-tab"
+          className="view-panel"
+        >
+          <section className="workspace">
+            <aside className="filter-rail" aria-label="투표지 필터">
+              <div className="rail-title">
+                <Filter aria-hidden="true" size={16} />
+                <span>투표지</span>
+              </div>
+              <div className="race-list">
+                {ballotOptions.map((ballotId) => {
+                  const group = ballotGroups.find((item) => item.id === ballotId);
+                  const label = group?.title.replace(/ 후보$/, "") ?? allRaces;
 
-        <section className="candidate-area" aria-label="후보 목록">
-          <div className="section-head">
-            <div>
-              <p className="eyebrow">{profile} 관점</p>
-              <h2>{`${selectedResidence.city} ${selectedResidence.district} ${selectedResidence.neighborhood}에서 공약을 비교할 후보`}</h2>
-            </div>
-            <div className="result-count">
-              <strong>{totalCandidateCount}</strong>
-              <span>명</span>
-            </div>
-          </div>
+                  return (
+                    <button
+                      key={ballotId}
+                      type="button"
+                      className={ballotId === ballotFilter ? "is-active" : ""}
+                      onClick={() => setBallotFilter(ballotId)}
+                    >
+                      <Landmark aria-hidden="true" size={15} />
+                      <span>{label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="source-box">
+                <FileText aria-hidden="true" size={16} />
+                <span>{regionDataset?.source.sourceName ?? manifest.sourceName}</span>
+              </div>
+            </aside>
 
-          {regionDataset && visibleBallotGroups.length > 0 ? (
-            <div className="candidate-sections">
-              {visibleBallotGroups.map((group) => (
-                <section className="ballot-section" key={group.id} aria-labelledby={`${group.id}-title`}>
-                  <header className="ballot-section__header">
-                    <div>
-                      <p>{group.race}</p>
-                      <h3 id={`${group.id}-title`}>{group.title}</h3>
-                    </div>
-                    <span>{group.candidates.length}명</span>
-                  </header>
-                  <div className="candidate-grid">
-                    {group.candidates.map((candidate) => (
-                      <CandidateCard
-                        key={candidate.id}
-                        candidate={candidate}
-                        ballotCandidates={group.candidates}
-                        profile={profile}
-                        onOpen={() => setSelectedCandidate(candidate)}
-                      />
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </div>
-          ) : regionDataset ? (
-            <div className="region-empty-state" aria-live="polite">
-              <FileText aria-hidden="true" size={18} />
-              <strong>표시할 후보 없음</strong>
-              <span>이 지역에는 현재 표시할 후보 자료가 없습니다.</span>
-            </div>
-          ) : (
-            <div className="region-loading" aria-live="polite">
-              <FileText aria-hidden="true" size={18} />
-              <span>후보자 자료 불러오는 중</span>
-            </div>
-          )}
-        </section>
+            <section className="candidate-area" aria-label="후보 목록">
+              <div className="section-head">
+                <div>
+                  <p className="eyebrow">{profile} 관점</p>
+                  <h2>{`${selectedResidence.city} ${selectedResidence.district} ${selectedResidence.neighborhood}에서 공약을 비교할 후보`}</h2>
+                </div>
+                <div className="result-count">
+                  <strong>{totalCandidateCount}</strong>
+                  <span>명</span>
+                </div>
+              </div>
 
-      </section>
+              {regionDataset && visibleBallotGroups.length > 0 ? (
+                <div className="candidate-sections">
+                  {visibleBallotGroups.map((group) => (
+                    <section className="ballot-section" key={group.id} aria-labelledby={`${group.id}-title`}>
+                      <header className="ballot-section__header">
+                        <div>
+                          <p>{group.race}</p>
+                          <h3 id={`${group.id}-title`}>{group.title}</h3>
+                        </div>
+                        <span>{group.candidates.length}명</span>
+                      </header>
+                      <div className="candidate-grid">
+                        {group.candidates.map((candidate) => (
+                          <CandidateCard
+                            key={candidate.id}
+                            candidate={candidate}
+                            ballotCandidates={group.candidates}
+                            profile={profile}
+                            onOpen={() => setSelectedCandidate(candidate)}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              ) : regionDataset ? (
+                <div className="region-empty-state" aria-live="polite">
+                  <FileText aria-hidden="true" size={18} />
+                  <strong>표시할 후보 없음</strong>
+                  <span>이 지역에는 현재 표시할 후보 자료가 없습니다.</span>
+                </div>
+              ) : (
+                <div className="region-loading" aria-live="polite">
+                  <FileText aria-hidden="true" size={18} />
+                  <span>후보자 자료 불러오는 중</span>
+                </div>
+              )}
+            </section>
+          </section>
+        </div>
+      ) : (
+        <div
+          id="view-rivalries-panel"
+          role="tabpanel"
+          aria-labelledby="view-rivalries-tab"
+          className="view-panel"
+        >
+          <HotRivalriesSection
+            rivalries={rivalryCards}
+            onOpenCandidate={(candidate) => setSelectedCandidate(candidate)}
+            onSelectResidence={handleRivalryResidenceSelect}
+          />
+        </div>
+      )}
 
       {selectedCandidate ? (
         <CandidateDialog
@@ -797,6 +917,137 @@ export function App() {
       ) : null}
 
     </main>
+  );
+}
+
+function HotRivalriesSection({
+  rivalries,
+  onOpenCandidate,
+  onSelectResidence,
+}: {
+  rivalries: RivalryCard[];
+  onOpenCandidate: (candidate: Candidate) => void;
+  onSelectResidence: (residence: Residence) => void;
+}) {
+  const updatedAt = rivalries[0]?.updatedAt ?? "2026-05-27";
+
+  return (
+    <section className="hot-rivalry" aria-label="관심 라이벌">
+      <header className="hot-rivalry__header">
+        <div>
+          <p className="eyebrow">기사 종합</p>
+          <h2>전국 초접전 라이벌</h2>
+        </div>
+        <span>{`${updatedAt} 검색 기준`}</span>
+      </header>
+
+      <div className="hot-rivalry__list">
+        {rivalries.map((rivalry) => (
+          <article
+            key={rivalry.id}
+            className={rivalry.isSelectedRegion ? "rivalry-card rivalry-card--selected" : "rivalry-card"}
+            aria-labelledby={`${rivalry.id}-title`}
+          >
+            <header className="rivalry-card__header">
+              <div>
+                <p className="eyebrow">{rivalry.interestLabel}</p>
+                <h3 id={`${rivalry.id}-title`}>{rivalry.title}</h3>
+              </div>
+              <span>{rivalry.city}</span>
+            </header>
+
+            <div className="hot-rivalry__matchup">
+              {rivalry.candidates ? (
+                <>
+                  <RivalryCandidate
+                    candidate={rivalry.candidates[0]}
+                    onOpen={() => onOpenCandidate(rivalry.candidates![0])}
+                  />
+                  <strong className="versus-badge">VS</strong>
+                  <RivalryCandidate
+                    candidate={rivalry.candidates[1]}
+                    onOpen={() => onOpenCandidate(rivalry.candidates![1])}
+                  />
+                </>
+              ) : (
+                <>
+                  <RivalryName name={rivalry.candidateNames[0]} office={rivalry.office} />
+                  <strong className="versus-badge">VS</strong>
+                  <RivalryName name={rivalry.candidateNames[1]} office={rivalry.office} />
+                </>
+              )}
+            </div>
+
+            {rivalry.issueTags.length > 0 ? (
+              <div className="hot-rivalry__issues" aria-label={`${rivalry.title} 주요 쟁점`}>
+                {rivalry.issueTags.map((issue) => (
+                  <span key={issue}>{issue}</span>
+                ))}
+              </div>
+            ) : null}
+
+            <p className="hot-rivalry__summary">{rivalry.interestSummary}</p>
+
+            <div className="rivalry-card__footer">
+              {rivalry.representativeResidence ? (
+                <button
+                  type="button"
+                  className="region-jump-button"
+                  onClick={() => onSelectResidence(rivalry.representativeResidence!)}
+                >
+                  <MapPin aria-hidden="true" size={14} />
+                  <span>이 지역 후보 보기</span>
+                </button>
+              ) : null}
+
+              {rivalry.sources.length > 0 ? (
+                <div className="source-links related-source-links" aria-label={`${rivalry.title} 관심도 근거`}>
+                  {rivalry.sources.map((source) => (
+                    <a key={source.url} href={source.url} target="_blank" rel="noreferrer" title={source.note}>
+                      <span>{source.name}</span>
+                      <ExternalLink aria-hidden="true" size={13} />
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RivalryName({ name, office }: { name: string; office: string }) {
+  return (
+    <div className="rivalry-name">
+      <span className="rivalry-candidate__office">{office}</span>
+      <strong>{name}</strong>
+      <span className="party-name">후보 데이터 선택 전</span>
+    </div>
+  );
+}
+
+function RivalryCandidate({ candidate, onOpen }: { candidate: Candidate; onOpen: () => void }) {
+  const primaryPledge = getCandidatePolicyLeads(candidate)[0] ?? candidate.pledgeHighlights[0] ?? candidate.pledgeSummary;
+
+  return (
+    <button
+      type="button"
+      className="rivalry-candidate"
+      style={{ "--candidate-color": candidate.color } as CSSProperties}
+      onClick={onOpen}
+      aria-label={`${candidate.name} 후보 상세 보기`}
+    >
+      <CandidatePhoto candidate={candidate} />
+      <span className="rivalry-candidate__body">
+        <span className="rivalry-candidate__office">{candidate.office}</span>
+        <strong>{candidate.name}</strong>
+        <span className="party-name">{candidate.party}</span>
+        <span className="rivalry-candidate__pledge">{primaryPledge}</span>
+      </span>
+      <ChevronRight aria-hidden="true" size={18} />
+    </button>
   );
 }
 
