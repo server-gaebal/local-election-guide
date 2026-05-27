@@ -16,7 +16,7 @@ const gyeonggiRegionWithGovernor = {
       ...seoulRegion.candidates[0],
       id: "gyeonggi-governor-test",
       residenceId: gyeonggiRegion.residence.id,
-      name: "추미애",
+      name: "경기 테스트 후보",
       party: "더불어민주당",
       office: "경기도지사",
       criminalRecord: {
@@ -84,7 +84,7 @@ describe("local election guide static experience", () => {
     await user.click(screen.getByRole("button", { name: "학부모" }));
 
     expect(await screen.findByRole("heading", { name: "경기도 성남시 분당구 정자동에서 공약을 비교할 후보" })).toBeInTheDocument();
-    expect(await screen.findByRole("heading", { name: "백서연" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "경기 테스트 후보" })).toBeInTheDocument();
     expect(screen.getAllByText("학부모 관점").length).toBeGreaterThan(0);
     expect(screen.queryByText("한지우")).not.toBeInTheDocument();
   });
@@ -159,6 +159,8 @@ describe("local election guide static experience", () => {
     render(<App />);
 
     const candidateCard = await screen.findByRole("article", { name: /정원오 후보 카드/ });
+    const seoulMayorComparison = seoulRegion.candidates.find((candidate) => candidate.name === "정원오")?.comparison;
+    expect(seoulMayorComparison).toBeTruthy();
     expect(candidateCard).toHaveStyle("--candidate-color: #2563eb");
     expect(within(candidateCard).getByRole("img", { name: "정원오 후보 사진" })).toBeInTheDocument();
     expect(within(candidateCard).getByText("더불어민주당").tagName).toBe("STRONG");
@@ -176,7 +178,7 @@ describe("local election guide static experience", () => {
     expect(within(candidateCard).getByText("공약 요약")).toBeInTheDocument();
     expect(within(candidateCard).queryByText("실행 요약")).not.toBeInTheDocument();
     expect(within(candidateCard).getAllByText("어떻게").length).toBeGreaterThan(0);
-    expect(within(candidateCard).getByText(/정책 초점은/)).toBeInTheDocument();
+    expect(candidateCard).toHaveTextContent(seoulMayorComparison as string);
     expect(candidateCard).toHaveTextContent(/앞세운 공약:/);
     expect(candidateCard).toHaveTextContent(/같은 투표지에서는 .* 공약을 중심으로 차이가 납니다/);
     expect(candidateCard).not.toHaveTextContent(/비교 기준:/);
@@ -202,6 +204,10 @@ describe("local election guide static experience", () => {
     await user.click(within(candidateCard).getByRole("button", { name: "전체 공약 보기" }));
 
     const dialog = screen.getByRole("dialog", { name: "정원오 전체 공약" });
+    const seoulMayorComparisonDetails = seoulRegion.candidates.find(
+      (candidate) => candidate.name === "정원오",
+    )?.comparisonDetails;
+    expect(seoulMayorComparisonDetails?.length).toBeGreaterThan(0);
     expect(within(dialog).getByText("후보자 공개 정보")).toBeInTheDocument();
     expect(within(dialog).getByText("전과 2건")).toBeInTheDocument();
     expect(within(dialog).queryByText(/전과 증명서|스캔 파일/)).not.toBeInTheDocument();
@@ -209,8 +215,9 @@ describe("local election guide static experience", () => {
     expect(within(dialog).getByText("상대 후보와의 차별점")).toBeInTheDocument();
     expect(within(dialog).queryByText("후보 특징")).not.toBeInTheDocument();
     expect(within(dialog).queryByText("공약 실현 가능성 검토")).not.toBeInTheDocument();
-    expect(within(dialog).getByText(/눈에 띄는 고유 공약:/)).toBeInTheDocument();
-    expect(within(dialog).getByText(/다른 후보와 나눠볼 지점:/)).toBeInTheDocument();
+    for (const detail of seoulMayorComparisonDetails ?? []) {
+      expect(within(dialog).getByText(detail)).toBeInTheDocument();
+    }
     expect(within(dialog).queryByText(/NEC CDN|원문 기반 요약·비교 생성 대상|선거구 기준:|비교 기준:/)).not.toBeInTheDocument();
     expect(within(dialog).getByText("공약 팩트체크")).toBeInTheDocument();
     expect(within(dialog).getByText(/선거관리위원회에서 제공한 후보자 정보와 공개 공약·공보 텍스트만/)).toBeInTheDocument();
