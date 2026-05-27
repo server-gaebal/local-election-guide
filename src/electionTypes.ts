@@ -21,6 +21,12 @@ export type Residence = {
   };
 };
 
+export type ResidenceAlias = {
+  label: string;
+  residenceId: string;
+  targetLabel: string;
+};
+
 export type Pledge = {
   title: string;
   detail: string;

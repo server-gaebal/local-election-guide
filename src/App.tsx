@@ -30,6 +30,7 @@ import {
   type Candidate,
   type RaceType,
   type Residence,
+  type ResidenceAlias,
   type VoterProfile,
 } from "./electionTypes";
 import { getCandidateFactCheck } from "./factChecks";
@@ -105,6 +106,7 @@ const citySortRank = new Map(citySortOrder.map((cityName, index) => [cityName, i
 const koCollator = new Intl.Collator("ko-KR", { numeric: true, sensitivity: "base" });
 
 type ResidenceOption = {
+  id: string;
   residence: Residence;
   label: string;
   normalizedLabel: string;
@@ -169,10 +171,34 @@ function createResidenceOption(residence: Residence): ResidenceOption {
   const label = formatResidenceLabel(residence);
 
   return {
+    id: residence.id,
     residence,
     label,
     normalizedLabel: normalizeResidenceSearch(label),
   };
+}
+
+function createResidenceAliasOptions(aliases: ResidenceAlias[] | undefined, residences: Residence[]) {
+  if (!aliases || aliases.length === 0) {
+    return [];
+  }
+
+  const residencesById = new Map(residences.map((residence) => [residence.id, residence]));
+
+  return aliases.flatMap((alias) => {
+    const residence = residencesById.get(alias.residenceId);
+
+    if (!residence) {
+      return [];
+    }
+
+    return {
+      id: `${alias.residenceId}:${alias.label}`,
+      residence,
+      label: alias.label,
+      normalizedLabel: normalizeResidenceSearch(alias.label),
+    } satisfies ResidenceOption;
+  });
 }
 
 function getResidenceSearchMatches(options: ResidenceOption[], query: string) {
@@ -340,7 +366,13 @@ export function App() {
       ),
     [city, district, residences],
   );
-  const residenceOptions = useMemo(() => residences.map(createResidenceOption), [residences]);
+  const residenceOptions = useMemo(
+    () => [
+      ...residences.map(createResidenceOption),
+      ...createResidenceAliasOptions(regionIndex?.residenceAliases, residences),
+    ],
+    [regionIndex?.residenceAliases, residences],
+  );
   const regionSearchMatches = useMemo(
     () => getResidenceSearchMatches(residenceOptions, regionSearch),
     [residenceOptions, regionSearch],
@@ -614,9 +646,10 @@ export function App() {
             </div>
             <datalist id="region-search-options">
               {regionSearchOptions.map((option) => (
-                <option key={option.residence.id} value={option.label} />
+                <option key={option.id} value={option.label} />
               ))}
             </datalist>
+            <p className="field-hint">주소 동이 안 보이면 검색하면 관할 행정동 후보로 연결합니다.</p>
           </label>
 
           <div className="profile-switch" aria-label="유권자 프로필">

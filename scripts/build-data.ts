@@ -6,6 +6,7 @@ import { candidates, residences, voterProfiles } from "../src/mockData";
 import { createCandidateInfoIndex, type NecCandidateInfoRecord } from "../src/necCandidateInfo";
 import type { NecNormalizedCandidate } from "../src/necCrawler";
 import type { NecElectionAreaCache, NecElectionDistrictsCache } from "../src/necElectionInfo";
+import type { Residence, ResidenceAlias } from "../src/electionTypes";
 import { buildNationalResidences, preserveStableResidenceIds } from "../src/necResidenceIndex";
 import {
   buildResidenceDatasetFromNec,
@@ -37,6 +38,21 @@ type NecDownloadsCache = {
 
 type NecCandidateInfoCache = {
   records: NecCandidateInfoRecord[];
+};
+
+type LegalDongMapping = {
+  cityName: string;
+  districtName: string;
+  adminDongName: string;
+  legalDongName: string;
+};
+
+type LegalDongMappingCache = {
+  generatedAt: string;
+  sourceName: string;
+  sourceUrl: string;
+  effectiveDate: string;
+  mappings: LegalDongMapping[];
 };
 
 type NecDownloadEntry = NecDownloadIndex extends Map<string, infer Value> ? Value : never;
@@ -159,6 +175,131 @@ function residenceLocationKey(residence: { city: string; district: string; neigh
   return [residence.city, residence.district, residence.neighborhood].join("\u0000");
 }
 
+function residenceElectionScopeKey(residence: Residence) {
+  return [
+    residence.electionScope?.districtHeadDistrict ?? "",
+    residence.electionScope?.cityCouncilDistrict ?? "",
+    residence.electionScope?.localCouncilDistrict ?? "",
+  ].join("\u0000");
+}
+
+function formatResidenceLabel(residence: Residence) {
+  return `${residence.city} ${residence.district} ${residence.neighborhood}`;
+}
+
+function formatAliasTargetLabel(residences: Residence[]) {
+  const sortedResidences = sortResidences(residences);
+  const first = sortedResidences[0];
+  const neighborhoods = sortedResidences.map((residence) => residence.neighborhood);
+
+  return `${first.city} ${first.district} ${neighborhoods.join("/")}`;
+}
+
+function sortResidences(nextResidences: Residence[]) {
+  return [...nextResidences].sort(
+    (a, b) =>
+      a.city.localeCompare(b.city, "ko-KR") ||
+      a.district.localeCompare(b.district, "ko-KR") ||
+      a.neighborhood.localeCompare(b.neighborhood, "ko-KR") ||
+      a.id.localeCompare(b.id),
+  );
+}
+
+function getMappingCityCandidates(cityName: string) {
+  if (cityName === "광주광역시" || cityName === "전라남도") {
+    return [cityName, "전남광주통합특별시"];
+  }
+
+  return [cityName];
+}
+
+async function buildResidenceAliases(nextResidences: Residence[]) {
+  const mappingPath = "data/nec/info/legal-dong-mappings.json";
+
+  if (!(await pathExists(mappingPath))) {
+    return [];
+  }
+
+  const mappingCache = await readJsonFile<LegalDongMappingCache>(mappingPath);
+  const residencesByLocation = new Map(nextResidences.map((residence) => [residenceLocationKey(residence), residence]));
+  const targetsByAliasLabel = new Map<string, Residence[]>();
+
+  for (const mapping of mappingCache.mappings) {
+    if (mapping.adminDongName === mapping.legalDongName) {
+      continue;
+    }
+
+    const residence = getMappingCityCandidates(mapping.cityName)
+      .map((cityName) =>
+        residencesByLocation.get(
+          residenceLocationKey({
+            city: cityName,
+            district: mapping.districtName,
+            neighborhood: mapping.adminDongName,
+          }),
+        ),
+      )
+      .find((item): item is Residence => item !== undefined);
+
+    if (!residence) {
+      continue;
+    }
+
+    addAliasTarget(targetsByAliasLabel, `${residence.city} ${residence.district} ${mapping.legalDongName}`, residence);
+
+    const sourceLabel = `${mapping.cityName} ${mapping.districtName} ${mapping.legalDongName}`;
+    if (sourceLabel !== `${residence.city} ${residence.district} ${mapping.legalDongName}`) {
+      addAliasTarget(targetsByAliasLabel, sourceLabel, residence);
+    }
+  }
+
+  return Array.from(targetsByAliasLabel.entries()).flatMap(([label, targets]) =>
+    buildAliasesForTargets(label, targets),
+  );
+}
+
+function addAliasTarget(targetsByAliasLabel: Map<string, Residence[]>, label: string, residence: Residence) {
+  const existing = targetsByAliasLabel.get(label) ?? [];
+
+  if (!existing.some((target) => target.id === residence.id)) {
+    targetsByAliasLabel.set(label, [...existing, residence]);
+  }
+}
+
+function buildAliasesForTargets(label: string, targets: Residence[]) {
+  const targetsByScope = new Map<string, Residence[]>();
+
+  for (const target of targets) {
+    const scopeKey = residenceElectionScopeKey(target);
+    targetsByScope.set(scopeKey, [...(targetsByScope.get(scopeKey) ?? []), target]);
+  }
+
+  if (targetsByScope.size === 1) {
+    const equivalentTargets = Array.from(targetsByScope.values())[0];
+    const residence = sortResidences(equivalentTargets).at(-1) ?? equivalentTargets[0];
+
+    return [
+      {
+        label,
+        residenceId: residence.id,
+        targetLabel:
+          equivalentTargets.length === 1 ? formatResidenceLabel(residence) : formatAliasTargetLabel(equivalentTargets),
+      } satisfies ResidenceAlias,
+    ];
+  }
+
+  return Array.from(targetsByScope.values()).map((scopedTargets) => {
+    const residence = sortResidences(scopedTargets).at(-1) ?? scopedTargets[0];
+    const targetLabel = formatAliasTargetLabel(scopedTargets);
+
+    return {
+      label: `${label} (${scopedTargets.map((target) => target.neighborhood).join("/")})`,
+      residenceId: residence.id,
+      targetLabel,
+    } satisfies ResidenceAlias;
+  });
+}
+
 async function buildNationalResidencesFromCache() {
   if (!(await pathExists("data/nec/info/election-districts.json"))) {
     return [];
@@ -182,6 +323,7 @@ const normalizedResidences = allResidences.map((residence) =>
       }
     : residence,
 );
+const residenceAliases = await buildResidenceAliases(normalizedResidences);
 const necRegionDatasets = await buildNecRegionDatasets(normalizedResidences);
 
 const regions = normalizedResidences.map((residence) => {
@@ -220,6 +362,7 @@ await rm(join(repoRoot, "public/share"), { recursive: true, force: true });
 await writeJson("public/data/regions/index.json", {
   voterProfiles,
   residences: normalizedResidences,
+  residenceAliases,
 });
 
 for (const region of regions) {

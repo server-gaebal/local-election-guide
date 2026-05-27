@@ -7,11 +7,19 @@ import cacheManifest from "../public/data/cache-manifest.json";
 import regionIndex from "../public/data/regions/index.json";
 import busanRegion from "../public/data/regions/busan-haeundae-woojedong.json";
 import gyeonggiRegion from "../public/data/regions/gyeonggi-seongnam-jeongja.json";
+import uiwangCheonggyeRegion from "../public/data/regions/nec-4100-4124-dong-1gfp6af.json";
 import seoulRegion from "../public/data/regions/seoul-mapo-gongdeok.json";
 
 const testRegionIndex = {
   ...regionIndex,
-  residences: [gyeonggiRegion.residence, busanRegion.residence, seoulRegion.residence],
+  residences: [gyeonggiRegion.residence, busanRegion.residence, seoulRegion.residence, uiwangCheonggyeRegion.residence],
+  residenceAliases: [
+    {
+      label: "경기도 의왕시 포일동",
+      residenceId: uiwangCheonggyeRegion.residence.id,
+      targetLabel: "경기도 의왕시 청계동",
+    },
+  ],
 };
 
 const jsonFixtures = {
@@ -20,6 +28,7 @@ const jsonFixtures = {
   "data/regions/seoul-mapo-gongdeok.json": seoulRegion,
   "data/regions/gyeonggi-seongnam-jeongja.json": gyeonggiRegion,
   "data/regions/busan-haeundae-woojedong.json": busanRegion,
+  [`data/regions/${uiwangCheonggyeRegion.residence.id}.json`]: uiwangCheonggyeRegion,
 };
 
 function installStaticDataFetch() {
@@ -87,6 +96,18 @@ describe("local election guide static experience", () => {
     await user.click(screen.getByRole("button", { name: "지역 검색 적용" }));
 
     expect(await screen.findByRole("heading", { name: "부산광역시 해운대구 우제1동에서 공약을 비교할 후보" })).toBeInTheDocument();
+  });
+
+  it("maps legal dong search terms to the matching administrative election region", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const searchbox = await screen.findByLabelText("지역 검색");
+    await user.type(searchbox, "경기도 의왕시 포일동");
+    await user.click(screen.getByRole("button", { name: "지역 검색 적용" }));
+
+    expect(await screen.findByRole("heading", { name: "경기도 의왕시 청계동에서 공약을 비교할 후보" })).toBeInTheDocument();
+    expect(screen.getByText("주소 동이 안 보이면 검색하면 관할 행정동 후보로 연결합니다.")).toBeInTheDocument();
   });
 
   it("opens a shared region from the URL query", async () => {

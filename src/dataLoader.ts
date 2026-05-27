@@ -1,4 +1,4 @@
-import type { Candidate, Residence, VoterProfile } from "./electionTypes";
+import type { Candidate, Residence, ResidenceAlias, VoterProfile } from "./electionTypes";
 
 declare const __APP_DATA_VERSION__: string;
 
@@ -31,6 +31,7 @@ export type CacheManifest = {
 export type RegionIndex = {
   voterProfiles: VoterProfile[];
   residences: Residence[];
+  residenceAliases?: ResidenceAlias[];
 };
 
 export type RegionDataset = {
