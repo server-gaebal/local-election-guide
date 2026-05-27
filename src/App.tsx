@@ -1085,7 +1085,11 @@ function CandidateCard({
   const pledgeAvailabilityNotice = hasVisiblePledges ? "" : getPledgeAvailabilityNotice(candidate);
 
   return (
-    <article className="candidate-card" aria-label={`${candidate.name} 후보 카드`}>
+    <article
+      className="candidate-card"
+      aria-label={`${candidate.name} 후보 카드`}
+      style={{ "--candidate-color": candidate.color } as CSSProperties}
+    >
       <header className="candidate-card__header">
         <CandidatePhoto candidate={candidate} />
         <div className="candidate-identity">
@@ -1105,12 +1109,6 @@ function CandidateCard({
         {getCandidateToneIcon(candidate)}
         <span>{candidate.criminalRecord.summary}</span>
       </span>
-
-      <div className="tag-row">
-        {candidate.focusTags.map((tag) => (
-          <span key={tag}>{tag}</span>
-        ))}
-      </div>
 
       <section className="card-section pledge-list" aria-label={`${candidate.name} 공약 요약`}>
         <div className="card-section__title">
