@@ -96,7 +96,7 @@ describe("local election guide static experience", () => {
     expect(await screen.findByRole("heading", { name: "부산광역시 해운대구 우제1동에서 공약을 비교할 후보" })).toBeInTheDocument();
   });
 
-  it("shows category fact checks for Busan mayor and education superintendent candidates", async () => {
+  it("shows candidate-specific fact checks for Busan mayor and education superintendent candidates", async () => {
     window.history.replaceState({}, "", "/?region=busan-haeundae-woojedong");
     render(<App />);
 
@@ -104,10 +104,10 @@ describe("local election guide static experience", () => {
     const educationCard = await screen.findByRole("article", { name: /김석준 후보 카드/ });
 
     expect(within(mayorCard).getByText("팩트체크")).toBeInTheDocument();
-    expect(within(mayorCard).getByText(/광역단체장 공약은/)).toBeInTheDocument();
-    expect(within(mayorCard).getByText("권한 확인 필요")).toBeInTheDocument();
+    expect(within(mayorCard).getByText(/청년자산·가덕신공항/)).toBeInTheDocument();
+    expect(within(mayorCard).getByText("재원 확인 필요")).toBeInTheDocument();
     expect(within(educationCard).getByText("팩트체크")).toBeInTheDocument();
-    expect(within(educationCard).getByText(/교육감 공약은/)).toBeInTheDocument();
+    expect(within(educationCard).getByText(/AI 튜터, 기초학력/)).toBeInTheDocument();
     expect(within(educationCard).getByText("재원 확인 필요")).toBeInTheDocument();
   });
 
