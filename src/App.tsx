@@ -356,6 +356,7 @@ export function App() {
   const [largeText, setLargeText] = useState(false);
   const [ballotFilter, setBallotFilter] = useState<BallotFilter>(allRaces);
   const [activeView, setActiveView] = useState<ActiveView>(() => findActiveViewFromUrl());
+  const [rivalryCandidatePools, setRivalryCandidatePools] = useState<Record<string, Candidate[]>>({});
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [shareStatus, setShareStatus] = useState<"idle" | "done">("idle");
 
@@ -497,15 +498,68 @@ export function App() {
     () => ballotGroups.reduce((sum, group) => sum + group.candidates.length, 0),
     [ballotGroups],
   );
+
+  useEffect(() => {
+    if (activeView !== "rivalries" || residences.length === 0) {
+      return;
+    }
+
+    let isActive = true;
+    const rivalriesToLoad = searchBackedRivalries
+      .map((rivalry) => ({
+        rivalry,
+        residence: findRepresentativeResidence(residences, rivalry),
+      }))
+      .filter((item): item is { rivalry: HotRivalryDefinition; residence: Residence } => Boolean(item.residence));
+
+    Promise.all(
+      rivalriesToLoad.map(async ({ rivalry, residence }) => {
+        try {
+          const dataset = await loadRegionDataset(residence.id);
+          return { city: rivalry.city, candidates: dataset.candidates };
+        } catch {
+          return null;
+        }
+      }),
+    ).then((results) => {
+      if (!isActive) {
+        return;
+      }
+
+      setRivalryCandidatePools((currentPools) => {
+        const nextPools = { ...currentPools };
+
+        for (const result of results) {
+          if (result) {
+            nextPools[result.city] = result.candidates;
+          }
+        }
+
+        return nextPools;
+      });
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, [activeView, residences]);
+
   const rivalryCards = useMemo<RivalryCard[]>(
     () =>
-      searchBackedRivalries.map((rivalry) => ({
-        ...rivalry,
-        candidates: selectedResidence?.city === rivalry.city ? resolveRivalryCandidates(regionalCandidates, rivalry) : null,
-        representativeResidence: findRepresentativeResidence(residences, rivalry),
-        isSelectedRegion: selectedResidence?.city === rivalry.city,
-      })),
-    [regionalCandidates, residences, selectedResidence?.city],
+      searchBackedRivalries.map((rivalry) => {
+        const candidatePool =
+          selectedResidence?.city === rivalry.city && regionalCandidates.length > 0
+            ? regionalCandidates
+            : (rivalryCandidatePools[rivalry.city] ?? []);
+
+        return {
+          ...rivalry,
+          candidates: resolveRivalryCandidates(candidatePool, rivalry),
+          representativeResidence: findRepresentativeResidence(residences, rivalry),
+          isSelectedRegion: selectedResidence?.city === rivalry.city,
+        };
+      }),
+    [regionalCandidates, residences, rivalryCandidatePools, selectedResidence?.city],
   );
 
   const selectActiveView = (nextView: ActiveView) => {
