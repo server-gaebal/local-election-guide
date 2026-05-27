@@ -5,17 +5,19 @@ import { App } from "./App";
 import { clearElectionDataCache } from "./dataLoader";
 import cacheManifest from "../public/data/cache-manifest.json";
 import regionIndex from "../public/data/regions/index.json";
+import busanRegion from "../public/data/regions/busan-haeundae-woojedong.json";
 import seoulRegion from "../public/data/regions/seoul-mapo-gongdeok.json";
 
 const testRegionIndex = {
   ...regionIndex,
-  residences: [seoulRegion.residence],
+  residences: [seoulRegion.residence, busanRegion.residence],
 };
 
 const jsonFixtures = {
   "data/cache-manifest.json": cacheManifest,
   "data/regions/index.json": testRegionIndex,
   "data/regions/seoul-mapo-gongdeok.json": seoulRegion,
+  "data/regions/busan-haeundae-woojedong.json": busanRegion,
 };
 
 function installStaticDataFetch() {
@@ -69,9 +71,13 @@ describe("search-backed hot rivalries", () => {
     expect(within(rivalrySection).getByRole("heading", { name: "충북지사 접전" })).toBeInTheDocument();
 
     const seoulCard = within(rivalrySection).getByRole("article", { name: "서울시장 초접전" });
+    const busanCard = within(rivalrySection).getByRole("article", { name: "부산시장 초접전" });
 
     expect(within(seoulCard).getByText("정원오")).toBeInTheDocument();
     expect(within(seoulCard).getByText("오세훈")).toBeInTheDocument();
+    expect(await within(busanCard).findByRole("img", { name: "전재수 후보 사진" })).toBeInTheDocument();
+    expect(await within(busanCard).findByRole("img", { name: "박형준 후보 사진" })).toBeInTheDocument();
+    expect(within(busanCard).queryByText("후보 데이터 선택 전")).not.toBeInTheDocument();
     expect(within(rivalrySection).getByText(/2026-05-27 검색 기준/)).toBeInTheDocument();
     expect(within(seoulCard).getByRole("link", { name: /뉴스핌/ })).toHaveAttribute(
       "href",
