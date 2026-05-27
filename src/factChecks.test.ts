@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getCandidateFactCheck } from "./factChecks";
+import mayorGovernorRace from "../data/nec/full/races/3-시-도지사선거.json";
+import superintendentRace from "../data/nec/full/races/11-교육감선거.json";
 
 describe("candidate fact checks", () => {
   it("provides conservative official-source checks for Seoul mayor and Gyeonggi governor candidates", () => {
@@ -18,11 +20,11 @@ describe("candidate fact checks", () => {
 
   it("falls back to nationwide mayor/governor and education superintendent category checks", () => {
     const busanMayorFactCheck = getCandidateFactCheck({
-      id: "20260603-320260603-100162954",
+      id: "synthetic-mayor-candidate",
       race: "광역단체장",
     });
     const busanEducationFactCheck = getCandidateFactCheck({
-      id: "20260603-1120260603-100162788",
+      id: "synthetic-education-candidate",
       race: "교육감",
     });
 
@@ -32,6 +34,16 @@ describe("candidate fact checks", () => {
     expect(busanEducationFactCheck?.items[1].sources.some((source) => source.name.includes("지방교육재정"))).toBe(
       true,
     );
+  });
+
+  it("provides candidate-specific checks for every mayor/governor and superintendent candidate", () => {
+    const candidates = [...mayorGovernorRace.candidates, ...superintendentRace.candidates];
+    const missingCandidateFactChecks = candidates
+      .filter((candidate) => !getCandidateFactCheck(candidate.id))
+      .map((candidate) => `${candidate.name} ${candidate.id}`);
+
+    expect(candidates).toHaveLength(112);
+    expect(missingCandidateFactChecks).toEqual([]);
   });
 
   it("provides candidate-specific checks for Seoul and Gyeonggi education superintendent candidates", () => {
